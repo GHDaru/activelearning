@@ -1,0 +1,19 @@
+{
+  "seed": 42,
+  "sample_size": 1000,
+  "batch_size": 25,
+  "output_dir": "experiments/e0/results",
+  "dataset": {
+    "csv_path": "data/dataset.csv",
+    "text_column": "nm_item",
+    "label_column": "nm_product",
+    "min_samples_per_class": 5
+  },
+  "oracles": [
+    { "provider": "openai", "model": "gpt-4o-mini", "temperature": 0.0 },
+    { "provider": "openai", "model": "gpt-4o", "temperature": 0.0 },
+    { "provider": "gemini", "model": "gemini-2.0-flash", "temperature": 0.0 },
+    { "provider": "ollama", "model": "gemma3", "temperature": 0.0 },
+    { "provider": "ollama", "model": "qwen2.5", "temperature": 0.0 }
+  ]
+}
