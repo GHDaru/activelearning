@@ -109,8 +109,13 @@ class CategorySchema:
         }
         if constrained:
             category_property["enum"] = list(self._sorted)
+        # strict=True (OpenAI structured outputs) IMPÕE o schema na decodificação;
+        # sem ele a API trata o schema como orientação e o modelo pode desviar do
+        # enum (observado no piloto: ~4% de rótulos fora do schema em lote).
+        # O modo strict exige todas as propriedades em `required`.
         return {
             "name": "oracle_classification",
+            "strict": True,
             "schema": {
                 "type": "object",
                 "properties": {
@@ -127,7 +132,7 @@ class CategorySchema:
                         "description": "Justificativa breve da escolha.",
                     },
                 },
-                "required": ["predicted_category"],
+                "required": ["expanded_description", "predicted_category", "rationale"],
                 "additionalProperties": False,
             },
         }

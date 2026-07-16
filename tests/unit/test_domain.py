@@ -27,12 +27,17 @@ class TestCategorySchema:
         schema = CategorySchema.from_raw(["Cerveja", "arroz"])
         assert set(schema.values) == {"cerveja", "arroz", "_rare_"}
 
-    def test_json_schema_has_enum(self):
+    def test_json_schema_has_enum_and_strict(self):
         schema = CategorySchema.from_raw(["cerveja", "arroz"])
         json_schema = schema.to_json_schema()
         enum = json_schema["schema"]["properties"]["predicted_category"]["enum"]
         assert sorted(enum) == sorted(schema.values)
-        assert json_schema["schema"]["required"] == ["predicted_category"]
+        # strict exige todas as propriedades em required (OpenAI structured outputs);
+        # sem strict o enum vira sugestão e o modelo pode desviar (visto no piloto)
+        assert json_schema["strict"] is True
+        assert sorted(json_schema["schema"]["required"]) == sorted(
+            json_schema["schema"]["properties"]
+        )
 
     def test_validate_accepts_phrasing_variants_of_registered_labels_only(self):
         schema = CategorySchema.from_raw(["ovo de pascoa"])

@@ -91,6 +91,7 @@ def batch_json_schema(schema: CategorySchema, constrained: bool) -> dict:
     category_property = single["properties"]["predicted_category"]
     return {
         "name": "oracle_classification_batch",
+        "strict": True,
         "schema": {
             "type": "object",
             "properties": {
@@ -106,7 +107,7 @@ def batch_json_schema(schema: CategorySchema, constrained: bool) -> dict:
                             "predicted_category": category_property,
                             "rationale": {"type": "string"},
                         },
-                        "required": ["index", "predicted_category"],
+                        "required": ["index", "predicted_category", "rationale"],
                         "additionalProperties": False,
                     },
                 }
