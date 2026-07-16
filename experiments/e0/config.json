@@ -13,31 +13,132 @@
     "stratified_per_class": 3
   },
   "oracles": [
-    { "provider": "openai", "model": "gpt-4o-mini", "constrained": true,
-      "samples": ["rand", "strat"] },
-    { "provider": "openai", "model": "gpt-4o", "constrained": true,
-      "samples": ["rand", "strat"] },
-    { "provider": "gemini", "model": "gemini-2.0-flash", "constrained": true,
-      "samples": ["rand", "strat"] },
-    { "provider": "huawei-maas", "model": "DeepSeek-V4", "constrained": true,
-      "samples": ["rand", "strat"], "disable_thinking": true,
-      "pricing_usd_per_mtok": [0, 0, 0],
-      "_nota": "preencher pricing conforme tabela MaaS da regiao; base_url via MAAS_BASE_URL" },
-    { "provider": "huawei-maas", "model": "GLM-5.2", "constrained": true,
-      "samples": ["rand", "strat"],
-      "pricing_usd_per_mtok": [0, 0, 0] },
-    { "provider": "ollama", "model": "gemma3", "constrained": true,
-      "samples": ["rand", "strat"] },
-    { "provider": "ollama", "model": "qwen2.5", "constrained": true,
-      "samples": ["rand", "strat"] },
-
-    { "provider": "openai", "model": "gpt-4o-mini", "constrained": false,
-      "samples": ["rand"],
-      "_nota": "RQ4 (efeito do instrumento): modo livre, so na S-rand" },
-    { "provider": "huawei-maas", "model": "DeepSeek-V4", "constrained": false,
-      "samples": ["rand"], "disable_thinking": true,
-      "pricing_usd_per_mtok": [0, 0, 0] },
-    { "provider": "ollama", "model": "gemma3", "constrained": false,
-      "samples": ["rand"] }
+    {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "mode": "enum",
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-4o",
+      "mode": "enum",
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-2.0-flash",
+      "mode": "enum",
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-flash",
+      "mode": "json-prompt",
+      "samples": [
+        "rand",
+        "strat"
+      ],
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0,
+        0,
+        0
+      ],
+      "_nota": "preencher pricing conforme console MaaS; nomes via GET /v2/models",
+      "requests_per_minute": 3,
+      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "glm-5.2",
+      "mode": "json-prompt",
+      "samples": [
+        "rand",
+        "strat"
+      ],
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0.98,
+        0.98,
+        3.08
+      ],
+      "_nota": "GLM-5.2 nao suporta structured output nem prefix caching (console MaaS)",
+      "requests_per_minute": 3,
+      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
+    },
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "mode": "json-prompt",
+      "samples": [
+        "rand",
+        "strat"
+      ],
+      "_nota": "modelo :free — cotas apertadas; reasoning desativado por padrao",
+      "requests_per_minute": 18,
+      "_nota_rpm": "modelos :free: ~20 rpm + cota diaria (50/dia sem saldo; 1000/dia com US$10 de saldo)"
+    },
+    {
+      "provider": "ollama",
+      "model": "gemma3",
+      "mode": "enum",
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "ollama",
+      "model": "qwen2.5",
+      "mode": "enum",
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "mode": "free",
+      "samples": [
+        "rand"
+      ],
+      "_nota": "RQ4 (efeito do instrumento): schema sem enum, so na S-rand"
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-flash",
+      "mode": "free",
+      "samples": [
+        "rand"
+      ],
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0,
+        0,
+        0
+      ],
+      "_nota": "RQ4 — se structured output nao for suportado, remover esta entrada",
+      "requests_per_minute": 3,
+      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
+    },
+    {
+      "provider": "ollama",
+      "model": "gemma3",
+      "mode": "free",
+      "samples": [
+        "rand"
+      ]
+    }
   ]
 }

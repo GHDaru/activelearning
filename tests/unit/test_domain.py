@@ -109,6 +109,38 @@ class TestLCE:
             lce(curve, baseline_performance=1.0)
 
 
+class TestExtractJson:
+    def test_plain_json(self):
+        from activelearning.adapters.oracles.openai_compatible import extract_json
+
+        assert extract_json('{"predicted_category": "arroz"}') == {
+            "predicted_category": "arroz"
+        }
+
+    def test_markdown_fenced_json(self):
+        from activelearning.adapters.oracles.openai_compatible import extract_json
+
+        text = '```json\n{"predicted_category": "arroz", "rationale": "x"}\n```'
+        assert extract_json(text)["predicted_category"] == "arroz"
+
+    def test_json_with_thinking_block_and_prose(self):
+        from activelearning.adapters.oracles.openai_compatible import extract_json
+
+        text = (
+            "<think>categoria provavel eh arroz</think>\n"
+            'Aqui está: {"predicted_category": "arroz"} espero ter ajudado'
+        )
+        assert extract_json(text)["predicted_category"] == "arroz"
+
+    def test_garbage_raises(self):
+        import pytest as _pytest
+
+        from activelearning.adapters.oracles.openai_compatible import extract_json
+
+        with _pytest.raises(Exception):
+            extract_json("sem json aqui")
+
+
 class TestSchemaFreeMode:
     def test_free_schema_has_no_enum(self):
         schema = CategorySchema.from_raw(["cerveja", "arroz"])

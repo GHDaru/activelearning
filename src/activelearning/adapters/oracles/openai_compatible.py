@@ -1,25 +1,31 @@
 """Adapter OraclePort genérico para APIs compatíveis com OpenAI Chat Completions.
 
-Cobre a API da OpenAI e provedores OpenAI-compatible (Huawei ModelArts MaaS,
-DeepSeek direto, etc. — tipicamente servidos por vLLM, que suporta structured
-outputs via ``response_format`` json_schema).
+Cobre OpenAI, Huawei ModelArts MaaS, OpenRouter e outros endpoints compatíveis.
 
-Modos de schema:
-- ``constrained=True`` (produção): rótulo restrito por enum na decodificação.
-- ``constrained=False`` (APENAS sub-experimento RQ4/E0): string livre com lista de
-  categorias no system prompt — reproduz o instrumento do legado; validação
-  pós-hoc contabiliza ``invalid_label``.
+Modos de instrumento (``mode``):
+- ``enum``        : saída estruturada com rótulo restrito por enum na decodificação.
+                    Requer suporte a structured outputs no provedor. Modo de produção.
+- ``json-prompt`` : para provedores SEM structured output (e.g. GLM-5.2 no MaaS,
+                    vários modelos :free do OpenRouter). Lista de categorias e formato
+                    JSON instruídos no system prompt; parse tolerante; validação
+                    pós-hoc com contabilização explícita de ``invalid_label``
+                    (fallback previsto no Princípio III da constituição).
+- ``free``        : saída estruturada SEM enum — réplica do instrumento do legado,
+                    usada EXCLUSIVAMENTE no sub-experimento RQ4 do E0.
 
-Prompt caching (OpenAI): prefixo estático (system + schema) idêntico entre
-chamadas; ``prompt_cache_key`` estável melhora o roteamento; tokens cacheados
-são lidos de ``usage.prompt_tokens_details.cached_tokens`` e descontados no custo.
-Provedores que não reportam cache simplesmente resultam em cached=0.
+ATENÇÃO (validade de medição): comparar modelos medidos em modos diferentes exige
+cautela — o modo é gravado em ``oracle_id`` e ``prompt_version`` de cada anotação.
+
+Prompt caching (OpenAI): prefixo estático idêntico entre chamadas +
+``prompt_cache_key``; tokens cacheados lidos de
+``usage.prompt_tokens_details.cached_tokens``. Provedores sem cache ⇒ cached=0.
 """
 from __future__ import annotations
 
 import hashlib
 import json
 import os
+import re
 import time
 
 from ...domain.annotation import Annotation, OracleUsage
@@ -32,6 +38,42 @@ from .prompt import (
     user_prompt,
 )
 
+PROMPT_VERSION_JSON_PROMPT = "v2-json-prompt"
+
+_MODE_SUFFIX = {"enum": "", "free": "#free", "json-prompt": "#prompt"}
+_MODE_PROMPT_VERSION = {
+    "enum": PROMPT_VERSION,
+    "free": PROMPT_VERSION_FREE,
+    "json-prompt": PROMPT_VERSION_JSON_PROMPT,
+}
+
+
+def system_prompt_json_instruction(schema: CategorySchema) -> str:
+    """System prompt do modo json-prompt: lista + formato JSON instruídos no texto."""
+    return (
+        system_prompt_free(schema)
+        + "\n\nFormato da resposta: responda APENAS um objeto JSON válido, sem "
+        'markdown, no formato {"predicted_category": "<categoria exata da lista>", '
+        '"rationale": "<justificativa breve>"}.'
+    )
+
+
+def extract_json(text: str) -> dict:
+    """Parse tolerante para o modo json-prompt.
+
+    Remove blocos de reasoning (<think>...</think>), cercas de markdown e captura
+    o primeiro objeto JSON presente no texto.
+    """
+    cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", cleaned.strip(), flags=re.MULTILINE)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        match = re.search(r"\{.*\}", cleaned, flags=re.DOTALL)
+        if match:
+            return json.loads(match.group(0))
+        raise
+
 
 class OpenAICompatibleOracle:
     """OraclePort sobre qualquer endpoint Chat Completions compatível com OpenAI."""
@@ -43,38 +85,73 @@ class OpenAICompatibleOracle:
         base_url: str | None = None,
         temperature: float = 0.0,
         api_key_env: str = "OPENAI_API_KEY",
-        constrained: bool = True,
+        mode: str = "enum",
         pricing_usd_per_mtok: tuple[float, float, float] | None = None,
         use_prompt_cache_key: bool = True,
         extra_body: dict | None = None,
+        extra_headers: dict | None = None,
         max_retries: int = 3,
+        requests_per_minute: float | None = None,
+        rate_limit_retries: int = 5,
     ) -> None:
         from openai import OpenAI  # import tardio: adapter, não domínio
 
+        if mode not in _MODE_SUFFIX:
+            raise ValueError(f"mode deve ser um de {sorted(_MODE_SUFFIX)}, não {mode!r}.")
         api_key = os.environ.get(api_key_env)
         if not api_key:
             raise RuntimeError(f"Variável de ambiente {api_key_env} não definida.")
-        self._client = OpenAI(api_key=api_key, base_url=base_url)
+        self._client = OpenAI(
+            api_key=api_key, base_url=base_url, default_headers=extra_headers or None
+        )
         self._model = model
         self._temperature = temperature
-        self._constrained = constrained
+        self._mode = mode
         self._pricing = pricing_usd_per_mtok
         self._use_cache_key = use_prompt_cache_key
         self._extra_body = extra_body or {}
         self._max_retries = max_retries
-        mode_suffix = "" if constrained else "#free"
-        self.oracle_id = f"{provider_name}:{model}@T{temperature}{mode_suffix}"
-        self.prompt_version = PROMPT_VERSION if constrained else PROMPT_VERSION_FREE
+        # Throttle proativo (tiers gratuitos: MaaS 3 rpm, OpenRouter :free ~20 rpm)
+        self._min_interval = 60.0 / requests_per_minute if requests_per_minute else 0.0
+        self._rate_limit_retries = rate_limit_retries
+        self._last_request_at = 0.0
+        self.oracle_id = f"{provider_name}:{model}@T{temperature}{_MODE_SUFFIX[mode]}"
+        self.prompt_version = _MODE_PROMPT_VERSION[mode]
+
+    def _throttle(self) -> None:
+        if self._min_interval <= 0:
+            return
+        elapsed = time.monotonic() - self._last_request_at
+        if elapsed < self._min_interval:
+            time.sleep(self._min_interval - elapsed)
+        self._last_request_at = time.monotonic()
 
     def annotate(self, batch: list[Instance], schema: CategorySchema) -> list[Annotation]:
-        json_schema = schema.to_json_schema(constrained=self._constrained)
-        system = SYSTEM_PROMPT if self._constrained else system_prompt_free(schema)
-        cache_key = self._cache_key(system, json_schema)
-        return [self._annotate_one(i, schema, json_schema, system, cache_key) for i in batch]
+        if self._mode == "enum":
+            system = SYSTEM_PROMPT
+            response_format = {
+                "type": "json_schema",
+                "json_schema": schema.to_json_schema(constrained=True),
+            }
+        elif self._mode == "free":
+            system = system_prompt_free(schema)
+            response_format = {
+                "type": "json_schema",
+                "json_schema": schema.to_json_schema(constrained=False),
+            }
+        else:  # json-prompt
+            system = system_prompt_json_instruction(schema)
+            response_format = None
+        cache_key = self._cache_key(system, response_format)
+        return [
+            self._annotate_one(i, schema, system, response_format, cache_key) for i in batch
+        ]
 
-    def _cache_key(self, system: str, json_schema: dict) -> str:
+    def _cache_key(self, system: str, response_format: dict | None) -> str:
         digest = hashlib.sha256(
-            (system + self.prompt_version + json.dumps(json_schema, sort_keys=True)).encode()
+            (
+                system + self.prompt_version + json.dumps(response_format, sort_keys=True)
+            ).encode()
         ).hexdigest()[:16]
         return f"falco-oracle-{digest}"
 
@@ -82,8 +159,8 @@ class OpenAICompatibleOracle:
         self,
         instance: Instance,
         schema: CategorySchema,
-        json_schema: dict,
         system: str,
+        response_format: dict | None,
         cache_key: str,
     ) -> Annotation:
         started = time.monotonic()
@@ -96,18 +173,23 @@ class OpenAICompatibleOracle:
                 {"role": "system", "content": system},
                 {"role": "user", "content": user_prompt(instance)},
             ],
-            "response_format": {"type": "json_schema", "json_schema": json_schema},
         }
+        if response_format is not None:
+            request_kwargs["response_format"] = response_format
         if self._use_cache_key:
             request_kwargs["prompt_cache_key"] = cache_key
         if self._extra_body:
             request_kwargs["extra_body"] = self._extra_body
 
-        for attempt in range(1, self._max_retries + 1):
+        rate_limit_hits = 0
+        attempt = 0
+        while attempt < self._max_retries:
+            attempt += 1
             try:
+                self._throttle()
                 response = self._client.chat.completions.create(**request_kwargs)
                 raw = response.choices[0].message.content or ""
-                payload = json.loads(raw)
+                payload = extract_json(raw)
                 label = schema.validate(str(payload.get("predicted_category", "")))
                 return Annotation(
                     instance_id=instance.id,
@@ -123,6 +205,15 @@ class OpenAICompatibleOracle:
                 # Alguns provedores OpenAI-compatible rejeitam prompt_cache_key
                 if "prompt_cache_key" in last_error and "prompt_cache_key" in request_kwargs:
                     request_kwargs.pop("prompt_cache_key")
+                    attempt -= 1
+                    continue
+                # 429: espera longa própria (janela de rate limit), não conta
+                # como tentativa comum e tem contador separado.
+                is_rate_limit = "RateLimitError" in last_error or " 429 " in last_error
+                if is_rate_limit and rate_limit_hits < self._rate_limit_retries:
+                    rate_limit_hits += 1
+                    attempt -= 1
+                    time.sleep(min(20.0 * rate_limit_hits, 65.0))
                     continue
                 if attempt < self._max_retries:
                     time.sleep(2**attempt)
@@ -162,12 +253,16 @@ class OpenAICompatibleOracle:
 
 
 class HuaweiMaasOracle(OpenAICompatibleOracle):
-    """Oráculo via Huawei ModelArts Studio (MaaS) — endpoint OpenAI-compatible.
+    """Oráculo via Huawei ModelArts Studio (MaaS), endpoint OpenAI-compatible.
 
-    Base URL por região, e.g. ``https://api-ap-southeast-1.modelarts-maas.com/v1``.
-    Backend Ascend-vLLM: suporta structured outputs via response_format json_schema.
-    Para modelos DeepSeek, o modo thinking/reasoning é DESATIVADO por padrão —
-    structured output com thinking ativo tem defeito conhecido no vLLM.
+    Base URL por região (nota: caminho ``/v2``), e.g.
+    ``https://api-ap-southeast-1.modelarts-maas.com/v2``.
+    Nomes de modelo conforme GET /v2/models (e.g. ``deepseek-v4-flash``,
+    ``deepseek-v4-pro``, ``glm-5.2`` — minúsculas).
+
+    GLM-5.2 NÃO suporta structured output (console MaaS) ⇒ usar ``mode="json-prompt"``.
+    Thinking é desativado por padrão (sintaxe MaaS: ``thinking: {type: disabled}``)
+    para latência/custo e para evitar interação ruim com parsing de JSON.
     """
 
     def __init__(
@@ -176,27 +271,69 @@ class HuaweiMaasOracle(OpenAICompatibleOracle):
         base_url: str | None = None,
         temperature: float = 0.0,
         api_key_env: str = "MAAS_API_KEY",
-        constrained: bool = True,
+        mode: str = "json-prompt",
         pricing_usd_per_mtok: tuple[float, float, float] | None = None,
         disable_thinking: bool = True,
+        requests_per_minute: float | None = 3.0,
         max_retries: int = 3,
     ) -> None:
         base_url = base_url or os.environ.get(
-            "MAAS_BASE_URL", "https://api-ap-southeast-1.modelarts-maas.com/v1"
+            "MAAS_BASE_URL", "https://api-ap-southeast-1.modelarts-maas.com/v2"
         )
         extra_body: dict = {}
         if disable_thinking:
-            # Convenção vLLM/DeepSeek para desligar o modo thinking na inferência.
-            extra_body["chat_template_kwargs"] = {"thinking": False}
+            extra_body["thinking"] = {"type": "disabled"}
         super().__init__(
             model=model,
             provider_name="huawei-maas",
             base_url=base_url,
             temperature=temperature,
             api_key_env=api_key_env,
-            constrained=constrained,
+            mode=mode,
             pricing_usd_per_mtok=pricing_usd_per_mtok,
             use_prompt_cache_key=False,  # parâmetro específico da OpenAI
             extra_body=extra_body,
+            requests_per_minute=requests_per_minute,
+            max_retries=max_retries,
+        )
+
+
+class OpenRouterOracle(OpenAICompatibleOracle):
+    """Oráculo via OpenRouter (agregador OpenAI-compatible; inclui modelos :free).
+
+    Base URL ``https://openrouter.ai/api/v1``; nomes conforme GET /api/v1/models
+    (e.g. ``nvidia/nemotron-3-ultra-550b-a55b:free``).
+    Reasoning é desativado por padrão (``reasoning: {enabled: false}``) — para
+    classificação de texto curto o custo/latência do reasoning não se justifica e
+    modelos :free têm cotas apertadas. Muitos modelos :free não suportam structured
+    output ⇒ default ``mode="json-prompt"``.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        temperature: float = 0.0,
+        api_key_env: str = "OPENROUTER_API_KEY",
+        mode: str = "json-prompt",
+        pricing_usd_per_mtok: tuple[float, float, float] | None = (0.0, 0.0, 0.0),
+        reasoning_enabled: bool = False,
+        requests_per_minute: float | None = 18.0,
+        max_retries: int = 3,
+    ) -> None:
+        super().__init__(
+            model=model,
+            provider_name="openrouter",
+            base_url="https://openrouter.ai/api/v1",
+            temperature=temperature,
+            api_key_env=api_key_env,
+            mode=mode,
+            pricing_usd_per_mtok=pricing_usd_per_mtok,
+            use_prompt_cache_key=False,
+            extra_body={"reasoning": {"enabled": reasoning_enabled}},
+            extra_headers={
+                "HTTP-Referer": "https://github.com/GHDaru/activelearning",
+                "X-Title": "activelearning-falco",
+            },
+            requests_per_minute=requests_per_minute,
             max_retries=max_retries,
         )

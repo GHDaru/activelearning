@@ -101,7 +101,7 @@ def build_samples(config: dict, rows, schema: CategorySchema) -> dict[str, list[
 
 def build_oracle(spec: dict):
     kind = spec["provider"]
-    constrained = bool(spec.get("constrained", True))
+    mode = spec.get("mode", "enum")
     temperature = float(spec.get("temperature", 0.0))
     pricing = spec.get("pricing_usd_per_mtok")
     pricing = tuple(pricing) if pricing else None
@@ -109,9 +109,7 @@ def build_oracle(spec: dict):
     if kind == "openai":
         from activelearning.adapters.oracles.openai_oracle import OpenAIOracle
 
-        return OpenAIOracle(
-            model=spec["model"], temperature=temperature, constrained=constrained
-        )
+        return OpenAIOracle(model=spec["model"], temperature=temperature, mode=mode)
     if kind == "huawei-maas":
         from activelearning.adapters.oracles.openai_compatible import HuaweiMaasOracle
 
@@ -119,9 +117,21 @@ def build_oracle(spec: dict):
             model=spec["model"],
             base_url=spec.get("base_url"),
             temperature=temperature,
-            constrained=constrained,
+            mode=mode,
             pricing_usd_per_mtok=pricing,
             disable_thinking=bool(spec.get("disable_thinking", True)),
+            requests_per_minute=spec.get("requests_per_minute", 3.0),
+        )
+    if kind == "openrouter":
+        from activelearning.adapters.oracles.openai_compatible import OpenRouterOracle
+
+        return OpenRouterOracle(
+            model=spec["model"],
+            temperature=temperature,
+            mode=mode,
+            pricing_usd_per_mtok=pricing or (0.0, 0.0, 0.0),
+            reasoning_enabled=bool(spec.get("reasoning_enabled", False)),
+            requests_per_minute=spec.get("requests_per_minute", 18.0),
         )
     if kind == "openai-compatible":
         from activelearning.adapters.oracles.openai_compatible import OpenAICompatibleOracle
@@ -132,7 +142,7 @@ def build_oracle(spec: dict):
             base_url=spec["base_url"],
             temperature=temperature,
             api_key_env=spec.get("api_key_env", "OPENAI_API_KEY"),
-            constrained=constrained,
+            mode=mode,
             pricing_usd_per_mtok=pricing,
             use_prompt_cache_key=False,
         )
@@ -163,7 +173,7 @@ def main() -> None:
 
     summaries = []
     for spec in config["oracles"]:
-        mode = "enum" if spec.get("constrained", True) else "free"
+        mode = spec.get("mode", "enum")
         wanted = spec.get("samples", ["rand", "strat"])
         print(f"\n=== {spec['provider']}:{spec['model']} [{mode}] amostras={wanted} ===")
         try:

@@ -21,7 +21,7 @@ class OpenAIOracle(OpenAICompatibleOracle):
         model: str = "gpt-4o-mini",
         temperature: float = 0.0,
         api_key_env: str = "OPENAI_API_KEY",
-        constrained: bool = True,
+        mode: str = "enum",
         max_retries: int = 3,
     ) -> None:
         super().__init__(
@@ -30,7 +30,7 @@ class OpenAIOracle(OpenAICompatibleOracle):
             base_url=None,
             temperature=temperature,
             api_key_env=api_key_env,
-            constrained=constrained,
+            mode=mode,
             pricing_usd_per_mtok=_PRICING_USD_PER_MTOK.get(model),
             use_prompt_cache_key=True,
             max_retries=max_retries,
