@@ -77,6 +77,24 @@
       "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
     },
     {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-pro",
+      "mode": "json-prompt",
+      "samples": [
+        "rand",
+        "strat"
+      ],
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0,
+        0,
+        0
+      ],
+      "_nota": "candidato a LLM Avancado do FALCO (par natural com deepseek-v4-flash como Inicial); preencher pricing conforme console MaaS",
+      "requests_per_minute": 3,
+      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
+    },
+    {
       "provider": "openrouter",
       "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
       "mode": "json-prompt",
