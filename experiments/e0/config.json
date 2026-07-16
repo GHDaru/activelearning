@@ -17,6 +17,7 @@
       "provider": "openai",
       "model": "gpt-4o-mini",
       "mode": "enum",
+      "items_per_call": 10,
       "samples": [
         "rand",
         "strat"
@@ -26,6 +27,7 @@
       "provider": "openai",
       "model": "gpt-4o",
       "mode": "enum",
+      "items_per_call": 10,
       "samples": [
         "rand",
         "strat"
@@ -38,125 +40,122 @@
       "samples": [
         "rand",
         "strat"
-      ]
+      ],
+      "_nota": "adapter Gemini ainda e unitario (1 item/chamada)"
     },
     {
       "provider": "huawei-maas",
       "model": "deepseek-v4-flash",
       "mode": "json-prompt",
+      "items_per_call": 25,
+      "requests_per_minute": 3,
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0.135,
+        0.135,
+        0.27
+      ],
+      "_nota": "LLM Inicial candidato; preco console MaaS 07/2026",
       "samples": [
         "rand",
         "strat"
-      ],
+      ]
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-pro",
+      "mode": "json-prompt",
+      "items_per_call": 25,
+      "requests_per_minute": 3,
       "disable_thinking": true,
       "pricing_usd_per_mtok": [
-        0,
-        0,
-        0
+        1.617,
+        1.617,
+        3.235
       ],
-      "_nota": "preencher pricing conforme console MaaS; nomes via GET /v2/models",
-      "requests_per_minute": 3,
-      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
+      "_nota": "LLM Avancado candidato; preco console MaaS 07/2026",
+      "samples": [
+        "rand",
+        "strat"
+      ]
     },
     {
       "provider": "huawei-maas",
       "model": "glm-5.2",
       "mode": "json-prompt",
-      "samples": [
-        "rand",
-        "strat"
-      ],
+      "items_per_call": 25,
+      "requests_per_minute": 3,
       "disable_thinking": true,
       "pricing_usd_per_mtok": [
         0.98,
         0.98,
         3.08
       ],
-      "_nota": "GLM-5.2 nao suporta structured output nem prefix caching (console MaaS)",
-      "requests_per_minute": 3,
-      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
-    },
-    {
-      "provider": "huawei-maas",
-      "model": "deepseek-v4-pro",
-      "mode": "json-prompt",
+      "_nota": "preco piso do range ($0.98-1.40 in / $3.08-4.40 out)",
       "samples": [
         "rand",
         "strat"
-      ],
-      "disable_thinking": true,
-      "pricing_usd_per_mtok": [
-        0,
-        0,
-        0
-      ],
-      "_nota": "candidato a LLM Avancado do FALCO (par natural com deepseek-v4-flash como Inicial); preencher pricing conforme console MaaS",
-      "requests_per_minute": 3,
-      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
+      ]
     },
     {
       "provider": "openrouter",
       "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
       "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-super-120b-a12b:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "google/gemma-4-31b-it:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
       "samples": [
         "rand",
         "strat"
       ],
-      "_nota": "modelo :free — cotas apertadas; reasoning desativado por padrao",
-      "requests_per_minute": 18,
-      "_nota_rpm": "modelos :free: ~20 rpm + cota diaria (50/dia sem saldo; 1000/dia com US$10 de saldo)"
-    },
-    {
-      "provider": "ollama",
-      "model": "gemma3",
-      "mode": "enum",
-      "samples": [
-        "rand",
-        "strat"
-      ]
-    },
-    {
-      "provider": "ollama",
-      "model": "qwen2.5",
-      "mode": "enum",
-      "samples": [
-        "rand",
-        "strat"
-      ]
+      "_nota": "substitui o slot local (gemma) — sem permissao p/ Ollama"
     },
     {
       "provider": "openai",
       "model": "gpt-4o-mini",
       "mode": "free",
+      "items_per_call": 10,
       "samples": [
         "rand"
       ],
-      "_nota": "RQ4 (efeito do instrumento): schema sem enum, so na S-rand"
-    },
-    {
-      "provider": "huawei-maas",
-      "model": "deepseek-v4-flash",
-      "mode": "free",
-      "samples": [
-        "rand"
-      ],
-      "disable_thinking": true,
-      "pricing_usd_per_mtok": [
-        0,
-        0,
-        0
-      ],
-      "_nota": "RQ4 — se structured output nao for suportado, remover esta entrada",
-      "requests_per_minute": 3,
-      "_nota_rpm": "tier atual: 3 rpm (ModelArts.81101); aumente se contratar cota"
-    },
-    {
-      "provider": "ollama",
-      "model": "gemma3",
-      "mode": "free",
-      "samples": [
-        "rand"
-      ]
+      "_nota": "RQ4 (efeito do instrumento) — so em provedores com structured output"
     }
+  ],
+  "_notas_desenho": [
+    "items_per_call definido pela calibracao (config_calibration.json); rode-a primeiro",
+    "MaaS nao suporta structured output em nenhum modelo (console 07/2026) -> json-prompt",
+    "RQ4 (enum vs free) restrito a provedores com structured output (OpenAI)"
   ]
 }

@@ -141,6 +141,46 @@ class TestExtractJson:
             extract_json("sem json aqui")
 
 
+class TestBatchedOracleHelpers:
+    def test_parse_batch_payload_maps_by_index(self):
+        from activelearning.adapters.oracles.openai_compatible import parse_batch_payload
+
+        payload = {
+            "classifications": [
+                {"index": 2, "predicted_category": "arroz"},
+                {"index": 1, "predicted_category": "cerveja"},
+                {"index": 99, "predicted_category": "fora do range"},
+                {"index": "x", "predicted_category": "indice invalido"},
+            ]
+        }
+        mapped = parse_batch_payload(payload, n_items=3)
+        assert mapped[1]["predicted_category"] == "cerveja"
+        assert mapped[2]["predicted_category"] == "arroz"
+        assert 3 not in mapped and 99 not in mapped
+
+    def test_split_usage_preserves_totals(self):
+        from activelearning.adapters.oracles.openai_compatible import split_usage
+
+        total = OracleUsage(103, 47, 9.0, 0.9, cached_input_tokens=52)
+        parts = split_usage(total, 4)
+        assert len(parts) == 4
+        assert sum(p.input_tokens for p in parts) == 103
+        assert sum(p.output_tokens for p in parts) == 47
+        assert sum(p.cached_input_tokens for p in parts) == 52
+        assert sum(p.cost_usd for p in parts) == pytest.approx(0.9)
+
+    def test_batch_json_schema_keeps_enum_and_is_size_independent(self):
+        from activelearning.adapters.oracles.openai_compatible import batch_json_schema
+
+        schema = CategorySchema.from_raw(["cerveja", "arroz"])
+        batched = batch_json_schema(schema, constrained=True)
+        items = batched["schema"]["properties"]["classifications"]["items"]
+        assert sorted(items["properties"]["predicted_category"]["enum"]) == sorted(
+            schema.values
+        )
+        assert "minItems" not in batched["schema"]["properties"]["classifications"]
+
+
 class TestSchemaFreeMode:
     def test_free_schema_has_no_enum(self):
         schema = CategorySchema.from_raw(["cerveja", "arroz"])

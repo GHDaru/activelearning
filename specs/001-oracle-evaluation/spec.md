@@ -29,6 +29,14 @@ inválido, ~94% do input servido do cache de prompt, ~US$0,29/1k rótulos.
   representativos: `gpt-4o-mini` (API premium), `DeepSeek-V4` (MaaS) e `gemma3` (local).
 - **Temperatura**: fixa em 0.0 — justificada pelo piloto legado (insensibilidade
   observada entre 0.0 e 1.0) e pelo requisito de reprodutibilidade em produção.
+- **Itens por chamada (b_call)**: rotulagem EM LOTE (itens numerados numa única
+  chamada; resposta como array indexado). Reduz drasticamente chamadas e custo
+  (~5x no piloto), essencial sob rate limits (MaaS 3 rpm: lote 25 => ~40 min/modelo
+  em vez de ~16 h). Como lote muda o instrumento (contaminação de contexto, efeitos
+  de posição), há uma CALIBRAÇÃO prévia (`config_calibration.json`): b_call em
+  {1, 10, 25} pareado em 100 itens da S-rand (gpt-4o-mini e deepseek-v4-flash);
+  o E0 principal usa o maior b_call sem degradação significativa (McNemar).
+  O b_call usado fica gravado no oracle_id (sufixo @b{n}).
 
 ### Amostras (pareadas — todos os modelos rotulam as MESMAS instâncias)
 

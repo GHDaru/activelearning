@@ -109,7 +109,10 @@ def build_oracle(spec: dict):
     if kind == "openai":
         from activelearning.adapters.oracles.openai_oracle import OpenAIOracle
 
-        return OpenAIOracle(model=spec["model"], temperature=temperature, mode=mode)
+        return OpenAIOracle(
+            model=spec["model"], temperature=temperature, mode=mode,
+            items_per_call=int(spec.get("items_per_call", 1)),
+        )
     if kind == "huawei-maas":
         from activelearning.adapters.oracles.openai_compatible import HuaweiMaasOracle
 
@@ -121,6 +124,7 @@ def build_oracle(spec: dict):
             pricing_usd_per_mtok=pricing,
             disable_thinking=bool(spec.get("disable_thinking", True)),
             requests_per_minute=spec.get("requests_per_minute", 3.0),
+            items_per_call=int(spec.get("items_per_call", 1)),
         )
     if kind == "openrouter":
         from activelearning.adapters.oracles.openai_compatible import OpenRouterOracle
@@ -132,6 +136,7 @@ def build_oracle(spec: dict):
             pricing_usd_per_mtok=pricing or (0.0, 0.0, 0.0),
             reasoning_enabled=bool(spec.get("reasoning_enabled", False)),
             requests_per_minute=spec.get("requests_per_minute", 18.0),
+            items_per_call=int(spec.get("items_per_call", 1)),
         )
     if kind == "openai-compatible":
         from activelearning.adapters.oracles.openai_compatible import OpenAICompatibleOracle

@@ -1,0 +1,93 @@
+{
+  "seed": 42,
+  "batch_size": 25,
+  "output_dir": "experiments/e0/results_calibration",
+  "dataset": {
+    "csv_path": "data/dataset.csv",
+    "text_column": "nm_item",
+    "label_column": "nm_product",
+    "min_samples_per_class": 5
+  },
+  "samples": {
+    "random_size": 100,
+    "stratified_per_class": 1
+  },
+  "_objetivo": "Calibrar items_per_call: acuracia nao pode degradar vs unitario (McNemar pareado). Usar o maior b sem degradacao no E0 principal.",
+  "oracles": [
+    {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "mode": "enum",
+      "items_per_call": 1,
+      "samples": [
+        "rand"
+      ]
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-flash",
+      "mode": "json-prompt",
+      "items_per_call": 1,
+      "requests_per_minute": 3,
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0.135,
+        0.135,
+        0.27
+      ],
+      "samples": [
+        "rand"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "mode": "enum",
+      "items_per_call": 10,
+      "samples": [
+        "rand"
+      ]
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-flash",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 3,
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0.135,
+        0.135,
+        0.27
+      ],
+      "samples": [
+        "rand"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "mode": "enum",
+      "items_per_call": 25,
+      "samples": [
+        "rand"
+      ]
+    },
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-flash",
+      "mode": "json-prompt",
+      "items_per_call": 25,
+      "requests_per_minute": 3,
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0.135,
+        0.135,
+        0.27
+      ],
+      "samples": [
+        "rand"
+      ]
+    }
+  ]
+}
