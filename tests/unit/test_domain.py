@@ -58,9 +58,16 @@ class TestAnnotation:
         assert ann.is_correct(None) is None
 
     def test_usage_is_additive(self):
-        total = OracleUsage(10, 5, 1.0, 0.01) + OracleUsage(20, 10, 2.0, 0.02)
+        total = OracleUsage(10, 5, 1.0, 0.01, cached_input_tokens=8) + OracleUsage(
+            20, 10, 2.0, 0.02, cached_input_tokens=18
+        )
         assert total.input_tokens == 30
         assert total.cost_usd == pytest.approx(0.03)
+        assert total.cached_input_tokens == 26
+        assert total.cache_hit_rate == pytest.approx(26 / 30)
+
+    def test_cache_hit_rate_zero_without_input(self):
+        assert OracleUsage().cache_hit_rate == 0.0
 
 
 class TestStrategies:

@@ -58,6 +58,8 @@ class OracleEvaluationReport:
             "macro_f1": round(self.macro_f1, 4),
             "invalid_label_rate": round(self.invalid_rate, 4),
             "input_tokens": self.usage.input_tokens,
+            "cached_input_tokens": self.usage.cached_input_tokens,
+            "cache_hit_rate": round(self.usage.cache_hit_rate, 4),
             "output_tokens": self.usage.output_tokens,
             "total_cost_usd": round(self.usage.cost_usd, 4),
             "cost_per_1k_labels_usd": round(self.cost_per_1k_labels_usd, 4),
@@ -138,6 +140,7 @@ class EvaluateOracle:
                     output_tokens=usage.get("output_tokens", 0),
                     latency_seconds=usage.get("latency_seconds", 0.0),
                     cost_usd=usage.get("cost_usd", 0.0),
+                    cached_input_tokens=usage.get("cached_input_tokens", 0),
                 )
                 gold_value = gold.value
                 report.per_class_total[gold_value] = (

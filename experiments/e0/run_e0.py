@@ -14,7 +14,26 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_ROOT / "src"))
+
+
+def load_dotenv_if_present() -> None:
+    """Carrega variáveis de um .env na raiz do projeto (não versionado)."""
+    env_path = _ROOT / ".env"
+    if not env_path.exists():
+        return
+    import os
+
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+load_dotenv_if_present()
 
 from activelearning.application.evaluate_oracle import EvaluateOracle  # noqa: E402
 from activelearning.domain.instances import CategorySchema, Instance, Label  # noqa: E402
