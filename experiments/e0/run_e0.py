@@ -49,13 +49,16 @@ def load_rows_and_schema(config: dict):
     path = Path(data_cfg["csv_path"])
     text_col, label_col = data_cfg["text_column"], data_cfg["label_column"]
     min_per_class = int(data_cfg.get("min_samples_per_class", 5))
+    # Rotulos operacionais que vazaram como categoria (auditoria da base:
+    # 'inativo' = 144 linhas de status, nao tipo de produto).
+    excluded = {e.lower() for e in data_cfg.get("exclude_labels", ["inativo"])}
 
     rows: list[tuple[str, str]] = []
     with path.open(encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             text = (row.get(text_col) or "").strip()
             label = (row.get(label_col) or "").strip()
-            if text and label:
+            if text and label and label.lower() not in excluded:
                 rows.append((text, label))
 
     counts: dict[str, int] = {}

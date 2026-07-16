@@ -38,7 +38,7 @@ from .prompt import (
     user_prompt,
 )
 
-PROMPT_VERSION_JSON_PROMPT = "v2-json-prompt"
+PROMPT_VERSION_JSON_PROMPT = "v3-json-prompt"
 
 _MODE_SUFFIX = {"enum": "", "free": "#free", "json-prompt": "#prompt"}
 _MODE_PROMPT_VERSION = {
