@@ -1,0 +1,15 @@
+{
+  "oracle_id": "openai:gpt-4o@T0.0@b10",
+  "prompt_version": "v3-enum",
+  "n_total": 621,
+  "accuracy": 0.8213,
+  "macro_f1": 0.7818,
+  "invalid_label_rate": 0.0048,
+  "input_tokens": 205855,
+  "cached_input_tokens": 185472,
+  "cache_hit_rate": 0.901,
+  "output_tokens": 23680,
+  "total_cost_usd": 0.5196,
+  "cost_per_1k_labels_usd": 0.8367,
+  "total_latency_seconds": 290.5
+}

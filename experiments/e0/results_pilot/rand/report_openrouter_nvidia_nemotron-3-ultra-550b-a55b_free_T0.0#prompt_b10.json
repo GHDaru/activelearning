@@ -1,0 +1,15 @@
+{
+  "oracle_id": "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free@T0.0#prompt@b10",
+  "prompt_version": "v3-json-prompt",
+  "n_total": 100,
+  "accuracy": 0.78,
+  "macro_f1": 0.7303,
+  "invalid_label_rate": 0.02,
+  "input_tokens": 34509,
+  "cached_input_tokens": 0,
+  "cache_hit_rate": 0.0,
+  "output_tokens": 5573,
+  "total_cost_usd": 0.0,
+  "cost_per_1k_labels_usd": 0.0,
+  "total_latency_seconds": 72.5
+}

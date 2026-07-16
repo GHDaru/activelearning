@@ -68,26 +68,39 @@ def main() -> None:
                 }
             )
 
-    # McNemar pareado na S-rand
-    gold_rand = {i.id: i.gold_label.value for i in samples["rand"]}
-    correctness = correctness_by_oracle(args.results / "rand", gold_rand)
+    # McNemar pareado dentro de cada amostra (rand e strat).
+    # Gold indexado pela base inteira (id = e0-{índice da linha filtrada}, estável):
+    # anotações de execuções com amostragem anterior continuam pareáveis mesmo que
+    # a amostra regenerada pela config atual seja outra.
+    from activelearning.domain.instances import Label  # noqa: E402
+
+    gold_all = {
+        f"e0-{i}": (schema.validate(label) or Label("_rare_")).value
+        for i, (_, label) in enumerate(rows)
+    }
     mcnemar = []
-    for a, b in itertools.combinations(sorted(correctness), 2):
-        common = set(correctness[a]) & set(correctness[b])
-        if not common:
+    for sample_name in samples:
+        sample_dir = args.results / sample_name
+        if not sample_dir.exists():
             continue
-        n01 = sum(1 for i in common if correctness[a][i] and not correctness[b][i])
-        n10 = sum(1 for i in common if not correctness[a][i] and correctness[b][i])
-        mcnemar.append(
-            {
-                "oracle_a": a,
-                "oracle_b": b,
-                "n_paired": len(common),
-                "a_right_b_wrong": n01,
-                "a_wrong_b_right": n10,
-                "p_value": round(mcnemar_test(n01, n10), 6),
-            }
-        )
+        correctness = correctness_by_oracle(sample_dir, gold_all)
+        for a, b in itertools.combinations(sorted(correctness), 2):
+            common = set(correctness[a]) & set(correctness[b])
+            if not common:
+                continue
+            n01 = sum(1 for i in common if correctness[a][i] and not correctness[b][i])
+            n10 = sum(1 for i in common if not correctness[a][i] and correctness[b][i])
+            mcnemar.append(
+                {
+                    "sample": sample_name,
+                    "oracle_a": a,
+                    "oracle_b": b,
+                    "n_paired": len(common),
+                    "a_right_b_wrong": n01,
+                    "a_wrong_b_right": n10,
+                    "p_value": round(mcnemar_test(n01, n10), 6),
+                }
+            )
 
     (args.results / "e0_table.json").write_text(
         json.dumps(table, ensure_ascii=False, indent=2), encoding="utf-8"
