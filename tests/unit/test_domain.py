@@ -4,7 +4,7 @@ import pytest
 
 from activelearning.domain.annotation import Annotation, OracleUsage
 from activelearning.domain.instances import CategorySchema, Instance, Label, normalize_label
-from activelearning.domain.metrics import LearningCurve, lce
+from activelearning.domain.metrics import LearningCurve, lce, mcnemar_test, wilson_interval
 from activelearning.domain.strategies import (
     entropy_scores,
     least_confidence_scores,
@@ -107,6 +107,39 @@ class TestLCE:
         curve.append(10, 0.5)
         with pytest.raises(ValueError):
             lce(curve, baseline_performance=1.0)
+
+
+class TestSchemaFreeMode:
+    def test_free_schema_has_no_enum(self):
+        schema = CategorySchema.from_raw(["cerveja", "arroz"])
+        free = schema.to_json_schema(constrained=False)
+        assert "enum" not in free["schema"]["properties"]["predicted_category"]
+        constrained = schema.to_json_schema(constrained=True)
+        assert "enum" in constrained["schema"]["properties"]["predicted_category"]
+
+
+class TestStatistics:
+    def test_wilson_interval_contains_proportion(self):
+        low, high = wilson_interval(85, 100)
+        assert low < 0.85 < high
+        assert 0.76 < low < 0.80 and 0.90 < high < 0.92
+
+    def test_wilson_extremes_stay_in_unit_interval(self):
+        assert wilson_interval(0, 50)[0] == 0.0
+        assert wilson_interval(50, 50)[1] == 1.0
+
+    def test_mcnemar_no_discordance_is_one(self):
+        assert mcnemar_test(0, 0) == 1.0
+
+    def test_mcnemar_symmetric_discordance_not_significant(self):
+        assert mcnemar_test(20, 20) > 0.8
+
+    def test_mcnemar_asymmetric_discordance_significant(self):
+        assert mcnemar_test(40, 5) < 0.001
+
+    def test_mcnemar_small_n_uses_exact_binomial(self):
+        p = mcnemar_test(9, 1)
+        assert 0.02 < p < 0.03  # binomial exato bicaudal para 1 de 10
 
 
 class TestInstance:

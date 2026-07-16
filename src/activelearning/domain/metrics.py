@@ -57,3 +57,39 @@ def lce(
         auc_real = float(simpson(y=y, x=x))
 
     return auc_real / (baseline_performance * delta_ideal)
+
+
+def wilson_interval(successes: int, total: int, confidence: float = 0.95) -> tuple[float, float]:
+    """Intervalo de confiança de Wilson para uma proporção (acurácia)."""
+    if total <= 0:
+        raise ValueError("total deve ser positivo.")
+    if not 0 <= successes <= total:
+        raise ValueError("successes deve estar em [0, total].")
+    from scipy.stats import norm
+
+    z = float(norm.ppf(1 - (1 - confidence) / 2))
+    p = successes / total
+    denom = 1 + z**2 / total
+    center = (p + z**2 / (2 * total)) / denom
+    half = (z / denom) * np.sqrt(p * (1 - p) / total + z**2 / (4 * total**2))
+    return (max(0.0, center - half), min(1.0, center + half))
+
+
+def mcnemar_test(b: int, c: int) -> float:
+    """Teste de McNemar para amostras pareadas (χ² com correção de continuidade).
+
+    ``b`` = casos em que A acertou e B errou; ``c`` = A errou e B acertou.
+    Com poucos discordantes (b+c < 25) usa o teste binomial exato.
+    Retorna o p-valor bicaudal.
+    """
+    if b < 0 or c < 0:
+        raise ValueError("b e c devem ser não negativos.")
+    n = b + c
+    if n == 0:
+        return 1.0
+    from scipy.stats import binomtest, chi2
+
+    if n < 25:
+        return float(binomtest(min(b, c), n=n, p=0.5).pvalue)
+    stat = (abs(b - c) - 1) ** 2 / n
+    return float(chi2.sf(stat, df=1))

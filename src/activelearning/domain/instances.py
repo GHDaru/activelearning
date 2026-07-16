@@ -90,13 +90,25 @@ class CategorySchema:
         normalized = normalize_label(raw)
         return Label(normalized) if normalized in self._sorted else None
 
-    def to_json_schema(self) -> dict:
-        """Schema JSON de saída estruturada com o rótulo restrito por enum.
+    def to_json_schema(self, constrained: bool = True) -> dict:
+        """Schema JSON de saída estruturada.
 
-        Correção do defeito do legado ``activetextclassification/prompts.py``, cujo
+        Com ``constrained=True`` (padrão e único modo permitido em produção pela
+        constituição, Princípio III), o rótulo é restrito por ``enum`` — correção do
+        defeito do legado ``activetextclassification/prompts.py``, cujo
         ``predicted_category`` era string livre e contaminava a medição de acurácia
         do oráculo com variações de fraseado.
+
+        ``constrained=False`` existe EXCLUSIVAMENTE para o sub-experimento RQ4 do E0
+        (efeito do instrumento): reproduz o instrumento do legado para quantificar a
+        deflação de acurácia causada pela ausência do enum.
         """
+        category_property: dict = {
+            "type": "string",
+            "description": "A categoria escolhida, exatamente uma da lista.",
+        }
+        if constrained:
+            category_property["enum"] = list(self._sorted)
         return {
             "name": "oracle_classification",
             "schema": {
@@ -109,11 +121,7 @@ class CategorySchema:
                             "(ex.: 'cv br lt 350' -> 'cerveja brahma lata 350 ml')."
                         ),
                     },
-                    "predicted_category": {
-                        "type": "string",
-                        "enum": list(self._sorted),
-                        "description": "A categoria escolhida, exatamente uma da lista.",
-                    },
+                    "predicted_category": category_property,
                     "rationale": {
                         "type": "string",
                         "description": "Justificativa breve da escolha.",

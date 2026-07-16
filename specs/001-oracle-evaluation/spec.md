@@ -1,59 +1,88 @@
-# Spec 001 — E0: Avaliação de Oráculos LLM com Saída Restrita (enum)
+# Spec 001 — E0: Avaliação de Oráculos LLM (redesenho fatorial)
 
-## Contexto e problema
+## Contexto
 
-No legado (`activetextclassification`), a acurácia medida dos oráculos LLM foi:
-gemini-1.5-flash 57,9% (N=2020), gpt-4o-mini 47,9% (N=1020), gemma3 28,1% (N=1020),
-qwen2.5 21,2% (N=1020). O schema JSON usado (`prompts.py`) definia
-`predicted_category` como string **sem `enum`**, permitindo respostas fora da lista de
-categorias. Análise qualitativa mostrou erros que são variações de fraseado
-("ovos de pascoa" vs. ouro "ovo de pascoa"; "bebida de leite" vs. "bebida lactea"),
-não erros de classificação. **A medição está contaminada pelo instrumento.**
+No legado (`activetextclassification`), a acurácia medida dos oráculos foi deflacionada
+por um defeito de instrumento: o schema JSON não restringia `predicted_category` por
+`enum`, e variações de fraseado ("ovos de pascoa" vs. "ovo de pascoa") contaram como
+erro. Piloto com o instrumento corrigido (gpt-4o-mini, N=8): 7/8 corretos, 0% de rótulo
+inválido, ~94% do input servido do cache de prompt, ~US$0,29/1k rótulos.
 
-## Objetivo
+## Perguntas de pesquisa (o que o E0 testa)
 
-Medir a acurácia real dos LLMs candidatos a oráculo do FALCO com a saída
-estruturalmente restrita ao `CategorySchema`, e produzir a análise de custo e de erros
-que o Capítulo de Resultados da tese (pilar P3) exige.
+| RQ | Pergunta | Alimenta na tese |
+|----|----------|------------------|
+| **RQ1 — Assertividade** | Qual a acurácia global (com IC 95%) e o macro-F1 de cada LLM candidato na tarefa? Diferenças entre modelos são significativas? | Escolha do par (LLM Inicial, LLM Avançado); Cap. Resultados P3 |
+| **RQ2 — Custo** | Qual o custo por 1.000 rótulos e a latência de cada modelo (com prompt caching quando disponível)? | Análise custo-benefício vs. rotulagem humana (rec. 12 do orientador) |
+| **RQ3 — Perfil de erro** | Em que classes o oráculo erra? O erro concentra-se em pares confundíveis? Qual a taxa de rótulo inválido? | Matriz de confusão/análise qualitativa (rec. 13); base para discussão de robustez a ruído (rec. 14) e para E4 |
+| **RQ4 — Efeito do instrumento** | Quanto da inacurácia medida no legado era artefato do schema sem enum? | Achado metodológico (validade de medição de oráculos LLM); justifica a divergência com os números legados |
 
-## Requisitos
+## Desenho experimental
 
-1. O rótulo predito DEVE ser restringido por `enum` gerado de `CategorySchema`
-   (OpenAI `response_format=json_schema`; Gemini `response_schema`; Ollama `format`).
-2. Resposta fora do schema (só possível por falha do provedor) DEVE ser contabilizada
-   como `invalid_label` — nunca aceita nem descartada.
-3. Cada chamada DEVE registrar tokens, latência e custo estimado (USD).
-4. N ≥ 1000 instâncias por modelo, amostragem com semente fixa (42), temperatura 0.0.
-5. Execução retomável: anotações persistidas incrementalmente em JSONL; instâncias já
-   anotadas são puladas em re-execuções.
-6. Saídas: `annotations_<oracle>.jsonl`, `report_<oracle>.json`,
-   `e0_summary.json` (tabela consolidada para a tese).
+### Fatores
 
-## Modelos avaliados
+- **Modelo** (7 níveis): `gpt-4o-mini`, `gpt-4o` (OpenAI); `gemini-2.0-flash` (Google);
+  `DeepSeek-V4`, `GLM-5.2` (Huawei MaaS, OpenAI-compatible/Ascend-vLLM);
+  `gemma3`, `qwen2.5` (Ollama local).
+- **Modo do schema** (2 níveis, apenas RQ4): `enum` (restrito) × `free` (string livre com
+  lista no prompt — reproduz o instrumento do legado). O modo `free` roda em 3 modelos
+  representativos: `gpt-4o-mini` (API premium), `DeepSeek-V4` (MaaS) e `gemma3` (local).
+- **Temperatura**: fixa em 0.0 — justificada pelo piloto legado (insensibilidade
+  observada entre 0.0 e 1.0) e pelo requisito de reprodutibilidade em produção.
 
-| Provider | Modelo | Papel candidato no FALCO |
-|---|---|---|
-| openai | gpt-4o-mini | LLM Inicial |
-| openai | gpt-4o | LLM Avançado |
-| gemini | gemini-2.0-flash | LLM Inicial (alternativa) |
-| ollama | gemma3 | LLM Inicial local (custo zero) |
-| ollama | qwen2.5 | LLM Inicial local (alternativa) |
+### Amostras (pareadas — todos os modelos rotulam as MESMAS instâncias)
+
+| Amostra | Construção | Tamanho | Serve a |
+|---------|------------|---------|---------|
+| **S-rand** | Aleatória simples, seed 42 | 1.000 | RQ1 (acurácia global — distribuição de produção), RQ2, RQ4; McNemar pareado entre modelos |
+| **S-strat** | Estratificada, 3 por classe, seed 42 | ~1.866 (622×3) | RQ1 (macro-F1 confiável), RQ3 (confusão por classe) |
+
+Racional: com 622 classes, S-rand deixa a maioria das classes sem suporte — macro-F1 e
+matriz de confusão exigem a amostra estratificada; já a acurácia "de produção" e o custo
+devem ser medidos na distribuição real (S-rand).
+
+### Métricas e análise
+
+- Acurácia global + **IC de Wilson 95%** (por modelo, por amostra).
+- **Macro-F1** (S-strat) + F1 por classe; top-N pares de confusão.
+- `invalid_label_rate` (só possível > 0 no modo `free` ou por falha de provedor).
+- Custo total, custo/1k rótulos, tokens cacheados, latência média.
+- **McNemar** (χ² com correção de continuidade) par-a-par entre modelos na S-rand
+  (mesmas instâncias ⇒ teste pareado correto).
+- RQ4: Δacurácia (enum − free) por modelo, com McNemar pareado (mesma amostra S-rand).
+
+### Critérios de decisão (gate para E3)
+
+- **LLM Inicial** = argmax(acurácia/custo por 1k) sujeito a acurácia ≥ 85% (S-rand).
+- **LLM Avançado** = argmax(acurácia), desde que significativamente superior ao
+  Inicial (McNemar, α=0,05); caso contrário, o FALCO degenera para oráculo único e a
+  Fase 3 é rediscutida.
+- Se nenhum modelo ≥ 85%: E4 (robustez a ruído) torna-se obrigatório e a narrativa
+  da tese muda para "aprender com oráculo ruidoso".
+
+## Requisitos de implementação
+
+1. Modo `enum`: `response_format json_schema` (OpenAI/MaaS-vLLM), `response_schema`
+   (Gemini), `format` (Ollama). Modo `free`: mesma estrutura JSON sem `enum` no rótulo,
+   lista de categorias injetada no system prompt (estático ⇒ ainda cacheável).
+2. Resposta fora do schema ⇒ `invalid_label` contabilizado (nunca aceita/descartada).
+3. Huawei MaaS: adapter OpenAI-compatible com `base_url` configurável; **desativar
+   thinking/reasoning** no DeepSeek (bug conhecido de structured output no vLLM com
+   thinking ativo); preços por config (não hardcoded).
+4. Execução retomável (JSONL incremental); amostras derivadas por seed fixa.
+5. `oracle_id` distingue o modo do schema (sufixo `#free`) — artefatos não colidem.
+6. Saídas por modelo×modo×amostra: `annotations_*.jsonl`, `report_*.json`; consolidado:
+   `e0_summary.json` + `e0_mcnemar.json` (análise pareada).
 
 ## Critérios de aceitação
 
-- [ ] `uv run pytest` verde (domínio: CategorySchema/enum, Annotation, report).
-- [ ] `run_e0.py --config config.json` executa ponta a ponta com ao menos um provider
-      disponível e produz os três artefatos.
-- [ ] Relatório inclui: accuracy, macro-F1, invalid_label_rate, custo por 1k rótulos,
-      matriz de confusão (para análise de erros da tese).
-- [ ] Comparação com os números do legado documentada no relatório do experimento
-      (mesma amostra-fonte, schema corrigido) — quantifica o efeito do `enum`.
+- [ ] `uv run pytest` verde (inclui Wilson, McNemar, schema free).
+- [ ] Piloto N=8 com 1 provider real em ambos os modos (enum/free) produz artefatos.
+- [ ] `analyze_e0.py` gera tabela consolidada + matriz McNemar a partir dos JSONLs.
+- [ ] Documentada a comparação com os números legados (RQ4).
 
-## Decisões pós-execução (gate para E3)
+## Estimativa de custo (ordem de grandeza)
 
-- Se melhor modelo ≥ ~85% acc: narrativa original do FALCO mantida (oráculo substitui
-  rotulagem humana com ruído conhecido).
-- Se < ~85%: E4 (robustez a ruído) torna-se obrigatório e a discussão da tese muda o
-  foco para "aprender com oráculo ruidoso" + validação humana amostral.
-- Escolha do par (LLM Inicial, LLM Avançado) por custo-benefício: maximizar
-  `accuracy / cost_per_1k_labels`, com o Avançado sendo o de maior acurácia absoluta.
+~2.900 chamadas/modelo (S-rand + S-strat) × 7 modelos ≈ 20k chamadas no modo enum
+(+3.000 no modo free). Com cache: gpt-4o-mini ≈ US$1; gpt-4o ≈ US$13; Gemini/MaaS
+tipicamente abaixo do gpt-4o; locais custo zero. Total esperado < US$25.

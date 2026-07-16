@@ -1,6 +1,5 @@
 {
   "seed": 42,
-  "sample_size": 1000,
   "batch_size": 25,
   "output_dir": "experiments/e0/results",
   "dataset": {
@@ -9,11 +8,36 @@
     "label_column": "nm_product",
     "min_samples_per_class": 5
   },
+  "samples": {
+    "random_size": 1000,
+    "stratified_per_class": 3
+  },
   "oracles": [
-    { "provider": "openai", "model": "gpt-4o-mini", "temperature": 0.0 },
-    { "provider": "openai", "model": "gpt-4o", "temperature": 0.0 },
-    { "provider": "gemini", "model": "gemini-2.0-flash", "temperature": 0.0 },
-    { "provider": "ollama", "model": "gemma3", "temperature": 0.0 },
-    { "provider": "ollama", "model": "qwen2.5", "temperature": 0.0 }
+    { "provider": "openai", "model": "gpt-4o-mini", "constrained": true,
+      "samples": ["rand", "strat"] },
+    { "provider": "openai", "model": "gpt-4o", "constrained": true,
+      "samples": ["rand", "strat"] },
+    { "provider": "gemini", "model": "gemini-2.0-flash", "constrained": true,
+      "samples": ["rand", "strat"] },
+    { "provider": "huawei-maas", "model": "DeepSeek-V4", "constrained": true,
+      "samples": ["rand", "strat"], "disable_thinking": true,
+      "pricing_usd_per_mtok": [0, 0, 0],
+      "_nota": "preencher pricing conforme tabela MaaS da regiao; base_url via MAAS_BASE_URL" },
+    { "provider": "huawei-maas", "model": "GLM-5.2", "constrained": true,
+      "samples": ["rand", "strat"],
+      "pricing_usd_per_mtok": [0, 0, 0] },
+    { "provider": "ollama", "model": "gemma3", "constrained": true,
+      "samples": ["rand", "strat"] },
+    { "provider": "ollama", "model": "qwen2.5", "constrained": true,
+      "samples": ["rand", "strat"] },
+
+    { "provider": "openai", "model": "gpt-4o-mini", "constrained": false,
+      "samples": ["rand"],
+      "_nota": "RQ4 (efeito do instrumento): modo livre, so na S-rand" },
+    { "provider": "huawei-maas", "model": "DeepSeek-V4", "constrained": false,
+      "samples": ["rand"], "disable_thinking": true,
+      "pricing_usd_per_mtok": [0, 0, 0] },
+    { "provider": "ollama", "model": "gemma3", "constrained": false,
+      "samples": ["rand"] }
   ]
 }
