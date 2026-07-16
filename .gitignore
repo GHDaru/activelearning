@@ -5,5 +5,7 @@ __pycache__/
 .ruff_cache/
 dist/
 experiments/*/results/*.jsonl
-data/
+data/*
+!data/dataset.csv
+!data/README.md
 .env
