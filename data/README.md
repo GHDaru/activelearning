@@ -5,7 +5,7 @@
 Dataset público de descrições de produtos de e-commerce em português brasileiro,
 coletado de 18 grandes varejistas (Darú, 2022; Darú, 2024).
 
-- **250.365 instâncias** (linhas, sem contar o cabeçalho)
+- **250.221 instâncias** (versão corrigida; original com 250.365 em `data_old/` — ver `CORRECTIONS.md`)
 - Colunas: `nm_item` (descrição curta do produto), `nm_product` (categoria/rótulo-ouro)
 - Características: textos curtos (~20–40 caracteres), abreviações, forte
   desbalanceamento de classes

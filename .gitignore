@@ -8,4 +8,6 @@ experiments/*/results/*.jsonl
 data/*
 !data/dataset.csv
 !data/README.md
+!data/CORRECTIONS.md
+!data/data_old/
 .env
