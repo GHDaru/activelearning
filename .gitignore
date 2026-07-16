@@ -15,3 +15,4 @@ node_modules/
 apps/web/dist/
 flowbuilder.db
 experiments/api_runs/
+*.tsbuildinfo
