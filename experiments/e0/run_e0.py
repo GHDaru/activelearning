@@ -42,127 +42,14 @@ from activelearning.application.evaluate_oracle import EvaluateOracle  # noqa: E
 from activelearning.domain.instances import CategorySchema, Instance, Label  # noqa: E402
 
 
-def load_rows_and_schema(config: dict):
-    import csv
-
-    data_cfg = config["dataset"]
-    path = Path(data_cfg["csv_path"])
-    text_col, label_col = data_cfg["text_column"], data_cfg["label_column"]
-    min_per_class = int(data_cfg.get("min_samples_per_class", 5))
-    # Rotulos operacionais que vazaram como categoria (auditoria da base:
-    # 'inativo' = 144 linhas de status, nao tipo de produto).
-    excluded = {e.lower() for e in data_cfg.get("exclude_labels", ["inativo"])}
-
-    rows: list[tuple[str, str]] = []
-    with path.open(encoding="utf-8") as fh:
-        for row in csv.DictReader(fh):
-            text = (row.get(text_col) or "").strip()
-            label = (row.get(label_col) or "").strip()
-            if text and label and label.lower() not in excluded:
-                rows.append((text, label))
-
-    counts: dict[str, int] = {}
-    for _, label in rows:
-        counts[label] = counts.get(label, 0) + 1
-    frequent = {label for label, n in counts.items() if n >= min_per_class}
-    schema = CategorySchema.from_raw(frequent, include_rare=True)
-    return rows, schema
-
-
-def _to_instance(rows, i: int, schema: CategorySchema) -> Instance:
-    text, label = rows[i]
-    gold = schema.validate(label) or Label("_rare_")
-    return Instance(id=f"e0-{i}", text=text, gold_label=gold)
-
-
-def build_samples(config: dict, rows, schema: CategorySchema) -> dict[str, list[Instance]]:
-    """S-rand (aleatória simples) e S-strat (k por classe), ambas com seed fixa."""
-    import random
-
-    seed = int(config.get("seed", 42))
-    samples: dict[str, list[Instance]] = {}
-
-    rand_size = int(config["samples"]["random_size"])
-    rng = random.Random(seed)
-    rand_indices = rng.sample(range(len(rows)), min(rand_size, len(rows)))
-    samples["rand"] = [_to_instance(rows, i, schema) for i in rand_indices]
-
-    k = int(config["samples"]["stratified_per_class"])
-    by_class: dict[str, list[int]] = {}
-    for i, (_, label) in enumerate(rows):
-        normalized = schema.validate(label)
-        key = normalized.value if normalized else "_rare_"
-        by_class.setdefault(key, []).append(i)
-    rng = random.Random(seed)
-    strat_indices: list[int] = []
-    for key in sorted(by_class):
-        pool = by_class[key]
-        strat_indices.extend(rng.sample(pool, min(k, len(pool))))
-    samples["strat"] = [_to_instance(rows, i, schema) for i in strat_indices]
-    return samples
-
-
-def build_oracle(spec: dict):
-    kind = spec["provider"]
-    mode = spec.get("mode", "enum")
-    temperature = float(spec.get("temperature", 0.0))
-    pricing = spec.get("pricing_usd_per_mtok")
-    pricing = tuple(pricing) if pricing else None
-
-    if kind == "openai":
-        from activelearning.adapters.oracles.openai_oracle import OpenAIOracle
-
-        return OpenAIOracle(
-            model=spec["model"], temperature=temperature, mode=mode,
-            items_per_call=int(spec.get("items_per_call", 1)),
-        )
-    if kind == "huawei-maas":
-        from activelearning.adapters.oracles.openai_compatible import HuaweiMaasOracle
-
-        return HuaweiMaasOracle(
-            model=spec["model"],
-            base_url=spec.get("base_url"),
-            temperature=temperature,
-            mode=mode,
-            pricing_usd_per_mtok=pricing,
-            disable_thinking=bool(spec.get("disable_thinking", True)),
-            requests_per_minute=spec.get("requests_per_minute", 3.0),
-            items_per_call=int(spec.get("items_per_call", 1)),
-        )
-    if kind == "openrouter":
-        from activelearning.adapters.oracles.openai_compatible import OpenRouterOracle
-
-        return OpenRouterOracle(
-            model=spec["model"],
-            temperature=temperature,
-            mode=mode,
-            pricing_usd_per_mtok=pricing or (0.0, 0.0, 0.0),
-            reasoning_enabled=bool(spec.get("reasoning_enabled", False)),
-            requests_per_minute=spec.get("requests_per_minute", 18.0),
-            items_per_call=int(spec.get("items_per_call", 1)),
-        )
-    if kind == "openai-compatible":
-        from activelearning.adapters.oracles.openai_compatible import OpenAICompatibleOracle
-
-        return OpenAICompatibleOracle(
-            model=spec["model"],
-            provider_name=spec.get("name", "openai-compatible"),
-            base_url=spec["base_url"],
-            temperature=temperature,
-            api_key_env=spec.get("api_key_env", "OPENAI_API_KEY"),
-            mode=mode,
-            pricing_usd_per_mtok=pricing,
-            use_prompt_cache_key=False,
-        )
-    if kind == "gemini":
-        from activelearning.adapters.oracles.gemini_oracle import GeminiOracle
-
-        return GeminiOracle(model=spec["model"], temperature=temperature)
-    if kind == "ollama":
-        from activelearning.adapters.oracles.ollama_oracle import OllamaOracle
-
-        return OllamaOracle(model=spec["model"], temperature=temperature)
-    raise ValueError(f"Provider desconhecido: {kind}")
+# Implementações canônicas movidas para o pacote (compartilhadas com a API do
+# FlowBuilder); reexportadas aqui para compatibilidade (analyze_e0 importa daqui).
+from activelearning.adapters.datasets.retail_csv import (  # noqa: E402,F401
+    build_samples,
+    load_rows_and_schema,
+    to_instance as _to_instance,
+)
+from activelearning.adapters.oracles.factory import build_oracle  # noqa: E402,F401
 
 
 def main() -> None:

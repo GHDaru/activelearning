@@ -11,3 +11,7 @@ data/*
 !data/CORRECTIONS.md
 !data/data_old/
 .env
+node_modules/
+apps/web/dist/
+flowbuilder.db
+experiments/api_runs/
