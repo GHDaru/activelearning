@@ -31,15 +31,27 @@ uv sync --all-extras          # ambiente completo
 uv run pytest                 # testes de domínio (sem rede/GPU/chaves)
 ```
 
-## Experimentos
+## Documentação
 
-| ID | O quê | Como rodar |
-|----|-------|------------|
-| E0 | Avaliação de oráculos LLM (schema com enum) | `uv run python experiments/e0/run_e0.py --config experiments/e0/config.json` |
-| E1 | Estratégias × batch size (PVBin + oráculo simulado) | (próximo) |
-| E2 | Épocas de fine-tuning do BERTimbau | (próximo) |
-| E3 | FALCO vs RS vs US (BERTimbau + oráculo LLM) | (alvo da defesa) |
-| E4 | Robustez a ruído do oráculo | (condicional a E0) |
+| Guia | Conteúdo |
+|------|----------|
+| [docs/biblioteca.md](docs/biblioteca.md) | uso da biblioteca: classificadores (PVBin, BERTimbau), DRI-SL, oráculos, laço de AL, runner FALCO, saneamento |
+| [docs/flowbuilder.md](docs/flowbuilder.md) | frontend + backend: subir os serviços, fluxo pela UI, referência da API (curl) |
+| [docs/experimentos.md](docs/experimentos.md) | como executar e parametrizar E0/E0-P/E1/E4/P1/E2-E3; artefatos e reprodutibilidade |
+| [docs/avaliacao-e-graficos.md](docs/avaliacao-e-graficos.md) | rotinas de análise estatística e geração de figuras (paleta validada) |
+| [docs/bertimbau-local-passo-a-passo.md](docs/bertimbau-local-passo-a-passo.md) | BERTimbau na RTX 3090 local, passo a passo |
+| [docs/architecture.md](docs/architecture.md) | arquitetura DDD + Hexagonal |
+
+## Experimentos (estado)
+
+| ID | O quê | Estado |
+|----|-------|--------|
+| E0 | Avaliação de oráculos LLM (enum/json-prompt/free) | completo (pagos) + free via NVIDIA NIM em execução |
+| E0-P | Ablação de prompt no modelo fraco | completo |
+| E1/E1b | Estratégias × lote (PVBin + oráculo simulado, 8 sementes) | completo |
+| E4 | Robustez a ruído do oráculo (ε ∈ {0,1; 0,2; 0,4}) | completo (PVBin) |
+| P1/P2 | Replays de sensibilidade de L0 e do AG (anticircularidade) | completo |
+| E2/E3 | BERTimbau: épocas×|L| e FALCO integrado | instrumental pronto; execução na GPU (bloco H) |
 
 ### Credenciais (`.env`)
 
