@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "sample": "rand",
+    "oracle_id": "nvidia-nim:nvidia/nemotron-3-ultra-550b-a55b@T0.0#prompt@b10",
+    "prompt_version": "v3-json-prompt",
+    "n_total": 1000,
+    "accuracy": 0.779,
+    "macro_f1": 0.7516,
+    "invalid_label_rate": 0.012,
+    "input_tokens": 409805,
+    "cached_input_tokens": 0,
+    "cache_hit_rate": 0.0,
+    "output_tokens": 56626,
+    "total_cost_usd": 0.0,
+    "cost_per_1k_labels_usd": 0.0,
+    "total_latency_seconds": 1512.8
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "nvidia-nim:nvidia/nemotron-3-ultra-550b-a55b@T0.0#prompt@b10",
+    "prompt_version": "v3-json-prompt",
+    "n_total": 1863,
+    "accuracy": 0.796,
+    "macro_f1": 0.7697,
+    "invalid_label_rate": 0.0258,
+    "input_tokens": 763196,
+    "cached_input_tokens": 0,
+    "cache_hit_rate": 0.0,
+    "output_tokens": 98581,
+    "total_cost_usd": 0.0,
+    "cost_per_1k_labels_usd": 0.0,
+    "total_latency_seconds": 2985.2
+  }
+]

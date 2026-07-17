@@ -160,9 +160,37 @@ def fig_e0_custo_acuracia():
     _save(fig, "fig_e0_custo_acuracia")
 
 
+def fig_ciclo_curvas():
+    """Ciclo E2E real (nemotron NIM): curva interna (validação) × externa (teste)."""
+    res_dir = ROOT / "experiments/e5cycle/results"
+    panels = []
+    for name, title in (("pvbin", "PVBin"), ("sgd", "SGD logístico")):
+        p = res_dir / f"cycle_{name}.json"
+        if p.exists():
+            panels.append((title, json.loads(p.read_text())))
+    if not panels:
+        print("fig_ciclo: sem resultados — pulando")
+        return
+    fig, axes = plt.subplots(1, len(panels), figsize=(5.6, 2.9),
+                             sharey=True, sharex=True)
+    axes = axes if isinstance(axes, (list, tuple)) or hasattr(axes, "__len__") else [axes]
+    for ax, (title, d) in zip(axes, panels):
+        for i, (key, label) in enumerate((("curve_val", "interna (validação)"),
+                                          ("curve_test", "externa (teste)"))):
+            xs = [x for x, _ in d[key]]
+            ys = [y for _, y in d[key]]
+            ax.plot(xs, ys, color=PALETTE[i], linestyle=LINESTYLES[i],
+                    marker=MARKERS[i], markersize=3, linewidth=1.6, label=label)
+        ax.set_title(title, fontsize=9)
+        ax.set_xlabel("rótulos do oráculo $|L|$")
+    axes[0].set_ylabel("Macro F1")
+    axes[0].legend(loc="lower right", frameon=False, fontsize=7.5)
+    _save(fig, "fig_ciclo_curvas")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=["e1", "e4", "e0"], default=None)
+    ap.add_argument("--only", choices=["e1", "e4", "e0", "ciclo"], default=None)
     args = ap.parse_args()
     if args.only in (None, "e1"):
         fig_e1_curvas()
@@ -170,3 +198,5 @@ if __name__ == "__main__":
         fig_e4_ruido()
     if args.only in (None, "e0"):
         fig_e0_custo_acuracia()
+    if args.only in (None, "ciclo"):
+        fig_ciclo_curvas()
