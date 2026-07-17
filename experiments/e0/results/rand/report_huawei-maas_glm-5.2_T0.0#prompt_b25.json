@@ -1,0 +1,15 @@
+{
+  "oracle_id": "huawei-maas:glm-5.2@T0.0#prompt@b25",
+  "prompt_version": "v3-json-prompt",
+  "n_total": 1000,
+  "accuracy": 0.773,
+  "macro_f1": 0.7424,
+  "invalid_label_rate": 0.007,
+  "input_tokens": 150734,
+  "cached_input_tokens": 0,
+  "cache_hit_rate": 0.0,
+  "output_tokens": 33042,
+  "total_cost_usd": 0.2495,
+  "cost_per_1k_labels_usd": 0.2495,
+  "total_latency_seconds": 973.1
+}
