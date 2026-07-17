@@ -137,6 +137,12 @@ def run_active_learning(
             labeled_labels.append(ann.label.value)
 
     annotate(l_indices)
+    if not labeled_texts:
+        raise RuntimeError(
+            f"oráculo {oracle.oracle_id!r} não produziu NENHUM rótulo válido no L0 "
+            f"({len(l_indices)} consultas, {invalid} inválidas) — verifique cota/"
+            "conectividade do provedor ou use o oráculo simulado."
+        )
 
     curve_f1, curve_acc = LearningCurve(), LearningCurve()
     records: list[dict] = []
