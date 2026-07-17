@@ -39,7 +39,20 @@ from sklearn.model_selection import train_test_split  # noqa: E402
 
 from activelearning.adapters.classifiers.pvbin import PVBinClassifier  # noqa: E402
 from activelearning.adapters.classifiers.sgd_text import SgdTextClassifier  # noqa: E402
+from activelearning.adapters.strategies.drisl import TfidfSvdEncoder, drisl_select  # noqa: E402
 from activelearning.domain.instances import normalize_label  # noqa: E402
+
+
+class PrecomputedEncoder:
+    """Cacheia embeddings por texto — o DRI-SL roda a cada lote sem re-encodar."""
+
+    def __init__(self, texts):
+        self._base = TfidfSvdEncoder()
+        emb = self._base(texts)
+        self._cache = {t: emb[i] for i, t in enumerate(texts)}
+
+    def __call__(self, texts):
+        return np.vstack([self._cache[t] for t in texts])
 
 CLASSIFIERS = {"pvbin": PVBinClassifier, "sgd": SgdTextClassifier}
 SEED = 42
@@ -74,7 +87,8 @@ def internal_split(texts, labels, seed=SEED):
         return train_test_split(texts, labels, test_size=0.2, random_state=seed)
 
 
-def run(classifier_name: str, pool, population, budget: int, batch: int, out_dir: Path):
+def run(classifier_name: str, pool, population, budget: int, batch: int,
+        out_dir: Path, strategy: str = "entropy", encoder=None):
     factory = CLASSIFIERS[classifier_name]
     pool_texts = [t for t, _ in pool]
     pool_labels = [l for _, l in pool]
@@ -87,7 +101,7 @@ def run(classifier_name: str, pool, population, budget: int, batch: int, out_dir
 
     curve = []
     t_start = time.time()
-    out_path = out_dir / f"popcurve_{classifier_name}.jsonl"
+    out_path = out_dir / f"popcurve_{classifier_name}_{strategy}.jsonl"
     out_path.write_text("")
     while True:
         lx = [pool_texts[i] for i in labeled_idx]
@@ -110,26 +124,35 @@ def run(classifier_name: str, pool, population, budget: int, batch: int, out_dir
         curve.append(point)
         with out_path.open("a") as fh:
             fh.write(json.dumps(point) + "\n")
-        print(f"[{classifier_name}] |L|={point['n_labels']} "
+        print(f"[{classifier_name}/{strategy}] |L|={point['n_labels']} "
               f"int acc/F1={point['acc_int']}/{point['f1_int']} "
               f"ext acc/F1={point['acc_ext']}/{point['f1_ext']}", flush=True)
         if len(labeled_idx) >= budget or not unlabeled:
             break
-        # seleção por entropia com o modelo corrente (treinado no split interno)
         take = min(batch, budget - len(labeled_idx), len(unlabeled))
-        proba = clf.predict_proba([pool_texts[i] for i in unlabeled])
-        with np.errstate(divide="ignore", invalid="ignore"):
-            ent = -np.nansum(proba * np.log(np.clip(proba, 1e-12, 1)), axis=1)
-        order = np.argsort(-ent)[:take]
-        chosen = [unlabeled[j] for j in order]
+        if strategy == "entropy":
+            proba = clf.predict_proba([pool_texts[i] for i in unlabeled])
+            with np.errstate(divide="ignore", invalid="ignore"):
+                ent = -np.nansum(proba * np.log(np.clip(proba, 1e-12, 1)), axis=1)
+            order = np.argsort(-ent)[:take]
+            chosen = [unlabeled[j] for j in order]
+        elif strategy == "random":
+            chosen = list(rng.choice(unlabeled, size=take, replace=False))
+        elif strategy == "drisl":
+            texts_u = [pool_texts[i] for i in unlabeled]
+            sel = drisl_select(texts_u, take, encoder, seed=SEED)
+            chosen = [unlabeled[j] for j in sel.indices]
+        else:
+            raise ValueError(strategy)
         chosen_set = set(chosen)
         labeled_idx.extend(chosen)
         unlabeled = [i for i in unlabeled if i not in chosen_set]
 
-    summary = {"classifier": classifier_name, "budget": budget, "batch": batch,
+    summary = {"classifier": classifier_name, "strategy": strategy,
+               "budget": budget, "batch": batch,
                "pool": len(pool), "population": len(population),
                "final": curve[-1], "wall_seconds": round(time.time() - t_start, 1)}
-    (out_dir / f"popcurve_{classifier_name}_summary.json").write_text(
+    (out_dir / f"popcurve_{classifier_name}_{strategy}_summary.json").write_text(
         json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2), flush=True)
 
@@ -140,6 +163,8 @@ def main():
     ap.add_argument("--budget", type=int, default=50000)
     ap.add_argument("--batch", type=int, default=500)
     ap.add_argument("--pool-size", type=int, default=50000)
+    ap.add_argument("--strategy", choices=["entropy", "random", "drisl"],
+                    default="entropy")
     ap.add_argument("--smoke", action="store_true")
     args = ap.parse_args()
     if args.smoke:
@@ -153,8 +178,13 @@ def main():
     out_dir = Path(__file__).parent / "results"
     out_dir.mkdir(exist_ok=True)
     names = ["pvbin", "sgd"] if args.classifier == "both" else [args.classifier]
+    encoder = None
+    if args.strategy == "drisl":
+        print("pré-computando embeddings do pool p/ DRI-SL...", flush=True)
+        encoder = PrecomputedEncoder([t for t, _ in pool])
     for n in names:
-        run(n, pool, population, args.budget, args.batch, out_dir)
+        run(n, pool, population, args.budget, args.batch, out_dir,
+            strategy=args.strategy, encoder=encoder)
 
 
 if __name__ == "__main__":
