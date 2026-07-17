@@ -47,3 +47,55 @@ def system_prompt_free(schema: CategorySchema) -> str:
 
 def user_prompt(instance: Instance) -> str:
     return f'Descrição do produto: "{instance.text}"'
+
+
+# ---------------------------------------------------------------------------
+# Variantes de prompt (E0-P, ablação de instrumento). Derivadas da anatomia de
+# erros do E0 (categorias-irmãs e classes guarda-chuva). Exemplos do v4b são
+# descrições INVENTADAS análogas — nunca instâncias das amostras de avaliação
+# (decisão D-004 no tesedaru).
+# ---------------------------------------------------------------------------
+
+RULES_V4A = (
+    "Regras de fronteira DESTE catálogo (siga-as estritamente): "
+    "(1) medicamentos e fármacos em geral → 'outro farma'; "
+    "(2) produto bucal líquido (enxaguante/antisséptico) → 'antisseptico bucal'; "
+    "(3) pó para preparo de suco/refresco (ex.: pós sabor fruta) → 'preparo para suco'; "
+    "(4) néctares e bebidas de fruta prontas → 'suco pronto'; "
+    "(5) limpador multiuso/perfumado sem superfície específica → 'multiuso'; "
+    "só use 'produto de limpeza de piso' se o texto citar piso/chão; "
+    "(6) sabão/detergente EM PÓ ou líquido PARA ROUPAS → 'lava roupas' "
+    "(não 'detergente', que é para louças); "
+    "(7) fones/headphones COM fio → 'acessorio de audio'; SEM fio → 'fone de ouvido'; "
+    "(8) álcool e álcool gel (inclusive antisséptico de mãos) → 'alcool'; "
+    "(9) leguminosas: use a variante 'em conserva' SOMENTE se o texto indicar "
+    "conserva/lata; a granel ou seca use a classe simples (ex.: 'ervilha seca'); "
+    "(10) pães industrializados embalados de marca → "
+    "'padaria e confeitaria industrializado'. "
+)
+
+FEWSHOT_V4B = (
+    "Exemplos adicionais de fronteiras difíceis (descrição → categoria): "
+    "'FONE C FIO BASICO PRETO P2' → acessorio de audio; "
+    "'HEADPHONE BLUETOOTH XPTO' → fone de ouvido; "
+    "'ENXAG BUCAL MENTA 500ML' → antisseptico bucal; "
+    "'PO P/ SUCO SABOR UVA 25G' → preparo para suco; "
+    "'NECTAR DE PESSEGO 1L TP' → suco pronto; "
+    "'LIMPADOR PERFUMADO LAVANDA 500ML' → multiuso; "
+    "'DET PO ROUPA BRILHANTE 800G' → lava roupas; "
+    "'ANALGESICO COMP C/10' → outro farma; "
+    "'ALCOOL GEL HIGIENIZADOR 70 500ML' → alcool; "
+    "'PAO DE FORMA INTEGRAL MARCA X 500G' → padaria e confeitaria industrializado. "
+)
+
+PROMPT_VARIANTS = {
+    "v3": "",
+    "v4a": RULES_V4A,
+    "v4b": RULES_V4A + FEWSHOT_V4B,
+}
+
+
+def variant_addition(variant: str) -> str:
+    if variant not in PROMPT_VARIANTS:
+        raise ValueError(f"variante de prompt desconhecida: {variant!r}")
+    return PROMPT_VARIANTS[variant]

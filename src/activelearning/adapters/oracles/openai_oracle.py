@@ -24,6 +24,7 @@ class OpenAIOracle(OpenAICompatibleOracle):
         mode: str = "enum",
         items_per_call: int = 1,
         max_retries: int = 3,
+        prompt_variant: str = "v3",
     ) -> None:
         super().__init__(
             model=model,
@@ -32,6 +33,7 @@ class OpenAIOracle(OpenAICompatibleOracle):
             temperature=temperature,
             api_key_env=api_key_env,
             mode=mode,
+            prompt_variant=prompt_variant,
             pricing_usd_per_mtok=_PRICING_USD_PER_MTOK.get(model),
             use_prompt_cache_key=True,
             items_per_call=items_per_call,

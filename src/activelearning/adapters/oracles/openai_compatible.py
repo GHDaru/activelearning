@@ -34,6 +34,7 @@ from .prompt import (
     PROMPT_VERSION,
     PROMPT_VERSION_FREE,
     SYSTEM_PROMPT,
+    variant_addition,
     system_prompt_free,
     user_prompt,
 )
@@ -178,6 +179,7 @@ class OpenAICompatibleOracle:
         requests_per_minute: float | None = None,
         rate_limit_retries: int = 5,
         items_per_call: int = 1,
+        prompt_variant: str = "v3",
     ) -> None:
         from openai import OpenAI  # import tardio: adapter, não domínio
 
@@ -209,6 +211,10 @@ class OpenAICompatibleOracle:
             f"{provider_name}:{model}@T{temperature}{_MODE_SUFFIX[mode]}{batch_suffix}"
         )
         self.prompt_version = _MODE_PROMPT_VERSION[mode]
+        self._prompt_variant = prompt_variant
+        if prompt_variant != "v3":
+            self.prompt_version += f"+{prompt_variant}"
+            self.oracle_id += f"#{prompt_variant}"
 
     def _throttle(self) -> None:
         if self._min_interval <= 0:
@@ -221,7 +227,7 @@ class OpenAICompatibleOracle:
     def _build_request_parts(self, schema: CategorySchema) -> tuple[str, dict | None]:
         batched = self._items_per_call > 1
         if self._mode == "enum":
-            system = SYSTEM_PROMPT
+            system = SYSTEM_PROMPT + variant_addition(self._prompt_variant)
             response_format = {
                 "type": "json_schema",
                 "json_schema": (
