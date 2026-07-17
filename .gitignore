@@ -16,3 +16,4 @@ apps/web/dist/
 flowbuilder.db
 experiments/api_runs/
 *.tsbuildinfo
+experiments/e0/results/lowcost_run.log

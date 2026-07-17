@@ -1,0 +1,206 @@
+{
+  "baseline_macro_f1_full_pool": 0.5398,
+  "e1_strategies_noise0_b100": {
+    "entropy": {
+      "lce": {
+        "mean": 0.4932,
+        "sd": 0.0055,
+        "n_seeds": 8
+      },
+      "final_macro_f1": {
+        "mean": 0.3976,
+        "sd": 0.0075,
+        "n_seeds": 8
+      },
+      "wilcoxon_vs_random_lce_p": 0.007812,
+      "wilcoxon_vs_random_final_macro_f1_p": 0.007812
+    },
+    "hybrid": {
+      "lce": {
+        "mean": 0.4759,
+        "sd": 0.0138,
+        "n_seeds": 8
+      },
+      "final_macro_f1": {
+        "mean": 0.3786,
+        "sd": 0.0078,
+        "n_seeds": 8
+      },
+      "wilcoxon_vs_random_lce_p": 0.007812,
+      "wilcoxon_vs_random_final_macro_f1_p": 0.007812
+    },
+    "least_confidence": {
+      "lce": {
+        "mean": 0.5176,
+        "sd": 0.01,
+        "n_seeds": 8
+      },
+      "final_macro_f1": {
+        "mean": 0.4214,
+        "sd": 0.0092,
+        "n_seeds": 8
+      },
+      "wilcoxon_vs_random_lce_p": 0.007812,
+      "wilcoxon_vs_random_final_macro_f1_p": 0.007812
+    },
+    "random": {
+      "lce": {
+        "mean": 0.4439,
+        "sd": 0.011,
+        "n_seeds": 8
+      },
+      "final_macro_f1": {
+        "mean": 0.3387,
+        "sd": 0.0061,
+        "n_seeds": 8
+      }
+    },
+    "smallest_margin": {
+      "lce": {
+        "mean": 0.528,
+        "sd": 0.0127,
+        "n_seeds": 8
+      },
+      "final_macro_f1": {
+        "mean": 0.4176,
+        "sd": 0.0125,
+        "n_seeds": 8
+      },
+      "wilcoxon_vs_random_lce_p": 0.007812,
+      "wilcoxon_vs_random_final_macro_f1_p": 0.007812
+    }
+  },
+  "e1b_batch_ablation": {
+    "strategy": "entropy",
+    "cells": {
+      "b50": {
+        "lce": {
+          "mean": 0.4924,
+          "sd": 0.009,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.3977,
+          "sd": 0.0069,
+          "n_seeds": 8
+        }
+      },
+      "b100": {
+        "lce": {
+          "mean": 0.4932,
+          "sd": 0.0055,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.3976,
+          "sd": 0.0075,
+          "n_seeds": 8
+        }
+      },
+      "b200": {
+        "lce": {
+          "mean": 0.4814,
+          "sd": 0.0124,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.388,
+          "sd": 0.0074,
+          "n_seeds": 8
+        }
+      }
+    }
+  },
+  "e4_noise": {
+    "eps0.1": {
+      "entropy": {
+        "lce": {
+          "mean": 0.4377,
+          "sd": 0.0114,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.3465,
+          "sd": 0.0077,
+          "n_seeds": 8
+        },
+        "f1_retention_vs_eps0": 0.8715
+      },
+      "random": {
+        "lce": {
+          "mean": 0.3894,
+          "sd": 0.0108,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.2937,
+          "sd": 0.0064,
+          "n_seeds": 8
+        },
+        "f1_retention_vs_eps0": 0.8671
+      },
+      "wilcoxon_entropy_vs_random_lce_p": 0.007812,
+      "wilcoxon_entropy_vs_random_final_macro_f1_p": 0.007812
+    },
+    "eps0.2": {
+      "entropy": {
+        "lce": {
+          "mean": 0.3716,
+          "sd": 0.0102,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.2943,
+          "sd": 0.0061,
+          "n_seeds": 8
+        },
+        "f1_retention_vs_eps0": 0.7402
+      },
+      "random": {
+        "lce": {
+          "mean": 0.3362,
+          "sd": 0.0108,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.252,
+          "sd": 0.0064,
+          "n_seeds": 8
+        },
+        "f1_retention_vs_eps0": 0.744
+      },
+      "wilcoxon_entropy_vs_random_lce_p": 0.007812,
+      "wilcoxon_entropy_vs_random_final_macro_f1_p": 0.007812
+    },
+    "eps0.4": {
+      "entropy": {
+        "lce": {
+          "mean": 0.2716,
+          "sd": 0.0089,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.215,
+          "sd": 0.0098,
+          "n_seeds": 8
+        },
+        "f1_retention_vs_eps0": 0.5407
+      },
+      "random": {
+        "lce": {
+          "mean": 0.2488,
+          "sd": 0.0093,
+          "n_seeds": 8
+        },
+        "final_macro_f1": {
+          "mean": 0.1856,
+          "sd": 0.0059,
+          "n_seeds": 8
+        },
+        "f1_retention_vs_eps0": 0.548
+      },
+      "wilcoxon_entropy_vs_random_lce_p": 0.007812,
+      "wilcoxon_entropy_vs_random_final_macro_f1_p": 0.007812
+    }
+  }
+}
