@@ -1,0 +1,29 @@
+{
+  "seed": 42,
+  "batch_size": 25,
+  "output_dir": "experiments/e0/results",
+  "dataset": {
+    "csv_path": "data/dataset.csv",
+    "text_column": "nm_item",
+    "label_column": "nm_product",
+    "min_samples_per_class": 5
+  },
+  "samples": {
+    "random_size": 1000,
+    "stratified_per_class": 3
+  },
+  "oracles": [
+    {
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 30,
+      "samples": [
+        "rand",
+        "strat"
+      ],
+      "_nota": "D-006: braço free restaurado via NVIDIA NIM (sem cota de 50/dia do OpenRouter)"
+    }
+  ]
+}

@@ -47,6 +47,18 @@ def build_oracle(spec: dict):
             requests_per_minute=spec.get("requests_per_minute", 18.0),
             items_per_call=int(spec.get("items_per_call", 1)),
         )
+    if kind == "nvidia":
+        from activelearning.adapters.oracles.openai_compatible import NvidiaNimOracle
+
+        return NvidiaNimOracle(
+            model=spec["model"],
+            temperature=temperature,
+            mode=mode,
+            pricing_usd_per_mtok=pricing or (0.0, 0.0, 0.0),
+            enable_thinking=bool(spec.get("enable_thinking", False)),
+            requests_per_minute=spec.get("requests_per_minute", 30.0),
+            items_per_call=int(spec.get("items_per_call", 1)),
+        )
     if kind == "openai-compatible":
         from activelearning.adapters.oracles.openai_compatible import OpenAICompatibleOracle
 

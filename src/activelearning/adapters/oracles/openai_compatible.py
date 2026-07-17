@@ -560,3 +560,41 @@ class OpenRouterOracle(OpenAICompatibleOracle):
             items_per_call=items_per_call,
             max_retries=max_retries,
         )
+
+
+class NvidiaNimOracle(OpenAICompatibleOracle):
+    """Oráculo via NVIDIA NIM (build.nvidia.com — API de avaliação gratuita).
+
+    Base URL ``https://integrate.api.nvidia.com/v1``; nomes sem sufixo ``:free``
+    (e.g. ``nvidia/nemotron-3-ultra-550b-a55b``). O trial não publica limites de
+    vazão; padrão conservador de 30 req/min. Reasoning desligado por padrão via
+    ``chat_template_kwargs`` (sintaxe própria do NIM); structured output NÃO é
+    suportado (página do modelo) ⇒ default ``mode="json-prompt"``.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        temperature: float = 0.0,
+        api_key_env: str = "NVIDIA_API_KEY",
+        mode: str = "json-prompt",
+        pricing_usd_per_mtok: tuple[float, float, float] | None = (0.0, 0.0, 0.0),
+        enable_thinking: bool = False,
+        requests_per_minute: float | None = 30.0,
+        items_per_call: int = 1,
+        max_retries: int = 3,
+    ) -> None:
+        super().__init__(
+            model=model,
+            provider_name="nvidia-nim",
+            base_url="https://integrate.api.nvidia.com/v1",
+            temperature=temperature,
+            api_key_env=api_key_env,
+            mode=mode,
+            pricing_usd_per_mtok=pricing_usd_per_mtok,
+            use_prompt_cache_key=False,
+            extra_body={"chat_template_kwargs": {"enable_thinking": enable_thinking}},
+            requests_per_minute=requests_per_minute,
+            items_per_call=items_per_call,
+            max_retries=max_retries,
+        )
