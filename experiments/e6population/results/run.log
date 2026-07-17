@@ -1,0 +1,2 @@
+pool=50000 população=181490 classes=714
+[pvbin] |L|=500 int acc/F1=0.5/0.3356 ext acc/F1=0.4329/0.0841
