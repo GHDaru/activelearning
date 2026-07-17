@@ -29,7 +29,11 @@ class CachedOracle:
                 if not line.strip():
                     continue
                 rec = json.loads(line)
-                if rec.get("oracle_id") != inner.oracle_id:
+                # o lote (@bN) é instrumento de vazão, não de rótulo — calibração
+                # pareada b20×b50 sem diferença (p=0,58); ignora-o na checagem
+                def _base(oid: str) -> str:
+                    return oid.split("@b")[0] if oid else oid
+                if _base(rec.get("oracle_id")) != _base(inner.oracle_id):
                     raise ValueError(
                         f"cache {self._path} pertence a {rec.get('oracle_id')!r}, "
                         f"não a {inner.oracle_id!r}")
