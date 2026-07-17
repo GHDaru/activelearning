@@ -1,0 +1,30 @@
+{
+  "seed": 42,
+  "batch_size": 25,
+  "output_dir": "experiments/e0/results",
+  "dataset": {
+    "csv_path": "data/dataset.csv",
+    "text_column": "nm_item",
+    "label_column": "nm_product",
+    "min_samples_per_class": 5
+  },
+  "samples": {
+    "random_size": 1000,
+    "stratified_per_class": 3
+  },
+  "oracles": [
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand"
+      ]
+    }
+  ],
+  "_notas_desenho": [
+    "D-005: escopo free reduzido a nemotron-ultra × S-rand — vazão do plano gratuito (~75 rótulos/h) inviabiliza o plano completo (~6 dias); ver tesedaru/docs/decisoes.md"
+  ]
+}
