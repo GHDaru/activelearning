@@ -55,3 +55,32 @@ class Run(Base):
         if with_report:
             data["report"] = self.report
         return data
+
+
+class Dataset(Base):
+    __tablename__ = "datasets"
+
+    id: Mapped[str] = mapped_column(String(12), primary_key=True, default=_new_id)
+    name: Mapped[str] = mapped_column(String(200))
+    filename: Mapped[str] = mapped_column(String(300))
+    text_column: Mapped[str] = mapped_column(String(100))
+    label_column: Mapped[str] = mapped_column(String(100))
+    original_path: Mapped[str] = mapped_column(String(500))
+    sanitized_path: Mapped[str] = mapped_column(String(500))
+    report: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+    def to_dict(self, with_report: bool = True) -> dict:
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "filename": self.filename,
+            "text_column": self.text_column,
+            "label_column": self.label_column,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "n_rows": (self.report or {}).get("n_rows_out"),
+            "n_classes": (self.report or {}).get("n_classes"),
+        }
+        if with_report:
+            data["report"] = self.report
+        return data

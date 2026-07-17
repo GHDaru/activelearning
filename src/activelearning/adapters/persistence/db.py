@@ -28,7 +28,11 @@ def make_engine(database_url: str | None = None):
     # Neon fornece URLs "postgresql://"; o driver instalado é o psycopg 3.
     if url.startswith("postgresql://"):
         url = url.replace("postgresql://", "postgresql+psycopg://", 1)
-    connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
+    if url.startswith("sqlite"):
+        connect_args = {"check_same_thread": False}
+    else:
+        # falha rápida em vez de travar o boot quando o Postgres é inalcançável
+        connect_args = {"connect_timeout": 10}
     return create_engine(url, connect_args=connect_args, pool_pre_ping=True)
 
 

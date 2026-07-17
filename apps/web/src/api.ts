@@ -8,12 +8,24 @@ export type OracleSpec = {
 };
 
 export type RunReport = {
-  accuracy: number;
-  macro_f1: number;
-  invalid_label_rate: number;
-  n_total: number;
-  total_cost_usd: number;
-  cost_per_1k_labels_usd: number;
+  accuracy?: number;
+  macro_f1?: number;
+  invalid_label_rate?: number;
+  n_total?: number;
+  total_cost_usd?: number;
+  cost_per_1k_labels_usd?: number;
+  // active-learning
+  strategy?: string;
+  lce_macro_f1?: number;
+  final_macro_f1?: number;
+  final_accuracy?: number;
+  n_labeled?: number;
+  invalid_labels?: number;
+  pool_size?: number;
+  test_size?: number;
+  n_classes?: number;
+  oracle_id?: string;
+  curve?: { n: number; macro_f1: number }[];
 };
 
 export type Run = {
@@ -21,13 +33,43 @@ export type Run = {
   name: string;
   kind: string;
   status: "pending" | "running" | "completed" | "failed";
-  config: { sample: string; limit: number; oracle: Record<string, unknown> };
+  config: {
+    sample?: string;
+    limit?: number;
+    dataset_id?: string;
+    params?: Record<string, unknown>;
+    oracle: Record<string, unknown>;
+  };
   report?: RunReport | null;
   error?: string | null;
   artifacts_dir?: string | null;
   created_at: string;
-  started_at?: string | null;
-  finished_at?: string | null;
+};
+
+export type DatasetReport = {
+  n_rows_in: number;
+  n_rows_out: number;
+  removed_empty: number;
+  removed_operational: number;
+  n_classes: number;
+  n_conflicting_texts: number;
+  n_conflicting_rows: number;
+  conflict_examples: { texto: string; rotulos: string[] }[];
+  n_exact_duplicates: number;
+  n_rare_classes_lt5: number;
+  class_histogram_top: [string, number][];
+};
+
+export type Dataset = {
+  id: string;
+  name: string;
+  filename: string;
+  text_column: string;
+  label_column: string;
+  created_at: string;
+  n_rows?: number;
+  n_classes?: number;
+  report?: DatasetReport;
 };
 
 async function json<T>(response: Response): Promise<T> {
@@ -40,15 +82,16 @@ export const api = {
   oracles: () => fetch("/api/oracles").then((r) => json<OracleSpec[]>(r)),
   runs: () => fetch("/api/runs").then((r) => json<Run[]>(r)),
   run: (id: string) => fetch(`/api/runs/${id}`).then((r) => json<Run>(r)),
-  createRun: (body: {
-    name: string;
-    sample: string;
-    limit: number;
-    oracle: Record<string, unknown>;
-  }) =>
+  createRun: (body: Record<string, unknown>) =>
     fetch("/api/runs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }).then((r) => json<Run>(r)),
+  datasets: () => fetch("/api/datasets").then((r) => json<Dataset[]>(r)),
+  dataset: (id: string) => fetch(`/api/datasets/${id}`).then((r) => json<Dataset>(r)),
+  uploadDataset: (form: FormData) =>
+    fetch("/api/datasets", { method: "POST", body: form }).then((r) => json<Dataset>(r)),
+  downloadUrl: (id: string, which: "sanitized" | "original") =>
+    `/api/datasets/${id}/download?which=${which}`,
 };

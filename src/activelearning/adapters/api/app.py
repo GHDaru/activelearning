@@ -10,21 +10,31 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
 from activelearning.adapters.api import runner
 from activelearning.adapters.api.settings import Settings
 from activelearning.adapters.persistence.db import Base, make_engine, make_session_factory
-from activelearning.adapters.persistence.models import Run
+from activelearning.adapters.persistence.models import Dataset, Run
+from activelearning.application.sanitize_dataset import sanitize_csv
 
 
 class CreateRunBody(BaseModel):
     name: str = Field(min_length=1, max_length=200)
+    kind: str = Field(default="oracle-eval", pattern="^(oracle-eval|active-learning)$")
     sample: str = Field(default="rand", pattern="^(rand|strat)$")
     limit: int = Field(default=50, ge=1, le=5000)
+    dataset_id: str | None = Field(default=None, description="obrigatório p/ active-learning")
+    params: dict = Field(
+        default_factory=dict,
+        description="active-learning: seed, budget, batch_size, initial_size, "
+        "strategy (entropy|least_confidence|smallest_margin|random|hybrid), "
+        "pool_size, test_fraction, min_per_class",
+    )
     oracle: dict = Field(
         default_factory=lambda: {"provider": "simulated", "noise": 0.1},
         description="Spec de oráculo no formato dos configs do E0 "
@@ -93,14 +103,82 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.post("/api/runs", status_code=201)
     def create_run(body: CreateRunBody) -> dict:
+        if body.kind == "active-learning" and not body.dataset_id:
+            raise HTTPException(status_code=422, detail="active-learning exige dataset_id")
         with session_factory() as session:
-            run = Run(name=body.name, config=body.model_dump())
+            if body.dataset_id and session.get(Dataset, body.dataset_id) is None:
+                raise HTTPException(status_code=404, detail="dataset não encontrado")
+            run = Run(name=body.name, kind=body.kind, config=body.model_dump())
             session.add(run)
             session.commit()
             run_id = run.id
             payload = run.to_dict()
         runner.launch_run(run_id, session_factory, experiment_config, settings.artifacts_root)
         return payload
+
+    # ------------------------------- datasets -------------------------------
+    uploads_root = settings.artifacts_root.parent / "uploads"
+
+    @app.post("/api/datasets", status_code=201)
+    async def upload_dataset(
+        file: UploadFile = File(...),
+        name: str = Form(...),
+        text_column: str = Form(...),
+        label_column: str = Form(...),
+        operational_labels: str = Form("inativo"),
+    ) -> dict:
+        import uuid
+
+        ds_id = uuid.uuid4().hex[:12]
+        ds_dir = uploads_root / ds_id
+        ds_dir.mkdir(parents=True, exist_ok=True)
+        original = ds_dir / "original.csv"
+        original.write_bytes(await file.read())
+        sanitized = ds_dir / "sanitized.csv"
+        ops = tuple(x.strip() for x in operational_labels.split(",") if x.strip())
+        try:
+            report = sanitize_csv(
+                original, sanitized, text_column=text_column,
+                label_column=label_column, operational_labels=ops,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+        with session_factory() as session:
+            ds = Dataset(
+                id=ds_id, name=name, filename=file.filename or "dataset.csv",
+                text_column=text_column, label_column=label_column,
+                original_path=str(original), sanitized_path=str(sanitized),
+                report=report.to_dict(),
+            )
+            session.add(ds)
+            session.commit()
+            return ds.to_dict()
+
+    @app.get("/api/datasets")
+    def list_datasets() -> list[dict]:
+        with session_factory() as session:
+            rows = session.scalars(select(Dataset).order_by(Dataset.created_at.desc())).all()
+            return [d.to_dict(with_report=False) for d in rows]
+
+    @app.get("/api/datasets/{dataset_id}")
+    def get_dataset(dataset_id: str) -> dict:
+        with session_factory() as session:
+            ds = session.get(Dataset, dataset_id)
+            if ds is None:
+                raise HTTPException(status_code=404, detail="dataset não encontrado")
+            return ds.to_dict()
+
+    @app.get("/api/datasets/{dataset_id}/download")
+    def download_dataset(dataset_id: str, which: str = "sanitized"):
+        if which not in ("sanitized", "original"):
+            raise HTTPException(status_code=422, detail="which deve ser sanitized|original")
+        with session_factory() as session:
+            ds = session.get(Dataset, dataset_id)
+            if ds is None:
+                raise HTTPException(status_code=404, detail="dataset não encontrado")
+            path = ds.sanitized_path if which == "sanitized" else ds.original_path
+            fname = f"{ds.name}-{which}.csv".replace(" ", "_")
+        return FileResponse(path, media_type="text/csv", filename=fname)
 
     @app.get("/api/runs")
     def list_runs() -> list[dict]:
