@@ -1,0 +1,85 @@
+{
+  "seed": 42,
+  "batch_size": 25,
+  "output_dir": "experiments/e0/results",
+  "dataset": {
+    "csv_path": "data/dataset.csv",
+    "text_column": "nm_item",
+    "label_column": "nm_product",
+    "min_samples_per_class": 5
+  },
+  "samples": {
+    "random_size": 1000,
+    "stratified_per_class": 3
+  },
+  "oracles": [
+    {
+      "provider": "huawei-maas",
+      "model": "deepseek-v4-flash",
+      "mode": "json-prompt",
+      "items_per_call": 25,
+      "requests_per_minute": 3,
+      "disable_thinking": true,
+      "pricing_usd_per_mtok": [
+        0.135,
+        0.135,
+        0.27
+      ],
+      "_nota": "LLM Inicial candidato; preco console MaaS 07/2026",
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-super-120b-a12b:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ]
+    },
+    {
+      "provider": "openrouter",
+      "model": "google/gemma-4-31b-it:free",
+      "mode": "json-prompt",
+      "items_per_call": 10,
+      "requests_per_minute": 18,
+      "samples": [
+        "rand",
+        "strat"
+      ],
+      "_nota": "substitui o slot local (gemma) — sem permissao p/ Ollama"
+    }
+  ],
+  "_notas_desenho": [
+    "items_per_call definido pela calibracao (config_calibration.json); rode-a primeiro",
+    "MaaS nao suporta structured output em nenhum modelo (console 07/2026) -> json-prompt",
+    "RQ4 (enum vs free) restrito a provedores com structured output (OpenAI)"
+  ]
+}

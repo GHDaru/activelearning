@@ -1,0 +1,222 @@
+[
+  {
+    "sample": "rand",
+    "oracle_id": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.783,
+    "ic_original": [
+      0.7564,
+      0.8074
+    ],
+    "acc_sem_ruido": 0.7901,
+    "ic_sem_ruido": [
+      0.7635,
+      0.8143
+    ],
+    "acc_multigold": 0.789,
+    "delta_sem_ruido_pp": 0.71,
+    "delta_multigold_pp": 0.6
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "huawei-maas:deepseek-v4-pro@T0.0#prompt@b25",
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.821,
+    "ic_original": [
+      0.796,
+      0.8435
+    ],
+    "acc_sem_ruido": 0.8256,
+    "ic_sem_ruido": [
+      0.8006,
+      0.848
+    ],
+    "acc_multigold": 0.826,
+    "delta_sem_ruido_pp": 0.46,
+    "delta_multigold_pp": 0.5
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "huawei-maas:glm-5.2@T0.0#prompt@b25",
+    "n": 375,
+    "n_conflito": 6,
+    "pct_conflito": 1.6,
+    "acc_original": 0.7707,
+    "ic_original": [
+      0.7255,
+      0.8103
+    ],
+    "acc_sem_ruido": 0.7751,
+    "ic_sem_ruido": [
+      0.7298,
+      0.8147
+    ],
+    "acc_multigold": 0.776,
+    "delta_sem_ruido_pp": 0.44,
+    "delta_multigold_pp": 0.53
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "openai:gpt-4o-mini@T0.0#free@b10",
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.605,
+    "ic_original": [
+      0.5744,
+      0.6348
+    ],
+    "acc_sem_ruido": 0.6105,
+    "ic_sem_ruido": [
+      0.5797,
+      0.6405
+    ],
+    "acc_multigold": 0.61,
+    "delta_sem_ruido_pp": 0.55,
+    "delta_multigold_pp": 0.5
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "openai:gpt-4o-mini@T0.0@b10",
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.613,
+    "ic_original": [
+      0.5824,
+      0.6427
+    ],
+    "acc_sem_ruido": 0.6176,
+    "ic_sem_ruido": [
+      0.5869,
+      0.6475
+    ],
+    "acc_multigold": 0.618,
+    "delta_sem_ruido_pp": 0.46,
+    "delta_multigold_pp": 0.5
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "openai:gpt-4o@T0.0@b10",
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.809,
+    "ic_original": [
+      0.7835,
+      0.8322
+    ],
+    "acc_sem_ruido": 0.8144,
+    "ic_sem_ruido": [
+      0.7889,
+      0.8374
+    ],
+    "acc_multigold": 0.815,
+    "delta_sem_ruido_pp": 0.54,
+    "delta_multigold_pp": 0.6
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free@T0.0#prompt@b10",
+    "n": 550,
+    "n_conflito": 7,
+    "pct_conflito": 1.27,
+    "acc_original": 0.6745,
+    "ic_original": [
+      0.6343,
+      0.7124
+    ],
+    "acc_sem_ruido": 0.6777,
+    "ic_sem_ruido": [
+      0.6373,
+      0.7157
+    ],
+    "acc_multigold": 0.68,
+    "delta_sem_ruido_pp": 0.32,
+    "delta_multigold_pp": 0.55
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "n": 1863,
+    "n_conflito": 40,
+    "pct_conflito": 2.15,
+    "acc_original": 0.8164,
+    "ic_original": [
+      0.7982,
+      0.8333
+    ],
+    "acc_sem_ruido": 0.8195,
+    "ic_sem_ruido": [
+      0.8012,
+      0.8365
+    ],
+    "acc_multigold": 0.8191,
+    "delta_sem_ruido_pp": 0.31,
+    "delta_multigold_pp": 0.27
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "huawei-maas:deepseek-v4-pro@T0.0#prompt@b25",
+    "n": 1863,
+    "n_conflito": 40,
+    "pct_conflito": 2.15,
+    "acc_original": 0.8261,
+    "ic_original": [
+      0.8082,
+      0.8426
+    ],
+    "acc_sem_ruido": 0.831,
+    "ic_sem_ruido": [
+      0.8132,
+      0.8475
+    ],
+    "acc_multigold": 0.8293,
+    "delta_sem_ruido_pp": 0.5,
+    "delta_multigold_pp": 0.32
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "openai:gpt-4o-mini@T0.0@b10",
+    "n": 1863,
+    "n_conflito": 40,
+    "pct_conflito": 2.15,
+    "acc_original": 0.4568,
+    "ic_original": [
+      0.4343,
+      0.4795
+    ],
+    "acc_sem_ruido": 0.4602,
+    "ic_sem_ruido": [
+      0.4375,
+      0.4832
+    ],
+    "acc_multigold": 0.4584,
+    "delta_sem_ruido_pp": 0.34,
+    "delta_multigold_pp": 0.16
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "openai:gpt-4o@T0.0@b10",
+    "n": 1863,
+    "n_conflito": 40,
+    "pct_conflito": 2.15,
+    "acc_original": 0.8207,
+    "ic_original": [
+      0.8026,
+      0.8375
+    ],
+    "acc_sem_ruido": 0.8245,
+    "ic_sem_ruido": [
+      0.8063,
+      0.8412
+    ],
+    "acc_multigold": 0.8229,
+    "delta_sem_ruido_pp": 0.37,
+    "delta_multigold_pp": 0.21
+  }
+]

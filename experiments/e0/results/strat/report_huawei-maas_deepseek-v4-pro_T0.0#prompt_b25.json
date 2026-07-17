@@ -1,0 +1,15 @@
+{
+  "oracle_id": "huawei-maas:deepseek-v4-pro@T0.0#prompt@b25",
+  "prompt_version": "v3-json-prompt",
+  "n_total": 1863,
+  "accuracy": 0.8261,
+  "macro_f1": 0.7927,
+  "invalid_label_rate": 0.0021,
+  "input_tokens": 284554,
+  "cached_input_tokens": 0,
+  "cache_hit_rate": 0.0,
+  "output_tokens": 88208,
+  "total_cost_usd": 0.7455,
+  "cost_per_1k_labels_usd": 0.4001,
+  "total_latency_seconds": 2141.2
+}
