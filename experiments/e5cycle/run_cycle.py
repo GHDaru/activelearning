@@ -83,8 +83,24 @@ def main():
     ap.add_argument("--classifier", choices=["pvbin", "sgd", "both"], default="both")
     ap.add_argument("--simulated", action="store_true",
                     help="smoke offline: troca o oráculo por SimulatedOracle(ruído 0,2)")
+    ap.add_argument("--budget", type=int, default=None)
+    ap.add_argument("--pool-size", type=int, default=None)
+    ap.add_argument("--val-size", type=int, default=None)
+    ap.add_argument("--test-size", type=int, default=None)
+    ap.add_argument("--batch-size", type=int, default=None)
+    ap.add_argument("--items-per-call", type=int, default=None)
+    ap.add_argument("--cache", type=str, default=None,
+                    help="JSONL de cache de anotações compartilhado entre ciclos")
+    ap.add_argument("--tag", type=str, default="",
+                    help="sufixo dos arquivos de saída (ex.: _b30k)")
     args = ap.parse_args()
     cfg = dict(CONFIG)
+    for k in ("budget", "pool_size", "val_size", "test_size", "batch_size"):
+        v = getattr(args, k)
+        if v is not None:
+            cfg[k] = v
+    if args.items_per_call is not None:
+        cfg["oracle"] = {**cfg["oracle"], "items_per_call": args.items_per_call}
     if args.simulated:
         cfg["oracle"] = {"provider": "simulated", "noise": 0.2, "seed": cfg["seed"]}
     pool, val, test, schema = load_splits(cfg)
@@ -99,6 +115,9 @@ def main():
     for name in names:
         factory = CLASSIFIERS[name]
         oracle = build_oracle(cfg["oracle"])
+        if args.cache:
+            from activelearning.adapters.oracles.cached import CachedOracle
+            oracle = CachedOracle(oracle, Path(args.cache))
         print(f"\n=== ciclo FALCO · classificador={name} · oráculo={cfg['oracle'].get('model', cfg['oracle']['provider'])} ===",
               flush=True)
         t0 = time.time()
@@ -109,7 +128,7 @@ def main():
             drisl_selector=lambda texts, k: drisl_select(
                 texts, k, encoder, seed=cfg["seed"]).indices,
             budget=cfg["budget"], batch_size=cfg["batch_size"], seed=cfg["seed"],
-            output_path=out / f"cycle_{name}_records.jsonl",
+            output_path=out / f"cycle_{name}{args.tag}_records.jsonl",
         )
         payload = {
             "classifier": name, "config": cfg, **res.summary(),
@@ -117,7 +136,9 @@ def main():
             "curve_test": list(zip(res.curve_macro_f1.l_sizes, res.curve_macro_f1.scores)),
             "curve_val": res.curve_val_macro_f1,
         }
-        (out / f"cycle_{name}.json").write_text(
+        if args.cache and hasattr(oracle, "hits"):
+            payload["oracle_cache"] = {"hits": oracle.hits, "calls_inner": oracle.calls_inner}
+        (out / f"cycle_{name}{args.tag}.json").write_text(
             json.dumps(payload, indent=2, ensure_ascii=False))
         print(json.dumps({k: payload[k] for k in
                           ("classifier", "final_macro_f1", "lce_macro_f1",
