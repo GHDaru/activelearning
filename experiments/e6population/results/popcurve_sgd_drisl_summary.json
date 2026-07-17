@@ -1,0 +1,17 @@
+{
+  "classifier": "sgd",
+  "strategy": "drisl",
+  "budget": 2000,
+  "batch": 500,
+  "pool": 8000,
+  "population": 223490,
+  "final": {
+    "n_labels": 2000,
+    "acc_int": 0.76,
+    "f1_int": 0.5723,
+    "acc_ext": 0.7047,
+    "f1_ext": 0.2152,
+    "elapsed_s": 62.6
+  },
+  "wall_seconds": 62.6
+}

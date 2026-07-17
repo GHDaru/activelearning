@@ -1,0 +1,162 @@
+pool=50000 população=181490 classes=714
+[pvbin/random] |L|=500 int acc/F1=0.5/0.3356 ext acc/F1=0.4329/0.0841
+[pvbin/random] |L|=1000 int acc/F1=0.52/0.3081 ext acc/F1=0.5226/0.1211
+[pvbin/random] |L|=1500 int acc/F1=0.61/0.4027 ext acc/F1=0.5798/0.1624
+[pvbin/random] |L|=2000 int acc/F1=0.6525/0.448 ext acc/F1=0.6094/0.1882
+[pvbin/random] |L|=2500 int acc/F1=0.67/0.445 ext acc/F1=0.627/0.2038
+[pvbin/random] |L|=3000 int acc/F1=0.645/0.417 ext acc/F1=0.6522/0.2235
+[pvbin/random] |L|=3500 int acc/F1=0.7057/0.4834 ext acc/F1=0.6703/0.2432
+[pvbin/random] |L|=4000 int acc/F1=0.7075/0.456 ext acc/F1=0.6803/0.2563
+[pvbin/random] |L|=4500 int acc/F1=0.6756/0.4466 ext acc/F1=0.6855/0.2667
+[pvbin/random] |L|=5000 int acc/F1=0.672/0.4392 ext acc/F1=0.6958/0.2733
+[pvbin/random] |L|=5500 int acc/F1=0.7364/0.4954 ext acc/F1=0.7061/0.2906
+[pvbin/random] |L|=6000 int acc/F1=0.715/0.4533 ext acc/F1=0.7139/0.2928
+[pvbin/random] |L|=6500 int acc/F1=0.7192/0.4762 ext acc/F1=0.7183/0.3038
+[pvbin/random] |L|=7000 int acc/F1=0.7257/0.4602 ext acc/F1=0.7246/0.3113
+[pvbin/random] |L|=7500 int acc/F1=0.7227/0.4688 ext acc/F1=0.7335/0.3218
+[pvbin/random] |L|=8000 int acc/F1=0.7206/0.4986 ext acc/F1=0.7365/0.3325
+[pvbin/random] |L|=8500 int acc/F1=0.7465/0.5039 ext acc/F1=0.7372/0.3389
+[pvbin/random] |L|=9000 int acc/F1=0.7533/0.5142 ext acc/F1=0.7425/0.3397
+[pvbin/random] |L|=9500 int acc/F1=0.7468/0.4901 ext acc/F1=0.7423/0.3397
+[pvbin/random] |L|=10000 int acc/F1=0.7445/0.4959 ext acc/F1=0.7447/0.348
+[pvbin/random] |L|=10500 int acc/F1=0.7619/0.5106 ext acc/F1=0.7496/0.3545
+[pvbin/random] |L|=11000 int acc/F1=0.7495/0.4959 ext acc/F1=0.7494/0.3595
+[pvbin/random] |L|=11500 int acc/F1=0.7661/0.5379 ext acc/F1=0.7527/0.3663
+[pvbin/random] |L|=12000 int acc/F1=0.7729/0.5195 ext acc/F1=0.7582/0.3721
+[pvbin/random] |L|=12500 int acc/F1=0.7744/0.5129 ext acc/F1=0.7614/0.3815
+[pvbin/random] |L|=13000 int acc/F1=0.7712/0.5321 ext acc/F1=0.7641/0.3847
+[pvbin/random] |L|=13500 int acc/F1=0.7685/0.5038 ext acc/F1=0.7658/0.388
+[pvbin/random] |L|=14000 int acc/F1=0.7757/0.4978 ext acc/F1=0.7667/0.3882
+[pvbin/random] |L|=14500 int acc/F1=0.7876/0.5247 ext acc/F1=0.7708/0.3978
+[pvbin/random] |L|=15000 int acc/F1=0.7887/0.5167 ext acc/F1=0.7733/0.4004
+[pvbin/random] |L|=15500 int acc/F1=0.7874/0.5457 ext acc/F1=0.775/0.4018
+[pvbin/random] |L|=16000 int acc/F1=0.7863/0.5153 ext acc/F1=0.7747/0.3969
+[pvbin/random] |L|=16500 int acc/F1=0.7921/0.548 ext acc/F1=0.7789/0.4079
+[pvbin/random] |L|=17000 int acc/F1=0.7824/0.539 ext acc/F1=0.7794/0.4063
+[pvbin/random] |L|=17500 int acc/F1=0.7806/0.5144 ext acc/F1=0.7816/0.4125
+[pvbin/random] |L|=18000 int acc/F1=0.7889/0.5191 ext acc/F1=0.7828/0.4147
+[pvbin/random] |L|=18500 int acc/F1=0.793/0.5247 ext acc/F1=0.786/0.4164
+[pvbin/random] |L|=19000 int acc/F1=0.7942/0.5478 ext acc/F1=0.7863/0.425
+[pvbin/random] |L|=19500 int acc/F1=0.7879/0.5395 ext acc/F1=0.7883/0.4229
+[pvbin/random] |L|=20000 int acc/F1=0.7855/0.5185 ext acc/F1=0.7892/0.4232
+[pvbin/random] |L|=20500 int acc/F1=0.7951/0.5524 ext acc/F1=0.7895/0.4307
+[pvbin/random] |L|=21000 int acc/F1=0.7981/0.5357 ext acc/F1=0.7919/0.4311
+[pvbin/random] |L|=21500 int acc/F1=0.793/0.5338 ext acc/F1=0.7929/0.4299
+[pvbin/random] |L|=22000 int acc/F1=0.795/0.5194 ext acc/F1=0.7938/0.4387
+[pvbin/random] |L|=22500 int acc/F1=0.7936/0.5317 ext acc/F1=0.7958/0.4395
+[pvbin/random] |L|=23000 int acc/F1=0.7876/0.5424 ext acc/F1=0.798/0.442
+[pvbin/random] |L|=23500 int acc/F1=0.8047/0.5506 ext acc/F1=0.7993/0.4465
+[pvbin/random] |L|=24000 int acc/F1=0.7954/0.5252 ext acc/F1=0.8001/0.4456
+[pvbin/random] |L|=24500 int acc/F1=0.7939/0.5176 ext acc/F1=0.8008/0.4417
+[pvbin/random] |L|=25000 int acc/F1=0.7988/0.5504 ext acc/F1=0.8022/0.4497
+[pvbin/random] |L|=25500 int acc/F1=0.8051/0.5592 ext acc/F1=0.8022/0.4512
+[pvbin/random] |L|=26000 int acc/F1=0.8071/0.5518 ext acc/F1=0.8048/0.4562
+[pvbin/random] |L|=26500 int acc/F1=0.7996/0.5501 ext acc/F1=0.8046/0.4557
+[pvbin/random] |L|=27000 int acc/F1=0.7937/0.5364 ext acc/F1=0.8051/0.4501
+[pvbin/random] |L|=27500 int acc/F1=0.8051/0.5528 ext acc/F1=0.8069/0.4564
+[pvbin/random] |L|=28000 int acc/F1=0.8052/0.5383 ext acc/F1=0.807/0.4578
+[pvbin/random] |L|=28500 int acc/F1=0.8116/0.5572 ext acc/F1=0.808/0.4579
+[pvbin/random] |L|=29000 int acc/F1=0.8133/0.5665 ext acc/F1=0.8106/0.4655
+[pvbin/random] |L|=29500 int acc/F1=0.8061/0.5576 ext acc/F1=0.8094/0.4647
+[pvbin/random] |L|=30000 int acc/F1=0.8132/0.5645 ext acc/F1=0.8121/0.4674
+[pvbin/random] |L|=30500 int acc/F1=0.8064/0.5367 ext acc/F1=0.8127/0.4668
+[pvbin/random] |L|=31000 int acc/F1=0.8011/0.5417 ext acc/F1=0.812/0.4694
+[pvbin/random] |L|=31500 int acc/F1=0.8098/0.5595 ext acc/F1=0.8141/0.4721
+[pvbin/random] |L|=32000 int acc/F1=0.8175/0.5605 ext acc/F1=0.8156/0.4763
+[pvbin/random] |L|=32500 int acc/F1=0.8154/0.5538 ext acc/F1=0.8154/0.475
+[pvbin/random] |L|=33000 int acc/F1=0.8162/0.5606 ext acc/F1=0.8153/0.476
+[pvbin/random] |L|=33500 int acc/F1=0.813/0.5321 ext acc/F1=0.8163/0.4778
+[pvbin/random] |L|=34000 int acc/F1=0.8251/0.5771 ext acc/F1=0.8162/0.4783
+[pvbin/random] |L|=34500 int acc/F1=0.8209/0.5701 ext acc/F1=0.8177/0.4842
+[pvbin/random] |L|=35000 int acc/F1=0.8157/0.5586 ext acc/F1=0.8182/0.4844
+[pvbin/random] |L|=35500 int acc/F1=0.8204/0.5777 ext acc/F1=0.8184/0.4898
+[pvbin/random] |L|=36000 int acc/F1=0.8213/0.5648 ext acc/F1=0.8197/0.4903
+[pvbin/random] |L|=36500 int acc/F1=0.8208/0.5734 ext acc/F1=0.8199/0.4945
+[pvbin/random] |L|=37000 int acc/F1=0.8247/0.5745 ext acc/F1=0.8211/0.4931
+[pvbin/random] |L|=37500 int acc/F1=0.8147/0.5672 ext acc/F1=0.8219/0.4937
+[pvbin/random] |L|=38000 int acc/F1=0.8217/0.5644 ext acc/F1=0.8214/0.4954
+[pvbin/random] |L|=38500 int acc/F1=0.8227/0.5604 ext acc/F1=0.8224/0.5017
+[pvbin/random] |L|=39000 int acc/F1=0.8287/0.5687 ext acc/F1=0.8234/0.5021
+[pvbin/random] |L|=39500 int acc/F1=0.8209/0.5633 ext acc/F1=0.8229/0.4984
+[pvbin/random] |L|=40000 int acc/F1=0.8209/0.5768 ext acc/F1=0.8246/0.5085
+[pvbin/random] |L|=40500 int acc/F1=0.8222/0.5695 ext acc/F1=0.8248/0.5041
+[pvbin/random] |L|=41000 int acc/F1=0.8254/0.5733 ext acc/F1=0.8259/0.5044
+[pvbin/random] |L|=41500 int acc/F1=0.828/0.5821 ext acc/F1=0.8263/0.5086
+[pvbin/random] |L|=42000 int acc/F1=0.8281/0.574 ext acc/F1=0.8275/0.5101
+[pvbin/random] |L|=42500 int acc/F1=0.832/0.5691 ext acc/F1=0.8274/0.5089
+[pvbin/random] |L|=43000 int acc/F1=0.8352/0.5893 ext acc/F1=0.8293/0.512
+[pvbin/random] |L|=43500 int acc/F1=0.8293/0.5836 ext acc/F1=0.8293/0.5144
+[pvbin/random] |L|=44000 int acc/F1=0.8327/0.5826 ext acc/F1=0.8289/0.5105
+[pvbin/random] |L|=44500 int acc/F1=0.8255/0.5719 ext acc/F1=0.8294/0.517
+[pvbin/random] |L|=45000 int acc/F1=0.8313/0.5744 ext acc/F1=0.8292/0.5152
+[pvbin/random] |L|=45500 int acc/F1=0.8296/0.5786 ext acc/F1=0.8308/0.5199
+[pvbin/random] |L|=46000 int acc/F1=0.8352/0.5951 ext acc/F1=0.8314/0.5206
+[pvbin/random] |L|=46500 int acc/F1=0.8361/0.581 ext acc/F1=0.8317/0.5198
+[pvbin/random] |L|=47000 int acc/F1=0.8343/0.5837 ext acc/F1=0.8323/0.5212
+[pvbin/random] |L|=47500 int acc/F1=0.8327/0.5693 ext acc/F1=0.8321/0.5235
+[pvbin/random] |L|=48000 int acc/F1=0.8343/0.5801 ext acc/F1=0.8333/0.5241
+[pvbin/random] |L|=48500 int acc/F1=0.8339/0.5857 ext acc/F1=0.8333/0.5259
+[pvbin/random] |L|=49000 int acc/F1=0.8282/0.5762 ext acc/F1=0.8326/0.5217
+[pvbin/random] |L|=49500 int acc/F1=0.8334/0.5883 ext acc/F1=0.8346/0.5296
+[pvbin/random] |L|=50000 int acc/F1=0.8348/0.5882 ext acc/F1=0.8354/0.5275
+{
+  "classifier": "pvbin",
+  "strategy": "random",
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8348,
+    "f1_int": 0.5882,
+    "acc_ext": 0.8354,
+    "f1_ext": 0.5275,
+    "elapsed_s": 643.4
+  },
+  "wall_seconds": 643.4
+}
+[sgd/random] |L|=500 int acc/F1=0.51/0.2988 ext acc/F1=0.4955/0.0914
+[sgd/random] |L|=1000 int acc/F1=0.615/0.3788 ext acc/F1=0.5982/0.1381
+[sgd/random] |L|=1500 int acc/F1=0.6833/0.4528 ext acc/F1=0.6553/0.1851
+[sgd/random] |L|=2000 int acc/F1=0.73/0.5182 ext acc/F1=0.6895/0.2154
+[sgd/random] |L|=2500 int acc/F1=0.754/0.5287 ext acc/F1=0.7081/0.2339
+[sgd/random] |L|=3000 int acc/F1=0.7483/0.5094 ext acc/F1=0.7289/0.2547
+[sgd/random] |L|=3500 int acc/F1=0.7614/0.5257 ext acc/F1=0.7462/0.2785
+[sgd/random] |L|=4000 int acc/F1=0.7875/0.5666 ext acc/F1=0.7585/0.2944
+[sgd/random] |L|=4500 int acc/F1=0.7533/0.5334 ext acc/F1=0.7636/0.2993
+[sgd/random] |L|=5000 int acc/F1=0.773/0.5485 ext acc/F1=0.7748/0.3094
+[sgd/random] |L|=5500 int acc/F1=0.8055/0.5764 ext acc/F1=0.7832/0.3239
+[sgd/random] |L|=6000 int acc/F1=0.7883/0.5344 ext acc/F1=0.7909/0.3305
+[sgd/random] |L|=6500 int acc/F1=0.8085/0.5571 ext acc/F1=0.7976/0.3402
+[sgd/random] |L|=7000 int acc/F1=0.8121/0.5509 ext acc/F1=0.8025/0.3529
+[sgd/random] |L|=7500 int acc/F1=0.8107/0.5759 ext acc/F1=0.8066/0.356
+[sgd/random] |L|=8000 int acc/F1=0.8169/0.595 ext acc/F1=0.8095/0.3683
+[sgd/random] |L|=8500 int acc/F1=0.8329/0.6078 ext acc/F1=0.8132/0.3788
+[sgd/random] |L|=9000 int acc/F1=0.83/0.5992 ext acc/F1=0.8162/0.3771
+[sgd/random] |L|=9500 int acc/F1=0.8274/0.576 ext acc/F1=0.8183/0.3817
+[sgd/random] |L|=10000 int acc/F1=0.8235/0.5945 ext acc/F1=0.8202/0.3912
+[sgd/random] |L|=10500 int acc/F1=0.8452/0.6027 ext acc/F1=0.8269/0.3984
+[sgd/random] |L|=11000 int acc/F1=0.8355/0.6001 ext acc/F1=0.8275/0.3997
+[sgd/random] |L|=11500 int acc/F1=0.8452/0.616 ext acc/F1=0.8309/0.4075
+[sgd/random] |L|=12000 int acc/F1=0.8413/0.5968 ext acc/F1=0.8333/0.4137
+[sgd/random] |L|=12500 int acc/F1=0.8464/0.6068 ext acc/F1=0.8365/0.4172
+[sgd/random] |L|=13000 int acc/F1=0.8469/0.582 ext acc/F1=0.837/0.4217
+[sgd/random] |L|=13500 int acc/F1=0.8489/0.5961 ext acc/F1=0.84/0.4247
+[sgd/random] |L|=14000 int acc/F1=0.8396/0.5717 ext acc/F1=0.8402/0.4239
+[sgd/random] |L|=14500 int acc/F1=0.85/0.5933 ext acc/F1=0.8429/0.4298
+[sgd/random] |L|=15000 int acc/F1=0.853/0.5801 ext acc/F1=0.8448/0.435
+[sgd/random] |L|=15500 int acc/F1=0.8465/0.5928 ext acc/F1=0.8461/0.4358
+[sgd/random] |L|=16000 int acc/F1=0.845/0.5852 ext acc/F1=0.8466/0.4349
+[sgd/random] |L|=16500 int acc/F1=0.8476/0.5997 ext acc/F1=0.8465/0.4376
+[sgd/random] |L|=17000 int acc/F1=0.8468/0.5911 ext acc/F1=0.8496/0.4402
+[sgd/random] |L|=17500 int acc/F1=0.8491/0.5936 ext acc/F1=0.8493/0.4405
+[sgd/random] |L|=18000 int acc/F1=0.8511/0.5821 ext acc/F1=0.8509/0.4433
+[sgd/random] |L|=18500 int acc/F1=0.8522/0.6036 ext acc/F1=0.8522/0.4434
+[sgd/random] |L|=19000 int acc/F1=0.8521/0.6051 ext acc/F1=0.8522/0.4468
+[sgd/random] |L|=19500 int acc/F1=0.8497/0.594 ext acc/F1=0.8539/0.4503
+[sgd/random] |L|=20000 int acc/F1=0.8465/0.58 ext acc/F1=0.8538/0.4486
+[sgd/random] |L|=20500 int acc/F1=0.8583/0.6156 ext acc/F1=0.8564/0.4529
+[sgd/random] |L|=21000 int acc/F1=0.8569/0.6034 ext acc/F1=0.8574/0.4506
+[sgd/random] |L|=21500 int acc/F1=0.8484/0.5867 ext acc/F1=0.8561/0.4505
+[sgd/random] |L|=22000 int acc/F1=0.8575/0.5961 ext acc/F1=0.8584/0.4538

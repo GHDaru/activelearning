@@ -1,0 +1,26 @@
+pool=50000 população=181490 classes=714
+pré-computando embeddings do pool p/ DRI-SL...
+[pvbin/drisl] |L|=500 int acc/F1=0.5/0.3356 ext acc/F1=0.4329/0.0841
+[pvbin/drisl] |L|=1000 int acc/F1=0.515/0.3078 ext acc/F1=0.558/0.1355
+[pvbin/drisl] |L|=1500 int acc/F1=0.6167/0.381 ext acc/F1=0.6023/0.1685
+[pvbin/drisl] |L|=2000 int acc/F1=0.6925/0.464 ext acc/F1=0.6252/0.1815
+[pvbin/drisl] |L|=2500 int acc/F1=0.726/0.4767 ext acc/F1=0.6423/0.1966
+[pvbin/drisl] |L|=3000 int acc/F1=0.74/0.4852 ext acc/F1=0.6536/0.2096
+[pvbin/drisl] |L|=3500 int acc/F1=0.74/0.4824 ext acc/F1=0.6577/0.2148
+[pvbin/drisl] |L|=4000 int acc/F1=0.7575/0.5114 ext acc/F1=0.6698/0.2277
+[pvbin/drisl] |L|=4500 int acc/F1=0.7933/0.5722 ext acc/F1=0.6765/0.2354
+[pvbin/drisl] |L|=5000 int acc/F1=0.801/0.5583 ext acc/F1=0.6839/0.2402
+[pvbin/drisl] |L|=5500 int acc/F1=0.8009/0.5443 ext acc/F1=0.6853/0.2473
+[pvbin/drisl] |L|=6000 int acc/F1=0.81/0.5756 ext acc/F1=0.6911/0.2536
+[pvbin/drisl] |L|=6500 int acc/F1=0.8123/0.5718 ext acc/F1=0.6945/0.2534
+[pvbin/drisl] |L|=7000 int acc/F1=0.8064/0.551 ext acc/F1=0.6983/0.2579
+[pvbin/drisl] |L|=7500 int acc/F1=0.8227/0.5871 ext acc/F1=0.7039/0.2666
+[pvbin/drisl] |L|=8000 int acc/F1=0.8269/0.5816 ext acc/F1=0.7075/0.2706
+[pvbin/drisl] |L|=8500 int acc/F1=0.8259/0.5748 ext acc/F1=0.7113/0.2732
+[pvbin/drisl] |L|=9000 int acc/F1=0.8383/0.6269 ext acc/F1=0.7142/0.2765
+[pvbin/drisl] |L|=9500 int acc/F1=0.8374/0.6122 ext acc/F1=0.7185/0.2838
+[pvbin/drisl] |L|=10000 int acc/F1=0.837/0.5972 ext acc/F1=0.7217/0.2838
+[pvbin/drisl] |L|=10500 int acc/F1=0.8333/0.589 ext acc/F1=0.7245/0.2904
+[pvbin/drisl] |L|=11000 int acc/F1=0.8377/0.582 ext acc/F1=0.7269/0.29
+[pvbin/drisl] |L|=11500 int acc/F1=0.8452/0.6213 ext acc/F1=0.7291/0.2979
+[pvbin/drisl] |L|=12000 int acc/F1=0.8458/0.5879 ext acc/F1=0.7336/0.3004

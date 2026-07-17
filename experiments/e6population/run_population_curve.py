@@ -96,13 +96,20 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
     pop_labels = [l for _, l in population]
 
     rng = np.random.default_rng(SEED)
-    labeled_idx: list[int] = list(rng.choice(len(pool), size=batch, replace=False))
-    unlabeled = [i for i in range(len(pool)) if i not in set(labeled_idx)]
+    out_path = out_dir / f"popcurve_{classifier_name}_{strategy}.jsonl"
+    state_path = out_dir / f"popcurve_{classifier_name}_{strategy}_state.json"
+    if state_path.exists():  # retomada pós-reinício: recarrega a trajetória
+        labeled_idx = json.loads(state_path.read_text())["labeled_idx"]
+        print(f"[{classifier_name}/{strategy}] RETOMANDO em |L|={len(labeled_idx)}",
+              flush=True)
+    else:
+        labeled_idx = [int(x) for x in rng.choice(len(pool), size=batch, replace=False)]
+        out_path.write_text("")
+    labeled_set = set(labeled_idx)
+    unlabeled = [i for i in range(len(pool)) if i not in labeled_set]
 
     curve = []
     t_start = time.time()
-    out_path = out_dir / f"popcurve_{classifier_name}_{strategy}.jsonl"
-    out_path.write_text("")
     while True:
         lx = [pool_texts[i] for i in labeled_idx]
         ly = [pool_labels[i] for i in labeled_idx]
@@ -145,8 +152,9 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
         else:
             raise ValueError(strategy)
         chosen_set = set(chosen)
-        labeled_idx.extend(chosen)
+        labeled_idx.extend(int(c) for c in chosen)
         unlabeled = [i for i in unlabeled if i not in chosen_set]
+        state_path.write_text(json.dumps({"labeled_idx": labeled_idx}))
 
     summary = {"classifier": classifier_name, "strategy": strategy,
                "budget": budget, "batch": batch,
