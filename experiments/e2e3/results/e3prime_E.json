@@ -1,0 +1,20 @@
+{
+  "arm": "E",
+  "fonte": "prefixo 15k da trajetória de entropia do E6 (SGD), gold",
+  "n_train": 15000,
+  "n_train_classes": 644,
+  "epochs": 3,
+  "batch_size": 16,
+  "max_length": 32,
+  "seed": 42,
+  "eval_n": 20092,
+  "eval_limit": 20000,
+  "accuracy": 0.8314,
+  "accuracy_wilson95": [
+    0.8262,
+    0.8365
+  ],
+  "macro_f1": 0.3801,
+  "fit_seconds": 3148.4,
+  "predict_seconds": 256.9
+}
