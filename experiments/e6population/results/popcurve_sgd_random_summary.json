@@ -1,0 +1,17 @@
+{
+  "classifier": "sgd",
+  "strategy": "random",
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8704,
+    "f1_int": 0.5582,
+    "acc_ext": 0.8736,
+    "f1_ext": 0.438,
+    "elapsed_s": 230.4
+  },
+  "wall_seconds": 230.4
+}

@@ -1,0 +1,17 @@
+{
+  "classifier": "pvbin",
+  "strategy": "drisl",
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8431,
+    "f1_int": 0.5733,
+    "acc_ext": 0.835,
+    "f1_ext": 0.5271,
+    "elapsed_s": 4144.7
+  },
+  "wall_seconds": 4144.7
+}

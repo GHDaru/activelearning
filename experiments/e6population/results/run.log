@@ -188,3 +188,123 @@ pool=50000 população=181490 classes=714
 [sgd] |L|=35500 int acc/F1=0.8462/0.618 ext acc/F1=0.8858/0.493
 [sgd] |L|=36000 int acc/F1=0.8458/0.6116 ext acc/F1=0.8851/0.4902
 [sgd] |L|=36500 int acc/F1=0.8475/0.6159 ext acc/F1=0.8849/0.4917
+pool=50000 população=181490 classes=714
+[sgd/entropy] |L|=500 int acc/F1=0.51/0.2988 ext acc/F1=0.4955/0.0914
+[sgd/entropy] |L|=1000 int acc/F1=0.47/0.3096 ext acc/F1=0.5581/0.1677
+[sgd/entropy] |L|=1500 int acc/F1=0.58/0.3778 ext acc/F1=0.6219/0.2319
+[sgd/entropy] |L|=2000 int acc/F1=0.6125/0.4595 ext acc/F1=0.6737/0.2765
+[sgd/entropy] |L|=2500 int acc/F1=0.602/0.4718 ext acc/F1=0.7034/0.3215
+[sgd/entropy] |L|=3000 int acc/F1=0.6233/0.4565 ext acc/F1=0.7305/0.3575
+[sgd/entropy] |L|=3500 int acc/F1=0.6286/0.4828 ext acc/F1=0.7584/0.3977
+[sgd/entropy] |L|=4000 int acc/F1=0.615/0.4692 ext acc/F1=0.7699/0.4209
+[sgd/entropy] |L|=4500 int acc/F1=0.6189/0.4891 ext acc/F1=0.7908/0.4438
+[sgd/entropy] |L|=5000 int acc/F1=0.649/0.5275 ext acc/F1=0.8009/0.4664
+[sgd/entropy] |L|=5500 int acc/F1=0.6591/0.5341 ext acc/F1=0.8122/0.4864
+[sgd/entropy] |L|=6000 int acc/F1=0.6683/0.5622 ext acc/F1=0.8239/0.5106
+[sgd/entropy] |L|=6500 int acc/F1=0.6846/0.5718 ext acc/F1=0.8344/0.5222
+[sgd/entropy] |L|=7000 int acc/F1=0.6986/0.5856 ext acc/F1=0.8433/0.5363
+[sgd/entropy] |L|=7500 int acc/F1=0.6907/0.5549 ext acc/F1=0.8491/0.5406
+[sgd/entropy] |L|=8000 int acc/F1=0.6981/0.5921 ext acc/F1=0.8537/0.5615
+[sgd/entropy] |L|=8500 int acc/F1=0.6924/0.5772 ext acc/F1=0.8589/0.5537
+[sgd/entropy] |L|=9000 int acc/F1=0.6689/0.5665 ext acc/F1=0.8618/0.56
+[sgd/entropy] |L|=9500 int acc/F1=0.6953/0.5708 ext acc/F1=0.8666/0.5683
+[sgd/entropy] |L|=10000 int acc/F1=0.699/0.5952 ext acc/F1=0.8706/0.5647
+[sgd/entropy] |L|=10500 int acc/F1=0.6914/0.5826 ext acc/F1=0.8743/0.5787
+[sgd/entropy] |L|=11000 int acc/F1=0.6991/0.59 ext acc/F1=0.8773/0.5843
+[sgd/entropy] |L|=11500 int acc/F1=0.7196/0.5953 ext acc/F1=0.8806/0.5767
+[sgd/entropy] |L|=12000 int acc/F1=0.73/0.6303 ext acc/F1=0.8813/0.5807
+[sgd/entropy] |L|=12500 int acc/F1=0.7388/0.6367 ext acc/F1=0.8841/0.5824
+[sgd/entropy] |L|=13000 int acc/F1=0.7304/0.6136 ext acc/F1=0.8852/0.584
+[sgd/entropy] |L|=13500 int acc/F1=0.7415/0.617 ext acc/F1=0.8873/0.5847
+[sgd/entropy] |L|=14000 int acc/F1=0.7436/0.6268 ext acc/F1=0.8888/0.5881
+[sgd/entropy] |L|=14500 int acc/F1=0.739/0.6363 ext acc/F1=0.8897/0.5864
+[sgd/entropy] |L|=15000 int acc/F1=0.7647/0.6374 ext acc/F1=0.8909/0.5883
+[sgd/entropy] |L|=15500 int acc/F1=0.7526/0.6357 ext acc/F1=0.8916/0.5907
+[sgd/entropy] |L|=16000 int acc/F1=0.7697/0.647 ext acc/F1=0.8915/0.5828
+[sgd/entropy] |L|=16500 int acc/F1=0.7688/0.6378 ext acc/F1=0.8929/0.5797
+[sgd/entropy] |L|=17000 int acc/F1=0.76/0.6414 ext acc/F1=0.8926/0.5793
+[sgd/entropy] |L|=17500 int acc/F1=0.7734/0.6418 ext acc/F1=0.8931/0.5797
+[sgd/entropy] |L|=18000 int acc/F1=0.7808/0.6562 ext acc/F1=0.8941/0.576
+[sgd/entropy] |L|=18500 int acc/F1=0.7889/0.6604 ext acc/F1=0.8948/0.5766
+[sgd/entropy] |L|=19000 int acc/F1=0.7876/0.6503 ext acc/F1=0.8947/0.5762
+[sgd/entropy] |L|=19500 int acc/F1=0.7923/0.6616 ext acc/F1=0.8944/0.5766
+[sgd/entropy] |L|=20000 int acc/F1=0.8013/0.6733 ext acc/F1=0.8951/0.5741
+[sgd/entropy] |L|=20500 int acc/F1=0.8059/0.6587 ext acc/F1=0.896/0.5742
+[sgd/entropy] |L|=21000 int acc/F1=0.816/0.651 ext acc/F1=0.896/0.5636
+[sgd/entropy] |L|=21500 int acc/F1=0.7984/0.6319 ext acc/F1=0.8944/0.5582
+[sgd/entropy] |L|=22000 int acc/F1=0.8007/0.6291 ext acc/F1=0.8946/0.5534
+[sgd/entropy] |L|=22500 int acc/F1=0.8067/0.632 ext acc/F1=0.8956/0.5513
+[sgd/entropy] |L|=23000 int acc/F1=0.8104/0.628 ext acc/F1=0.8944/0.5498
+[sgd/entropy] |L|=23500 int acc/F1=0.8138/0.6435 ext acc/F1=0.8956/0.5511
+[sgd/entropy] |L|=24000 int acc/F1=0.8137/0.6391 ext acc/F1=0.8942/0.5449
+[sgd/entropy] |L|=24500 int acc/F1=0.8147/0.636 ext acc/F1=0.8946/0.5446
+[sgd/entropy] |L|=25000 int acc/F1=0.8218/0.621 ext acc/F1=0.8949/0.5435
+[sgd/entropy] |L|=25500 int acc/F1=0.8218/0.6394 ext acc/F1=0.8937/0.5408
+[sgd/entropy] |L|=26000 int acc/F1=0.8165/0.6263 ext acc/F1=0.8933/0.5378
+[sgd/entropy] |L|=26500 int acc/F1=0.824/0.6441 ext acc/F1=0.8933/0.5337
+[sgd/entropy] |L|=27000 int acc/F1=0.8244/0.6442 ext acc/F1=0.8928/0.5297
+[sgd/entropy] |L|=27500 int acc/F1=0.8307/0.6381 ext acc/F1=0.8931/0.5319
+[sgd/entropy] |L|=28000 int acc/F1=0.8304/0.6381 ext acc/F1=0.8926/0.5253
+[sgd/entropy] |L|=28500 int acc/F1=0.8296/0.6366 ext acc/F1=0.8923/0.5274
+[sgd/entropy] |L|=29000 int acc/F1=0.8309/0.6409 ext acc/F1=0.8914/0.5242
+[sgd/entropy] |L|=29500 int acc/F1=0.8319/0.6372 ext acc/F1=0.8919/0.5234
+[sgd/entropy] |L|=30000 int acc/F1=0.8345/0.6292 ext acc/F1=0.8915/0.5214
+[sgd/entropy] |L|=30500 int acc/F1=0.8341/0.6371 ext acc/F1=0.8908/0.5159
+[sgd/entropy] |L|=31000 int acc/F1=0.8347/0.6351 ext acc/F1=0.8904/0.5143
+[sgd/entropy] |L|=31500 int acc/F1=0.8368/0.6232 ext acc/F1=0.8899/0.5158
+[sgd/entropy] |L|=32000 int acc/F1=0.8334/0.6401 ext acc/F1=0.8895/0.5135
+[sgd/entropy] |L|=32500 int acc/F1=0.8406/0.6228 ext acc/F1=0.8885/0.5083
+[sgd/entropy] |L|=33000 int acc/F1=0.8394/0.6252 ext acc/F1=0.8885/0.509
+[sgd/entropy] |L|=33500 int acc/F1=0.841/0.6243 ext acc/F1=0.8878/0.5034
+[sgd/entropy] |L|=34000 int acc/F1=0.8413/0.6146 ext acc/F1=0.8875/0.5034
+[sgd/entropy] |L|=34500 int acc/F1=0.847/0.6274 ext acc/F1=0.8873/0.5015
+[sgd/entropy] |L|=35000 int acc/F1=0.8431/0.6147 ext acc/F1=0.8868/0.4984
+[sgd/entropy] |L|=35500 int acc/F1=0.8462/0.618 ext acc/F1=0.8858/0.493
+[sgd/entropy] |L|=36000 int acc/F1=0.8458/0.6116 ext acc/F1=0.8851/0.4902
+[sgd/entropy] |L|=36500 int acc/F1=0.8475/0.6159 ext acc/F1=0.8849/0.4917
+[sgd/entropy] |L|=37000 int acc/F1=0.8491/0.6109 ext acc/F1=0.8846/0.4908
+[sgd/entropy] |L|=37500 int acc/F1=0.8513/0.6066 ext acc/F1=0.8839/0.4869
+[sgd/entropy] |L|=38000 int acc/F1=0.8528/0.6113 ext acc/F1=0.8838/0.4855
+[sgd/entropy] |L|=38500 int acc/F1=0.8529/0.6123 ext acc/F1=0.883/0.4857
+[sgd/entropy] |L|=39000 int acc/F1=0.8506/0.6042 ext acc/F1=0.8833/0.4841
+[sgd/entropy] |L|=39500 int acc/F1=0.8595/0.605 ext acc/F1=0.8824/0.479
+[sgd/entropy] |L|=40000 int acc/F1=0.8591/0.618 ext acc/F1=0.8823/0.4816
+[sgd/entropy] |L|=40500 int acc/F1=0.8601/0.6226 ext acc/F1=0.882/0.4814
+[sgd/entropy] |L|=41000 int acc/F1=0.8607/0.616 ext acc/F1=0.8817/0.478
+[sgd/entropy] |L|=41500 int acc/F1=0.8645/0.6256 ext acc/F1=0.8804/0.4761
+[sgd/entropy] |L|=42000 int acc/F1=0.8644/0.6106 ext acc/F1=0.8805/0.4755
+[sgd/entropy] |L|=42500 int acc/F1=0.864/0.6182 ext acc/F1=0.8801/0.4739
+[sgd/entropy] |L|=43000 int acc/F1=0.862/0.6085 ext acc/F1=0.879/0.4697
+[sgd/entropy] |L|=43500 int acc/F1=0.8644/0.6102 ext acc/F1=0.8785/0.4658
+[sgd/entropy] |L|=44000 int acc/F1=0.8623/0.6133 ext acc/F1=0.8779/0.4639
+[sgd/entropy] |L|=44500 int acc/F1=0.8657/0.6165 ext acc/F1=0.8776/0.4616
+[sgd/entropy] |L|=45000 int acc/F1=0.8692/0.6133 ext acc/F1=0.8778/0.4611
+[sgd/entropy] |L|=45500 int acc/F1=0.8687/0.6025 ext acc/F1=0.8771/0.4581
+[sgd/entropy] |L|=46000 int acc/F1=0.8707/0.6096 ext acc/F1=0.8768/0.4553
+[sgd/entropy] |L|=46500 int acc/F1=0.8689/0.6009 ext acc/F1=0.8766/0.4559
+[sgd/entropy] |L|=47000 int acc/F1=0.8748/0.6047 ext acc/F1=0.8764/0.4547
+pool=50000 população=181490 classes=714
+[sgd/entropy] RETOMANDO em |L|=47500
+[sgd/entropy] |L|=47500 int acc/F1=0.8719/0.6098 ext acc/F1=0.8759/0.4506
+[sgd/entropy] |L|=48000 int acc/F1=0.8733/0.5937 ext acc/F1=0.8754/0.4482
+[sgd/entropy] |L|=48500 int acc/F1=0.8725/0.5941 ext acc/F1=0.8749/0.4463
+[sgd/entropy] |L|=49000 int acc/F1=0.877/0.5967 ext acc/F1=0.8753/0.4482
+[sgd/entropy] |L|=49500 int acc/F1=0.8743/0.5898 ext acc/F1=0.8737/0.4408
+[sgd/entropy] |L|=50000 int acc/F1=0.8712/0.5801 ext acc/F1=0.8732/0.44
+{
+  "classifier": "sgd",
+  "strategy": "entropy",
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8712,
+    "f1_int": 0.5801,
+    "acc_ext": 0.8732,
+    "f1_ext": 0.44,
+    "elapsed_s": 508.9
+  },
+  "wall_seconds": 508.9
+}

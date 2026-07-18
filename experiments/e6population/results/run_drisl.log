@@ -24,3 +24,151 @@ pré-computando embeddings do pool p/ DRI-SL...
 [pvbin/drisl] |L|=11000 int acc/F1=0.8377/0.582 ext acc/F1=0.7269/0.29
 [pvbin/drisl] |L|=11500 int acc/F1=0.8452/0.6213 ext acc/F1=0.7291/0.2979
 [pvbin/drisl] |L|=12000 int acc/F1=0.8458/0.5879 ext acc/F1=0.7336/0.3004
+pool=50000 população=181490 classes=714
+pré-computando embeddings do pool p/ DRI-SL...
+[pvbin/drisl] |L|=500 int acc/F1=0.5/0.3356 ext acc/F1=0.4329/0.0841
+[pvbin/drisl] |L|=1000 int acc/F1=0.515/0.3078 ext acc/F1=0.558/0.1355
+[pvbin/drisl] |L|=1500 int acc/F1=0.6167/0.381 ext acc/F1=0.6023/0.1685
+[pvbin/drisl] |L|=2000 int acc/F1=0.6925/0.464 ext acc/F1=0.6252/0.1815
+[pvbin/drisl] |L|=2500 int acc/F1=0.726/0.4767 ext acc/F1=0.6423/0.1966
+[pvbin/drisl] |L|=3000 int acc/F1=0.74/0.4852 ext acc/F1=0.6536/0.2096
+[pvbin/drisl] |L|=3500 int acc/F1=0.74/0.4824 ext acc/F1=0.6577/0.2148
+[pvbin/drisl] |L|=4000 int acc/F1=0.7575/0.5114 ext acc/F1=0.6698/0.2277
+[pvbin/drisl] |L|=4500 int acc/F1=0.7933/0.5722 ext acc/F1=0.6765/0.2354
+[pvbin/drisl] |L|=5000 int acc/F1=0.801/0.5583 ext acc/F1=0.6839/0.2402
+[pvbin/drisl] |L|=5500 int acc/F1=0.8009/0.5443 ext acc/F1=0.6853/0.2473
+[pvbin/drisl] |L|=6000 int acc/F1=0.81/0.5756 ext acc/F1=0.6911/0.2536
+[pvbin/drisl] |L|=6500 int acc/F1=0.8123/0.5718 ext acc/F1=0.6945/0.2534
+[pvbin/drisl] |L|=7000 int acc/F1=0.8064/0.551 ext acc/F1=0.6983/0.2579
+[pvbin/drisl] |L|=7500 int acc/F1=0.8227/0.5871 ext acc/F1=0.7039/0.2666
+[pvbin/drisl] |L|=8000 int acc/F1=0.8269/0.5816 ext acc/F1=0.7075/0.2706
+[pvbin/drisl] |L|=8500 int acc/F1=0.8259/0.5748 ext acc/F1=0.7113/0.2732
+[pvbin/drisl] |L|=9000 int acc/F1=0.8383/0.6269 ext acc/F1=0.7142/0.2765
+[pvbin/drisl] |L|=9500 int acc/F1=0.8374/0.6122 ext acc/F1=0.7185/0.2838
+[pvbin/drisl] |L|=10000 int acc/F1=0.837/0.5972 ext acc/F1=0.7217/0.2838
+[pvbin/drisl] |L|=10500 int acc/F1=0.8333/0.589 ext acc/F1=0.7245/0.2904
+[pvbin/drisl] |L|=11000 int acc/F1=0.8377/0.582 ext acc/F1=0.7269/0.29
+[pvbin/drisl] |L|=11500 int acc/F1=0.8452/0.6213 ext acc/F1=0.7291/0.2979
+[pvbin/drisl] |L|=12000 int acc/F1=0.8458/0.5879 ext acc/F1=0.7336/0.3004
+[pvbin/drisl] |L|=12500 int acc/F1=0.8524/0.5952 ext acc/F1=0.7355/0.299
+[pvbin/drisl] |L|=13000 int acc/F1=0.8496/0.5971 ext acc/F1=0.7355/0.3053
+[pvbin/drisl] |L|=13500 int acc/F1=0.843/0.6149 ext acc/F1=0.7386/0.3081
+[pvbin/drisl] |L|=14000 int acc/F1=0.8511/0.6084 ext acc/F1=0.7433/0.3128
+[pvbin/drisl] |L|=14500 int acc/F1=0.8514/0.619 ext acc/F1=0.7418/0.3183
+[pvbin/drisl] |L|=15000 int acc/F1=0.8633/0.6586 ext acc/F1=0.7492/0.3259
+[pvbin/drisl] |L|=15500 int acc/F1=0.8468/0.5905 ext acc/F1=0.7485/0.3224
+[pvbin/drisl] |L|=16000 int acc/F1=0.8572/0.6101 ext acc/F1=0.7515/0.3299
+[pvbin/drisl] |L|=16500 int acc/F1=0.8552/0.6004 ext acc/F1=0.7538/0.3352
+[pvbin/drisl] |L|=17000 int acc/F1=0.8518/0.6216 ext acc/F1=0.7565/0.3368
+[pvbin/drisl] |L|=17500 int acc/F1=0.8611/0.5977 ext acc/F1=0.7578/0.3372
+[pvbin/drisl] |L|=18000 int acc/F1=0.8506/0.5718 ext acc/F1=0.7602/0.3425
+[pvbin/drisl] |L|=18500 int acc/F1=0.8551/0.5958 ext acc/F1=0.7614/0.3502
+[pvbin/drisl] |L|=19000 int acc/F1=0.8584/0.5995 ext acc/F1=0.7642/0.3526
+[pvbin/drisl] |L|=19500 int acc/F1=0.8551/0.5992 ext acc/F1=0.7649/0.3523
+[pvbin/drisl] |L|=20000 int acc/F1=0.85/0.5924 ext acc/F1=0.7671/0.3559
+[pvbin/drisl] |L|=20500 int acc/F1=0.8549/0.6107 ext acc/F1=0.7701/0.3615
+[pvbin/drisl] |L|=21000 int acc/F1=0.8555/0.6079 ext acc/F1=0.7729/0.3657
+[pvbin/drisl] |L|=21500 int acc/F1=0.8644/0.6111 ext acc/F1=0.7734/0.3642
+[pvbin/drisl] |L|=22000 int acc/F1=0.8548/0.5834 ext acc/F1=0.7732/0.3618
+[pvbin/drisl] |L|=22500 int acc/F1=0.8616/0.5954 ext acc/F1=0.7746/0.3693
+[pvbin/drisl] |L|=23000 int acc/F1=0.8585/0.5799 ext acc/F1=0.7763/0.3695
+[pvbin/drisl] |L|=23500 int acc/F1=0.857/0.5966 ext acc/F1=0.7787/0.3749
+[pvbin/drisl] |L|=24000 int acc/F1=0.8646/0.5933 ext acc/F1=0.7799/0.3772
+[pvbin/drisl] |L|=24500 int acc/F1=0.8502/0.5867 ext acc/F1=0.7815/0.3843
+[pvbin/drisl] |L|=25000 int acc/F1=0.8642/0.5983 ext acc/F1=0.7838/0.3833
+[pvbin/drisl] |L|=25500 int acc/F1=0.8665/0.5893 ext acc/F1=0.786/0.3889
+[pvbin/drisl] |L|=26000 int acc/F1=0.8585/0.6034 ext acc/F1=0.7859/0.3924
+[pvbin/drisl] |L|=26500 int acc/F1=0.8549/0.5741 ext acc/F1=0.7872/0.3905
+[pvbin/drisl] |L|=27000 int acc/F1=0.8694/0.5975 ext acc/F1=0.7884/0.3948
+[pvbin/drisl] |L|=27500 int acc/F1=0.8655/0.6051 ext acc/F1=0.7898/0.3988
+[pvbin/drisl] |L|=28000 int acc/F1=0.8621/0.6247 ext acc/F1=0.7899/0.4026
+[pvbin/drisl] |L|=28500 int acc/F1=0.8582/0.608 ext acc/F1=0.7918/0.4024
+[pvbin/drisl] |L|=29000 int acc/F1=0.8698/0.6222 ext acc/F1=0.7925/0.4079
+[pvbin/drisl] |L|=29500 int acc/F1=0.8686/0.6181 ext acc/F1=0.7947/0.4063
+[pvbin/drisl] |L|=30000 int acc/F1=0.8637/0.6227 ext acc/F1=0.7958/0.414
+[pvbin/drisl] |L|=30500 int acc/F1=0.8543/0.5832 ext acc/F1=0.7977/0.4183
+[pvbin/drisl] |L|=31000 int acc/F1=0.8597/0.6252 ext acc/F1=0.7992/0.4188
+[pvbin/drisl] |L|=31500 int acc/F1=0.8594/0.6105 ext acc/F1=0.8001/0.4214
+[pvbin/drisl] |L|=32000 int acc/F1=0.8597/0.6108 ext acc/F1=0.8009/0.4262
+[pvbin/drisl] |L|=32500 int acc/F1=0.8549/0.5737 ext acc/F1=0.8015/0.4219
+[pvbin/drisl] |L|=33000 int acc/F1=0.8558/0.6004 ext acc/F1=0.8041/0.4277
+[pvbin/drisl] |L|=33500 int acc/F1=0.8558/0.6023 ext acc/F1=0.8042/0.4308
+[pvbin/drisl] |L|=34000 int acc/F1=0.8549/0.5956 ext acc/F1=0.8047/0.432
+[pvbin/drisl] |L|=34500 int acc/F1=0.8586/0.5875 ext acc/F1=0.8075/0.44
+[pvbin/drisl] |L|=35000 int acc/F1=0.8589/0.6068 ext acc/F1=0.8069/0.4376
+[pvbin/drisl] |L|=35500 int acc/F1=0.8528/0.5739 ext acc/F1=0.8076/0.4371
+[pvbin/drisl] |L|=36000 int acc/F1=0.8601/0.5888 ext acc/F1=0.81/0.4429
+[pvbin/drisl] |L|=36500 int acc/F1=0.8555/0.6061 ext acc/F1=0.8108/0.4482
+[pvbin/drisl] |L|=37000 int acc/F1=0.853/0.5905 ext acc/F1=0.8123/0.4475
+[pvbin/drisl] |L|=37500 int acc/F1=0.8529/0.5904 ext acc/F1=0.8131/0.4506
+[pvbin/drisl] |L|=38000 int acc/F1=0.8529/0.5933 ext acc/F1=0.8147/0.4557
+[pvbin/drisl] |L|=38500 int acc/F1=0.8536/0.6091 ext acc/F1=0.8157/0.4572
+[pvbin/drisl] |L|=39000 int acc/F1=0.8523/0.5947 ext acc/F1=0.8154/0.4662
+[pvbin/drisl] |L|=39500 int acc/F1=0.8589/0.5959 ext acc/F1=0.8167/0.4637
+[pvbin/drisl] |L|=40000 int acc/F1=0.8535/0.5828 ext acc/F1=0.8181/0.4714
+[pvbin/drisl] |L|=40500 int acc/F1=0.8479/0.5688 ext acc/F1=0.8187/0.4687
+[pvbin/drisl] |L|=41000 int acc/F1=0.8548/0.5985 ext acc/F1=0.8202/0.4688
+[pvbin/drisl] |L|=41500 int acc/F1=0.851/0.5816 ext acc/F1=0.8215/0.4766
+[pvbin/drisl] |L|=42000 int acc/F1=0.853/0.5618 ext acc/F1=0.822/0.4794
+[pvbin/drisl] |L|=42500 int acc/F1=0.8504/0.598 ext acc/F1=0.8233/0.4876
+[pvbin/drisl] |L|=43000 int acc/F1=0.8456/0.5815 ext acc/F1=0.8235/0.4877
+[pvbin/drisl] |L|=43500 int acc/F1=0.8502/0.5809 ext acc/F1=0.8242/0.4933
+[pvbin/drisl] |L|=44000 int acc/F1=0.8523/0.5942 ext acc/F1=0.8252/0.492
+[pvbin/drisl] |L|=44500 int acc/F1=0.8448/0.5659 ext acc/F1=0.8265/0.4911
+[pvbin/drisl] |L|=45000 int acc/F1=0.8543/0.6059 ext acc/F1=0.8279/0.4976
+[pvbin/drisl] |L|=45500 int acc/F1=0.8478/0.6072 ext acc/F1=0.8278/0.5057
+[pvbin/drisl] |L|=46000 int acc/F1=0.8526/0.5952 ext acc/F1=0.8285/0.5005
+[pvbin/drisl] |L|=46500 int acc/F1=0.8472/0.5809 ext acc/F1=0.8299/0.5025
+[pvbin/drisl] |L|=47000 int acc/F1=0.851/0.5729 ext acc/F1=0.8302/0.5024
+[pvbin/drisl] |L|=47500 int acc/F1=0.8466/0.5695 ext acc/F1=0.8304/0.5114
+[pvbin/drisl] |L|=48000 int acc/F1=0.8445/0.5757 ext acc/F1=0.8326/0.5158
+[pvbin/drisl] |L|=48500 int acc/F1=0.8457/0.5824 ext acc/F1=0.8331/0.5176
+[pvbin/drisl] |L|=49000 int acc/F1=0.8441/0.5834 ext acc/F1=0.8337/0.5216
+[pvbin/drisl] |L|=49500 int acc/F1=0.843/0.5517 ext acc/F1=0.8339/0.5236
+[pvbin/drisl] |L|=50000 int acc/F1=0.8431/0.5733 ext acc/F1=0.835/0.5271
+{
+  "classifier": "pvbin",
+  "strategy": "drisl",
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8431,
+    "f1_int": 0.5733,
+    "acc_ext": 0.835,
+    "f1_ext": 0.5271,
+    "elapsed_s": 4144.7
+  },
+  "wall_seconds": 4144.7
+}
+[sgd/drisl] |L|=500 int acc/F1=0.51/0.2988 ext acc/F1=0.4955/0.0914
+[sgd/drisl] |L|=1000 int acc/F1=0.58/0.348 ext acc/F1=0.6256/0.1524
+[sgd/drisl] |L|=1500 int acc/F1=0.6767/0.3883 ext acc/F1=0.6725/0.1878
+[sgd/drisl] |L|=2000 int acc/F1=0.765/0.5333 ext acc/F1=0.6989/0.2058
+[sgd/drisl] |L|=2500 int acc/F1=0.798/0.544 ext acc/F1=0.7161/0.2238
+[sgd/drisl] |L|=3000 int acc/F1=0.8033/0.5647 ext acc/F1=0.7297/0.2344
+[sgd/drisl] |L|=3500 int acc/F1=0.7957/0.5652 ext acc/F1=0.7353/0.2455
+[sgd/drisl] |L|=4000 int acc/F1=0.8287/0.6009 ext acc/F1=0.7466/0.2554
+[sgd/drisl] |L|=4500 int acc/F1=0.8633/0.6751 ext acc/F1=0.755/0.2648
+[sgd/drisl] |L|=5000 int acc/F1=0.85/0.6442 ext acc/F1=0.7629/0.2722
+[sgd/drisl] |L|=5500 int acc/F1=0.8691/0.6636 ext acc/F1=0.7712/0.2825
+[sgd/drisl] |L|=6000 int acc/F1=0.88/0.6812 ext acc/F1=0.7741/0.287
+[sgd/drisl] |L|=6500 int acc/F1=0.8677/0.6498 ext acc/F1=0.7761/0.2838
+[sgd/drisl] |L|=7000 int acc/F1=0.8721/0.6466 ext acc/F1=0.7815/0.2917
+[sgd/drisl] |L|=7500 int acc/F1=0.88/0.6643 ext acc/F1=0.7848/0.2987
+[sgd/drisl] |L|=8000 int acc/F1=0.8875/0.6747 ext acc/F1=0.7872/0.3
+[sgd/drisl] |L|=8500 int acc/F1=0.8782/0.6463 ext acc/F1=0.7896/0.3002
+[sgd/drisl] |L|=9000 int acc/F1=0.8872/0.6916 ext acc/F1=0.792/0.3072
+pool=50000 população=181490 classes=714
+pré-computando embeddings do pool p/ DRI-SL...
+[sgd/drisl] RETOMANDO em |L|=9500
+[sgd/drisl] |L|=9500 int acc/F1=0.9021/0.7137 ext acc/F1=0.7972/0.3143
+[sgd/drisl] |L|=10000 int acc/F1=0.891/0.6806 ext acc/F1=0.7975/0.3102
+[sgd/drisl] |L|=10500 int acc/F1=0.8919/0.6822 ext acc/F1=0.8007/0.3141
+[sgd/drisl] |L|=11000 int acc/F1=0.8914/0.6512 ext acc/F1=0.8025/0.3155
+[sgd/drisl] |L|=11500 int acc/F1=0.9017/0.6898 ext acc/F1=0.805/0.3223
+[sgd/drisl] |L|=12000 int acc/F1=0.8875/0.6634 ext acc/F1=0.8059/0.3244
+[sgd/drisl] |L|=12500 int acc/F1=0.904/0.68 ext acc/F1=0.8079/0.3239
+[sgd/drisl] |L|=13000 int acc/F1=0.9062/0.6856 ext acc/F1=0.8085/0.3262
