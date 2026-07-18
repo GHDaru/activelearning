@@ -190,7 +190,8 @@ def fig_ciclo_curvas():
     _save(fig, "fig_ciclo_curvas")
 
 
-E6_STRATEGIES = [("entropy", "entropia"), ("random", "aleatória"), ("drisl", "DRI-SL")]
+E6_STRATEGIES = [("entropy", "entropia"), ("random", "aleatória"), ("drisl", "DRI-SL"),
+                 ("drisl-c", "DRI-SL-C")]
 E6_CLASSIFIERS = [("pvbin", "PVBin"), ("sgd", "SGD logístico")]
 
 
@@ -230,7 +231,9 @@ def fig_e6_seletores():
 
 def fig_e6_vies():
     """Viés de autoavaliação: interna − externa por seletor (grade 2×3)."""
-    fig, axes = plt.subplots(2, 3, figsize=(7.4, 4.4), sharex=True, sharey=True)
+    n_strat = len(E6_STRATEGIES)
+    fig, axes = plt.subplots(2, n_strat, figsize=(2.1 + 1.8 * n_strat, 4.4),
+                             sharex=True, sharey=True)
     for r, (clf, ctitle) in enumerate(E6_CLASSIFIERS):
         for c, (strat, stitle) in enumerate(E6_STRATEGIES):
             ax = axes[r][c]

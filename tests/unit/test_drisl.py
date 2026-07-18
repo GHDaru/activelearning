@@ -61,3 +61,17 @@ def test_rejects_bad_target():
         drisl_select(TEXTS, 0, TfidfSvdEncoder())
     with pytest.raises(ValueError):
         drisl_select(TEXTS, len(TEXTS) + 1, TfidfSvdEncoder())
+
+
+def test_drisl_select_by_groups_respects_target_and_groups():
+    from activelearning.adapters.strategies.drisl import drisl_select_by_groups
+
+    texts = ["arroz branco", "arroz integral", "arroz agulhinha",
+             "feijao preto", "feijao carioca", "leite integral"]
+    groups = ["arroz", "arroz", "arroz", "feijao", "feijao", "leite"]
+    res = drisl_select_by_groups(texts, target_size=3, groups=groups)
+    assert len(res.indices) == 3
+    assert len(set(res.indices)) == 3
+    # alocação proporcional com mínimo 1: cada grupo não vazio representado
+    selected_groups = {groups[i] for i in res.indices}
+    assert selected_groups == {"arroz", "feijao", "leite"}

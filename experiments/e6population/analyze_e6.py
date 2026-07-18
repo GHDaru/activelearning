@@ -12,7 +12,7 @@ from pathlib import Path
 from statistics import mean
 
 ROOT = Path(__file__).parent / "results"
-STRATEGIES = ("entropy", "random", "drisl")
+STRATEGIES = ("entropy", "random", "drisl", "drisl-c")
 CLASSIFIERS = ("pvbin", "sgd")
 MARKS = (2000, 5000, 10000, 20000, 50000)
 
