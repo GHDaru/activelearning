@@ -35,6 +35,7 @@ uv run pytest                 # testes de domínio (sem rede/GPU/chaves)
 
 | Guia | Conteúdo |
 |------|----------|
+| [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | **reprodutibilidade para outros pesquisadores**: ambiente, dados, comando exato de cada experimento, artefatos, custos e roteiro de publicação (Zenodo/Papers with Code) |
 | [docs/biblioteca.md](docs/biblioteca.md) | uso da biblioteca: classificadores (PVBin, BERTimbau), DRI-SL, oráculos, laço de AL, runner FALCO, saneamento |
 | [docs/flowbuilder.md](docs/flowbuilder.md) | frontend + backend: subir os serviços, fluxo pela UI, referência da API (curl) |
 | [docs/experimentos.md](docs/experimentos.md) | como executar e parametrizar E0/E0-P/E1/E4/P1/E2-E3; artefatos e reprodutibilidade |
