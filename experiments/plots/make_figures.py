@@ -190,9 +190,72 @@ def fig_ciclo_curvas():
     _save(fig, "fig_ciclo_curvas")
 
 
+E6_STRATEGIES = [("entropy", "entropia"), ("random", "aleatória"), ("drisl", "DRI-SL")]
+E6_CLASSIFIERS = [("pvbin", "PVBin"), ("sgd", "SGD logístico")]
+
+
+def _load_e6(clf, strat):
+    p = ROOT / f"experiments/e6population/results/popcurve_{clf}_{strat}.jsonl"
+    if not p.exists():
+        return None
+    pts, seen = [], set()
+    for line in p.read_text().splitlines():
+        if line.strip():
+            d = json.loads(line)
+            if d["n_labels"] not in seen:   # dedup de pontos re-avaliados em retomadas
+                seen.add(d["n_labels"])
+                pts.append(d)
+    return sorted(pts, key=lambda d: d["n_labels"])
+
+
+def fig_e6_seletores():
+    """Curva EXTERNA (população) por seletor — qual política domina onde."""
+    fig, axes = plt.subplots(1, 2, figsize=(6.4, 3.0), sharey=True, sharex=True)
+    for ax, (clf, title) in zip(axes, E6_CLASSIFIERS):
+        for i, (strat, label) in enumerate(E6_STRATEGIES):
+            pts = _load_e6(clf, strat)
+            if not pts:
+                continue
+            xs = [d["n_labels"] for d in pts]
+            ys = [d["f1_ext"] for d in pts]
+            ax.plot(xs, ys, color=PALETTE[i], linestyle=LINESTYLES[i],
+                    marker=MARKERS[i], markevery=10, markersize=3,
+                    linewidth=1.5, label=label)
+        ax.set_title(title, fontsize=9)
+        ax.set_xlabel("rótulos $|L|$")
+    axes[0].set_ylabel("Macro F1 na população")
+    axes[0].legend(loc="lower right", frameon=False, fontsize=7.5)
+    _save(fig, "fig_e6_seletores")
+
+
+def fig_e6_vies():
+    """Viés de autoavaliação: interna − externa por seletor (grade 2×3)."""
+    fig, axes = plt.subplots(2, 3, figsize=(7.4, 4.4), sharex=True, sharey=True)
+    for r, (clf, ctitle) in enumerate(E6_CLASSIFIERS):
+        for c, (strat, stitle) in enumerate(E6_STRATEGIES):
+            ax = axes[r][c]
+            pts = _load_e6(clf, strat)
+            if not pts:
+                ax.set_axis_off()
+                continue
+            xs = [d["n_labels"] for d in pts]
+            for i, (key, label) in enumerate((("f1_int", "interna"),
+                                              ("f1_ext", "externa"))):
+                ax.plot(xs, [d[key] for d in pts], color=PALETTE[i],
+                        linestyle=LINESTYLES[i], linewidth=1.4, label=label)
+            if r == 0:
+                ax.set_title(stitle, fontsize=9)
+            if c == 0:
+                ax.set_ylabel(f"{ctitle}\nMacro F1", fontsize=8.5)
+            if r == 1:
+                ax.set_xlabel("rótulos $|L|$", fontsize=8.5)
+    axes[0][0].legend(loc="lower right", frameon=False, fontsize=7.5)
+    _save(fig, "fig_e6_vies")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=["e1", "e4", "e0", "ciclo"], default=None)
+    ap.add_argument("--only", choices=["e1", "e4", "e0", "ciclo", "e6"], default=None)
     args = ap.parse_args()
     if args.only in (None, "e1"):
         fig_e1_curvas()
@@ -202,3 +265,6 @@ if __name__ == "__main__":
         fig_e0_custo_acuracia()
     if args.only in (None, "ciclo"):
         fig_ciclo_curvas()
+    if args.only in (None, "e6"):
+        fig_e6_seletores()
+        fig_e6_vies()
