@@ -1,0 +1,22 @@
+{
+  "arm": "B",
+  "n_cache": 9357,
+  "n_validos": 8937,
+  "fonte": "mesmos itens de A, rótulos gold",
+  "n_train": 8937,
+  "n_train_classes": 620,
+  "epochs": 3,
+  "batch_size": 16,
+  "max_length": 32,
+  "seed": 42,
+  "eval_n": 20092,
+  "eval_limit": 20000,
+  "accuracy": 0.7023,
+  "accuracy_wilson95": [
+    0.6959,
+    0.7086
+  ],
+  "macro_f1": 0.2092,
+  "fit_seconds": 1881.2,
+  "predict_seconds": 257.0
+}

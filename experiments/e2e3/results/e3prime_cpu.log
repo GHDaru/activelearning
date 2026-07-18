@@ -28,3 +28,748 @@ Notes:
   época 1/3 passo 41/559 loss=6.1984
   época 1/3 passo 51/559 loss=6.4896
   época 1/3 passo 61/559 loss=6.2875
+  época 1/3 passo 71/559 loss=6.0769
+  época 1/3 passo 81/559 loss=6.0679
+  época 1/3 passo 91/559 loss=6.0680
+  época 1/3 passo 101/559 loss=6.2614
+  época 1/3 passo 111/559 loss=6.1504
+  época 1/3 passo 121/559 loss=6.2721
+  época 1/3 passo 131/559 loss=5.6689
+  época 1/3 passo 141/559 loss=5.7175
+  época 1/3 passo 151/559 loss=5.7222
+  época 1/3 passo 161/559 loss=5.8912
+  época 1/3 passo 171/559 loss=5.4615
+  época 1/3 passo 181/559 loss=6.1658
+  época 1/3 passo 191/559 loss=5.8665
+  época 1/3 passo 201/559 loss=6.1344
+  época 1/3 passo 211/559 loss=5.6914
+  época 1/3 passo 221/559 loss=5.7894
+  época 1/3 passo 231/559 loss=5.8483
+  época 1/3 passo 241/559 loss=5.8063
+  época 1/3 passo 251/559 loss=5.9000
+  época 1/3 passo 261/559 loss=5.9541
+  época 1/3 passo 271/559 loss=6.0992
+  época 1/3 passo 281/559 loss=5.1128
+  época 1/3 passo 291/559 loss=5.8026
+  época 1/3 passo 301/559 loss=6.0105
+  época 1/3 passo 311/559 loss=5.8719
+  época 1/3 passo 321/559 loss=5.6755
+  época 1/3 passo 331/559 loss=5.6508
+  época 1/3 passo 341/559 loss=6.0649
+  época 1/3 passo 351/559 loss=5.8908
+  época 1/3 passo 361/559 loss=5.2303
+  época 1/3 passo 371/559 loss=5.6769
+  época 1/3 passo 381/559 loss=5.5123
+  época 1/3 passo 391/559 loss=5.9297
+  época 1/3 passo 401/559 loss=5.2063
+  época 1/3 passo 411/559 loss=5.4270
+  época 1/3 passo 421/559 loss=5.4412
+  época 1/3 passo 431/559 loss=4.9391
+  época 1/3 passo 441/559 loss=5.0707
+  época 1/3 passo 451/559 loss=5.5290
+  época 1/3 passo 461/559 loss=5.5502
+  época 1/3 passo 471/559 loss=5.4685
+  época 1/3 passo 481/559 loss=5.1148
+  época 1/3 passo 491/559 loss=5.4932
+  época 1/3 passo 501/559 loss=5.1913
+  época 1/3 passo 511/559 loss=5.2812
+  época 1/3 passo 521/559 loss=5.0750
+  época 1/3 passo 531/559 loss=4.7272
+  época 1/3 passo 541/559 loss=4.4779
+  época 1/3 passo 551/559 loss=5.1525
+  época 1: loss médio 5.7067
+  época 2/3 passo 1/559 loss=5.0572
+  época 2/3 passo 11/559 loss=4.7994
+  época 2/3 passo 21/559 loss=5.3415
+  época 2/3 passo 31/559 loss=4.6140
+  época 2/3 passo 41/559 loss=4.4585
+  época 2/3 passo 51/559 loss=4.7625
+  época 2/3 passo 61/559 loss=4.1438
+  época 2/3 passo 71/559 loss=5.0171
+  época 2/3 passo 81/559 loss=4.3865
+  época 2/3 passo 91/559 loss=5.4409
+  época 2/3 passo 101/559 loss=4.6685
+  época 2/3 passo 111/559 loss=4.5053
+  época 2/3 passo 121/559 loss=3.9044
+  época 2/3 passo 131/559 loss=3.9528
+  época 2/3 passo 141/559 loss=4.4995
+  época 2/3 passo 151/559 loss=4.3673
+  época 2/3 passo 161/559 loss=4.2321
+  época 2/3 passo 171/559 loss=4.2760
+  época 2/3 passo 181/559 loss=4.2849
+  época 2/3 passo 191/559 loss=4.1094
+  época 2/3 passo 201/559 loss=4.2686
+  época 2/3 passo 211/559 loss=4.1183
+  época 2/3 passo 221/559 loss=4.2540
+  época 2/3 passo 231/559 loss=3.9623
+  época 2/3 passo 241/559 loss=4.6112
+  época 2/3 passo 251/559 loss=4.2129
+  época 2/3 passo 261/559 loss=4.2725
+  época 2/3 passo 271/559 loss=3.9864
+  época 2/3 passo 281/559 loss=4.8581
+  época 2/3 passo 291/559 loss=4.4916
+  época 2/3 passo 301/559 loss=4.6954
+  época 2/3 passo 311/559 loss=3.9127
+  época 2/3 passo 321/559 loss=3.0483
+  época 2/3 passo 331/559 loss=3.6899
+  época 2/3 passo 341/559 loss=3.6068
+  época 2/3 passo 351/559 loss=4.5164
+  época 2/3 passo 361/559 loss=3.3253
+  época 2/3 passo 371/559 loss=4.1708
+  época 2/3 passo 381/559 loss=4.0962
+  época 2/3 passo 391/559 loss=3.5451
+  época 2/3 passo 401/559 loss=4.5662
+  época 2/3 passo 411/559 loss=4.1268
+  época 2/3 passo 421/559 loss=3.3732
+  época 2/3 passo 431/559 loss=3.7527
+  época 2/3 passo 441/559 loss=3.4110
+  época 2/3 passo 451/559 loss=4.4250
+  época 2/3 passo 461/559 loss=3.0851
+  época 2/3 passo 471/559 loss=4.2650
+  época 2/3 passo 481/559 loss=3.4512
+  época 2/3 passo 491/559 loss=3.9128
+  época 2/3 passo 501/559 loss=3.9443
+  época 2/3 passo 511/559 loss=4.2727
+  época 2/3 passo 521/559 loss=3.3083
+  época 2/3 passo 531/559 loss=3.5351
+  época 2/3 passo 541/559 loss=3.4068
+  época 2/3 passo 551/559 loss=3.4374
+  época 2: loss médio 4.2524
+  época 3/3 passo 1/559 loss=3.7753
+  época 3/3 passo 11/559 loss=3.2760
+  época 3/3 passo 21/559 loss=3.2565
+  época 3/3 passo 31/559 loss=3.3280
+  época 3/3 passo 41/559 loss=3.0624
+  época 3/3 passo 51/559 loss=3.4130
+  época 3/3 passo 61/559 loss=3.6391
+  época 3/3 passo 71/559 loss=2.8152
+  época 3/3 passo 81/559 loss=2.5771
+  época 3/3 passo 91/559 loss=3.8207
+  época 3/3 passo 101/559 loss=2.9837
+  época 3/3 passo 111/559 loss=3.6586
+  época 3/3 passo 121/559 loss=3.4759
+  época 3/3 passo 131/559 loss=2.9150
+  época 3/3 passo 141/559 loss=3.3682
+  época 3/3 passo 151/559 loss=3.2790
+  época 3/3 passo 161/559 loss=2.4492
+  época 3/3 passo 171/559 loss=2.0893
+  época 3/3 passo 181/559 loss=3.7235
+  época 3/3 passo 191/559 loss=2.8298
+  época 3/3 passo 201/559 loss=2.9571
+  época 3/3 passo 211/559 loss=3.5744
+  época 3/3 passo 221/559 loss=4.2249
+  época 3/3 passo 231/559 loss=2.5669
+  época 3/3 passo 241/559 loss=2.4750
+  época 3/3 passo 251/559 loss=4.2405
+  época 3/3 passo 261/559 loss=3.0977
+  época 3/3 passo 271/559 loss=4.4120
+  época 3/3 passo 281/559 loss=3.8228
+  época 3/3 passo 291/559 loss=2.3527
+  época 3/3 passo 301/559 loss=2.0874
+  época 3/3 passo 311/559 loss=3.5089
+  época 3/3 passo 321/559 loss=3.1119
+  época 3/3 passo 331/559 loss=2.4691
+  época 3/3 passo 341/559 loss=2.5473
+  época 3/3 passo 351/559 loss=2.4164
+  época 3/3 passo 361/559 loss=2.3577
+  época 3/3 passo 371/559 loss=3.1737
+  época 3/3 passo 381/559 loss=2.4999
+  época 3/3 passo 391/559 loss=3.3689
+  época 3/3 passo 401/559 loss=3.6820
+  época 3/3 passo 411/559 loss=2.3939
+  época 3/3 passo 421/559 loss=3.3266
+  época 3/3 passo 431/559 loss=1.9943
+  época 3/3 passo 441/559 loss=2.5179
+  época 3/3 passo 451/559 loss=2.4300
+  época 3/3 passo 461/559 loss=2.6619
+  época 3/3 passo 471/559 loss=2.9472
+  época 3/3 passo 481/559 loss=2.6232
+  época 3/3 passo 491/559 loss=3.8518
+  época 3/3 passo 501/559 loss=2.7701
+  época 3/3 passo 511/559 loss=3.0735
+  época 3/3 passo 521/559 loss=3.3412
+  época 3/3 passo 531/559 loss=2.7892
+  época 3/3 passo 541/559 loss=3.0682
+  época 3/3 passo 551/559 loss=2.6296
+  época 3: loss médio 3.0816
+  avaliação: 5000/20092
+  avaliação: 10000/20092
+  avaliação: 15000/20092
+  avaliação: 20000/20092
+  avaliação: 20092/20092
+{"arm": "A", "n_cache": 9357, "n_validos": 8937, "fonte": "rótulos do oráculo real (NIM)", "n_train": 8937, "n_train_classes": 635, "epochs": 3, "batch_size": 16, "max_length": 32, "seed": 42, "eval_n": 20092, "eval_limit": 20000, "accuracy": 0.6585, "accuracy_wilson95": [0.6519, 0.665], "macro_f1": 0.2424, "fit_seconds": 1943.3, "predict_seconds": 259.2}
+
+=== braço B: mesmos itens de A, rótulos gold · n=8937 classes=620 ===
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 10171.42it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/559 loss=6.4288
+  época 1/3 passo 11/559 loss=6.3931
+  época 1/3 passo 21/559 loss=6.4464
+  época 1/3 passo 31/559 loss=6.3338
+  época 1/3 passo 41/559 loss=6.0058
+  época 1/3 passo 51/559 loss=6.1453
+  época 1/3 passo 61/559 loss=5.9890
+  época 1/3 passo 71/559 loss=6.0161
+  época 1/3 passo 81/559 loss=5.8780
+  época 1/3 passo 91/559 loss=5.8341
+  época 1/3 passo 101/559 loss=6.2260
+  época 1/3 passo 111/559 loss=5.6002
+  época 1/3 passo 121/559 loss=6.0105
+  época 1/3 passo 131/559 loss=5.8791
+  época 1/3 passo 141/559 loss=5.5471
+  época 1/3 passo 151/559 loss=5.4968
+  época 1/3 passo 161/559 loss=6.0469
+  época 1/3 passo 171/559 loss=5.2890
+  época 1/3 passo 181/559 loss=5.8822
+  época 1/3 passo 191/559 loss=5.4360
+  época 1/3 passo 201/559 loss=5.8768
+  época 1/3 passo 211/559 loss=5.5541
+  época 1/3 passo 221/559 loss=5.6596
+  época 1/3 passo 231/559 loss=5.8155
+  época 1/3 passo 241/559 loss=5.6255
+  época 1/3 passo 251/559 loss=5.8924
+  época 1/3 passo 261/559 loss=5.9645
+  época 1/3 passo 271/559 loss=5.7798
+  época 1/3 passo 281/559 loss=5.1731
+  época 1/3 passo 291/559 loss=5.4993
+  época 1/3 passo 301/559 loss=5.7927
+  época 1/3 passo 311/559 loss=5.8964
+  época 1/3 passo 321/559 loss=5.5951
+  época 1/3 passo 331/559 loss=5.1096
+  época 1/3 passo 341/559 loss=5.5844
+  época 1/3 passo 351/559 loss=5.6293
+  época 1/3 passo 361/559 loss=5.1755
+  época 1/3 passo 371/559 loss=5.4090
+  época 1/3 passo 381/559 loss=4.8557
+  época 1/3 passo 391/559 loss=5.4365
+  época 1/3 passo 401/559 loss=5.6153
+  época 1/3 passo 411/559 loss=5.2756
+  época 1/3 passo 421/559 loss=5.3325
+  época 1/3 passo 431/559 loss=4.7748
+  época 1/3 passo 441/559 loss=4.9471
+  época 1/3 passo 451/559 loss=5.3226
+  época 1/3 passo 461/559 loss=4.9971
+  época 1/3 passo 471/559 loss=5.3237
+  época 1/3 passo 481/559 loss=4.6791
+  época 1/3 passo 491/559 loss=5.4196
+  época 1/3 passo 501/559 loss=5.1674
+  época 1/3 passo 511/559 loss=4.9242
+  época 1/3 passo 521/559 loss=4.9973
+  época 1/3 passo 531/559 loss=4.5148
+  época 1/3 passo 541/559 loss=4.1982
+  época 1/3 passo 551/559 loss=5.0447
+  época 1: loss médio 5.5337
+  época 2/3 passo 1/559 loss=4.8500
+  época 2/3 passo 11/559 loss=5.0747
+  época 2/3 passo 21/559 loss=4.6322
+  época 2/3 passo 31/559 loss=4.4333
+  época 2/3 passo 41/559 loss=4.4193
+  época 2/3 passo 51/559 loss=4.6128
+  época 2/3 passo 61/559 loss=4.1159
+  época 2/3 passo 71/559 loss=4.9265
+  época 2/3 passo 81/559 loss=4.1953
+  época 2/3 passo 91/559 loss=4.9673
+  época 2/3 passo 101/559 loss=4.3164
+  época 2/3 passo 111/559 loss=4.3384
+  época 2/3 passo 121/559 loss=4.0436
+  época 2/3 passo 131/559 loss=3.3765
+  época 2/3 passo 141/559 loss=4.5258
+  época 2/3 passo 151/559 loss=4.3798
+  época 2/3 passo 161/559 loss=3.9843
+  época 2/3 passo 171/559 loss=4.1464
+  época 2/3 passo 181/559 loss=4.2090
+  época 2/3 passo 191/559 loss=4.2374
+  época 2/3 passo 201/559 loss=4.4170
+  época 2/3 passo 211/559 loss=3.8513
+  época 2/3 passo 221/559 loss=4.2989
+  época 2/3 passo 231/559 loss=4.0409
+  época 2/3 passo 241/559 loss=3.9532
+  época 2/3 passo 251/559 loss=4.0707
+  época 2/3 passo 261/559 loss=3.9552
+  época 2/3 passo 271/559 loss=4.0353
+  época 2/3 passo 281/559 loss=4.4951
+  época 2/3 passo 291/559 loss=4.2847
+  época 2/3 passo 301/559 loss=4.4114
+  época 2/3 passo 311/559 loss=3.6873
+  época 2/3 passo 321/559 loss=2.8738
+  época 2/3 passo 331/559 loss=3.7563
+  época 2/3 passo 341/559 loss=3.7527
+  época 2/3 passo 351/559 loss=4.3502
+  época 2/3 passo 361/559 loss=3.2542
+  época 2/3 passo 371/559 loss=4.2177
+  época 2/3 passo 381/559 loss=3.8742
+  época 2/3 passo 391/559 loss=3.7523
+  época 2/3 passo 401/559 loss=3.8547
+  época 2/3 passo 411/559 loss=3.9428
+  época 2/3 passo 421/559 loss=3.2543
+  época 2/3 passo 431/559 loss=4.0806
+  época 2/3 passo 441/559 loss=3.1895
+  época 2/3 passo 451/559 loss=4.4372
+  época 2/3 passo 461/559 loss=2.9392
+  época 2/3 passo 471/559 loss=4.6059
+  época 2/3 passo 481/559 loss=3.1985
+  época 2/3 passo 491/559 loss=4.3376
+  época 2/3 passo 501/559 loss=4.1022
+  época 2/3 passo 511/559 loss=3.9414
+  época 2/3 passo 521/559 loss=2.7052
+  época 2/3 passo 531/559 loss=3.3870
+  época 2/3 passo 541/559 loss=2.8588
+  época 2/3 passo 551/559 loss=3.1711
+  época 2: loss médio 4.1099
+  época 3/3 passo 1/559 loss=3.0170
+  época 3/3 passo 11/559 loss=2.7423
+  época 3/3 passo 21/559 loss=2.9382
+  época 3/3 passo 31/559 loss=3.0190
+  época 3/3 passo 41/559 loss=3.3955
+  época 3/3 passo 51/559 loss=3.5140
+  época 3/3 passo 61/559 loss=3.3398
+  época 3/3 passo 71/559 loss=2.9907
+  época 3/3 passo 81/559 loss=2.3170
+  época 3/3 passo 91/559 loss=3.4387
+  época 3/3 passo 101/559 loss=3.1498
+  época 3/3 passo 111/559 loss=3.5768
+  época 3/3 passo 121/559 loss=3.3313
+  época 3/3 passo 131/559 loss=2.3098
+  época 3/3 passo 141/559 loss=2.9168
+  época 3/3 passo 151/559 loss=2.7665
+  época 3/3 passo 161/559 loss=2.2100
+  época 3/3 passo 171/559 loss=2.2055
+  época 3/3 passo 181/559 loss=3.5757
+  época 3/3 passo 191/559 loss=2.6540
+  época 3/3 passo 201/559 loss=3.1076
+  época 3/3 passo 211/559 loss=3.3206
+  época 3/3 passo 221/559 loss=3.7571
+  época 3/3 passo 231/559 loss=2.0501
+  época 3/3 passo 241/559 loss=2.6251
+  época 3/3 passo 251/559 loss=3.9090
+  época 3/3 passo 261/559 loss=2.8145
+  época 3/3 passo 271/559 loss=4.0877
+  época 3/3 passo 281/559 loss=3.2835
+  época 3/3 passo 291/559 loss=1.9675
+  época 3/3 passo 301/559 loss=2.7710
+  época 3/3 passo 311/559 loss=2.9903
+  época 3/3 passo 321/559 loss=2.9055
+  época 3/3 passo 331/559 loss=2.8445
+  época 3/3 passo 341/559 loss=2.3777
+  época 3/3 passo 351/559 loss=2.3363
+  época 3/3 passo 361/559 loss=1.8398
+  época 3/3 passo 371/559 loss=3.2902
+  época 3/3 passo 381/559 loss=2.3084
+  época 3/3 passo 391/559 loss=2.7342
+  época 3/3 passo 401/559 loss=2.9508
+  época 3/3 passo 411/559 loss=2.3179
+  época 3/3 passo 421/559 loss=3.2763
+  época 3/3 passo 431/559 loss=2.5610
+  época 3/3 passo 441/559 loss=3.3793
+  época 3/3 passo 451/559 loss=2.5695
+  época 3/3 passo 461/559 loss=2.7325
+  época 3/3 passo 471/559 loss=2.4709
+  época 3/3 passo 481/559 loss=2.9263
+  época 3/3 passo 491/559 loss=2.7565
+  época 3/3 passo 501/559 loss=2.8518
+  época 3/3 passo 511/559 loss=2.7060
+  época 3/3 passo 521/559 loss=2.8544
+  época 3/3 passo 531/559 loss=2.9471
+  época 3/3 passo 541/559 loss=3.0879
+  época 3/3 passo 551/559 loss=2.7680
+  época 3: loss médio 2.9337
+  avaliação: 5000/20092
+  avaliação: 10000/20092
+  avaliação: 15000/20092
+  avaliação: 20000/20092
+  avaliação: 20092/20092
+{"arm": "B", "n_cache": 9357, "n_validos": 8937, "fonte": "mesmos itens de A, rótulos gold", "n_train": 8937, "n_train_classes": 620, "epochs": 3, "batch_size": 16, "max_length": 32, "seed": 42, "eval_n": 20092, "eval_limit": 20000, "accuracy": 0.7023, "accuracy_wilson95": [0.6959, 0.7086], "macro_f1": 0.2092, "fit_seconds": 1881.2, "predict_seconds": 257.0}
+
+=== braço C: aleatório do pool, gold, |A| itens · n=8937 classes=493 ===
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 10245.08it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/559 loss=6.2190
+  época 1/3 passo 11/559 loss=5.9961
+  época 1/3 passo 21/559 loss=5.9157
+  época 1/3 passo 31/559 loss=5.8303
+  época 1/3 passo 41/559 loss=5.6999
+  época 1/3 passo 51/559 loss=5.2923
+  época 1/3 passo 61/559 loss=5.4053
+  época 1/3 passo 71/559 loss=5.4672
+  época 1/3 passo 81/559 loss=5.2047
+  época 1/3 passo 91/559 loss=4.7747
+  época 1/3 passo 101/559 loss=4.7532
+  época 1/3 passo 111/559 loss=4.8752
+  época 1/3 passo 121/559 loss=4.8171
+  época 1/3 passo 131/559 loss=4.4796
+  época 1/3 passo 141/559 loss=4.9682
+  época 1/3 passo 151/559 loss=4.7024
+  época 1/3 passo 161/559 loss=4.8233
+  época 1/3 passo 171/559 loss=4.7587
+  época 1/3 passo 181/559 loss=5.3373
+  época 1/3 passo 191/559 loss=2.7540
+  época 1/3 passo 201/559 loss=5.0837
+  época 1/3 passo 211/559 loss=4.2797
+  época 1/3 passo 221/559 loss=4.4034
+  época 1/3 passo 231/559 loss=4.4699
+  época 1/3 passo 241/559 loss=4.5285
+  época 1/3 passo 251/559 loss=3.8218
+  época 1/3 passo 261/559 loss=3.6038
+  época 1/3 passo 271/559 loss=4.9124
+  época 1/3 passo 281/559 loss=4.7378
+  época 1/3 passo 291/559 loss=4.3698
+  época 1/3 passo 301/559 loss=3.7048
+  época 1/3 passo 311/559 loss=4.0809
+  época 1/3 passo 321/559 loss=4.6226
+  época 1/3 passo 331/559 loss=4.2253
+  época 1/3 passo 341/559 loss=3.1015
+  época 1/3 passo 351/559 loss=3.2049
+  época 1/3 passo 361/559 loss=4.5692
+  época 1/3 passo 371/559 loss=3.9501
+  época 1/3 passo 381/559 loss=3.2659
+  época 1/3 passo 391/559 loss=4.0229
+  época 1/3 passo 401/559 loss=3.7466
+  época 1/3 passo 411/559 loss=2.8231
+  época 1/3 passo 421/559 loss=3.5838
+  época 1/3 passo 431/559 loss=2.9779
+  época 1/3 passo 441/559 loss=3.2266
+  época 1/3 passo 451/559 loss=4.3931
+  época 1/3 passo 461/559 loss=3.1617
+  época 1/3 passo 471/559 loss=3.3925
+  época 1/3 passo 481/559 loss=2.8380
+  época 1/3 passo 491/559 loss=2.7161
+  época 1/3 passo 501/559 loss=2.1473
+  época 1/3 passo 511/559 loss=3.6239
+  época 1/3 passo 521/559 loss=2.3498
+  época 1/3 passo 531/559 loss=3.2057
+  época 1/3 passo 541/559 loss=3.1214
+  época 1/3 passo 551/559 loss=1.8862
+  época 1: loss médio 4.1579
+  época 2/3 passo 1/559 loss=2.1435
+  época 2/3 passo 11/559 loss=3.0872
+  época 2/3 passo 21/559 loss=2.1290
+  época 2/3 passo 31/559 loss=3.0457
+  época 2/3 passo 41/559 loss=3.7261
+  época 2/3 passo 51/559 loss=3.1239
+  época 2/3 passo 61/559 loss=3.1382
+  época 2/3 passo 71/559 loss=2.7342
+  época 2/3 passo 81/559 loss=1.9635
+  época 2/3 passo 91/559 loss=2.1384
+  época 2/3 passo 101/559 loss=2.9449
+  época 2/3 passo 111/559 loss=2.6553
+  época 2/3 passo 121/559 loss=2.7019
+  época 2/3 passo 131/559 loss=2.4384
+  época 2/3 passo 141/559 loss=2.6116
+  época 2/3 passo 151/559 loss=2.5104
+  época 2/3 passo 161/559 loss=2.2914
+  época 2/3 passo 171/559 loss=1.9274
+  época 2/3 passo 181/559 loss=3.1272
+  época 2/3 passo 191/559 loss=2.5782
+  época 2/3 passo 201/559 loss=2.1214
+  época 2/3 passo 211/559 loss=2.4321
+  época 2/3 passo 221/559 loss=2.6214
+  época 2/3 passo 231/559 loss=3.1089
+  época 2/3 passo 241/559 loss=2.8031
+  época 2/3 passo 251/559 loss=2.9104
+  época 2/3 passo 261/559 loss=1.7018
+  época 2/3 passo 271/559 loss=2.4481
+  época 2/3 passo 281/559 loss=2.1942
+  época 2/3 passo 291/559 loss=2.3791
+  época 2/3 passo 301/559 loss=2.8928
+  época 2/3 passo 311/559 loss=2.2968
+  época 2/3 passo 321/559 loss=1.9504
+  época 2/3 passo 331/559 loss=2.2876
+  época 2/3 passo 341/559 loss=1.2921
+  época 2/3 passo 351/559 loss=2.0226
+  época 2/3 passo 361/559 loss=3.0402
+  época 2/3 passo 371/559 loss=2.0996
+  época 2/3 passo 381/559 loss=1.3165
+  época 2/3 passo 391/559 loss=2.1451
+  época 2/3 passo 401/559 loss=1.6517
+  época 2/3 passo 411/559 loss=1.2970
+  época 2/3 passo 421/559 loss=0.9199
+  época 2/3 passo 431/559 loss=1.9104
+  época 2/3 passo 441/559 loss=1.8368
+  época 2/3 passo 451/559 loss=1.9652
+  época 2/3 passo 461/559 loss=1.0893
+  época 2/3 passo 471/559 loss=2.3722
+  época 2/3 passo 481/559 loss=1.4745
+  época 2/3 passo 491/559 loss=2.1591
+  época 2/3 passo 501/559 loss=2.5467
+  época 2/3 passo 511/559 loss=2.0497
+  época 2/3 passo 521/559 loss=1.9047
+  época 2/3 passo 531/559 loss=1.7397
+  época 2/3 passo 541/559 loss=1.7003
+  época 2/3 passo 551/559 loss=1.5558
+  época 2: loss médio 2.2840
+  época 3/3 passo 1/559 loss=1.7298
+  época 3/3 passo 11/559 loss=1.5869
+  época 3/3 passo 21/559 loss=2.1474
+  época 3/3 passo 31/559 loss=2.4661
+  época 3/3 passo 41/559 loss=1.7245
+  época 3/3 passo 51/559 loss=1.9458
+  época 3/3 passo 61/559 loss=0.9356
+  época 3/3 passo 71/559 loss=1.4265
+  época 3/3 passo 81/559 loss=1.6395
+  época 3/3 passo 91/559 loss=1.4989
+  época 3/3 passo 101/559 loss=1.9389
+  época 3/3 passo 111/559 loss=1.3342
+  época 3/3 passo 121/559 loss=1.3203
+  época 3/3 passo 131/559 loss=2.2626
+  época 3/3 passo 141/559 loss=1.6652
+  época 3/3 passo 151/559 loss=1.2345
+  época 3/3 passo 161/559 loss=1.3202
+  época 3/3 passo 171/559 loss=1.6826
+  época 3/3 passo 181/559 loss=0.8781
+  época 3/3 passo 191/559 loss=1.7450
+  época 3/3 passo 201/559 loss=1.5492
+  época 3/3 passo 211/559 loss=1.2280
+  época 3/3 passo 221/559 loss=3.2253
+  época 3/3 passo 231/559 loss=0.8105
+  época 3/3 passo 241/559 loss=1.6944
+  época 3/3 passo 251/559 loss=1.1661
+  época 3/3 passo 261/559 loss=0.9477
+  época 3/3 passo 271/559 loss=1.7313
+  época 3/3 passo 281/559 loss=1.3779
+  época 3/3 passo 291/559 loss=1.4596
+  época 3/3 passo 301/559 loss=2.0880
+  época 3/3 passo 311/559 loss=1.6006
+  época 3/3 passo 321/559 loss=2.1974
+  época 3/3 passo 331/559 loss=2.2531
+  época 3/3 passo 341/559 loss=1.3973
+  época 3/3 passo 351/559 loss=1.0395
+  época 3/3 passo 361/559 loss=1.6827
+  época 3/3 passo 371/559 loss=1.3791
+  época 3/3 passo 381/559 loss=1.6183
+  época 3/3 passo 391/559 loss=1.3158
+  época 3/3 passo 401/559 loss=1.1598
+  época 3/3 passo 411/559 loss=1.4426
+  época 3/3 passo 421/559 loss=0.8658
+  época 3/3 passo 431/559 loss=1.4129
+  época 3/3 passo 441/559 loss=1.4011
+  época 3/3 passo 451/559 loss=1.8629
+  época 3/3 passo 461/559 loss=1.6806
+  época 3/3 passo 471/559 loss=1.8952
+  época 3/3 passo 481/559 loss=1.3263
+  época 3/3 passo 491/559 loss=1.6425
+  época 3/3 passo 501/559 loss=1.0103
+  época 3/3 passo 511/559 loss=1.3019
+  época 3/3 passo 521/559 loss=0.5237
+  época 3/3 passo 531/559 loss=2.3102
+  época 3/3 passo 541/559 loss=1.2415
+  época 3/3 passo 551/559 loss=1.4395
+  época 3: loss médio 1.5313
+  avaliação: 5000/20092
+  avaliação: 10000/20092
+  avaliação: 15000/20092
+  avaliação: 20000/20092
+  avaliação: 20092/20092
+{"arm": "C", "fonte": "aleatório do pool, gold, |A| itens", "n_train": 8937, "n_train_classes": 493, "epochs": 3, "batch_size": 16, "max_length": 32, "seed": 42, "eval_n": 20092, "eval_limit": 20000, "accuracy": 0.7316, "accuracy_wilson95": [0.7255, 0.7377], "macro_f1": 0.1888, "fit_seconds": 1881.3, "predict_seconds": 264.8}
+
+=== braço E: prefixo 15k da trajetória de entropia do E6 (SGD), gold · n=15000 classes=644 ===
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 11051.67it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/938 loss=6.4815
+  época 1/3 passo 11/938 loss=6.6000
+  época 1/3 passo 21/938 loss=6.3573
+  época 1/3 passo 31/938 loss=6.2858
+  época 1/3 passo 41/938 loss=6.1868
+  época 1/3 passo 51/938 loss=6.2306
+  época 1/3 passo 61/938 loss=6.0826
+  época 1/3 passo 71/938 loss=6.3137
+  época 1/3 passo 81/938 loss=6.2428
+  época 1/3 passo 91/938 loss=6.0112
+  época 1/3 passo 101/938 loss=6.1955
+  época 1/3 passo 111/938 loss=6.3481
+  época 1/3 passo 121/938 loss=5.8727
+  época 1/3 passo 131/938 loss=6.0127
+  época 1/3 passo 141/938 loss=6.0408
+  época 1/3 passo 151/938 loss=6.0057
+  época 1/3 passo 161/938 loss=6.2013
+  época 1/3 passo 171/938 loss=6.0533
+  época 1/3 passo 181/938 loss=6.1620
+  época 1/3 passo 191/938 loss=5.8755
+  época 1/3 passo 201/938 loss=5.7658
+  época 1/3 passo 211/938 loss=5.9635
+  época 1/3 passo 221/938 loss=5.4656
+  época 1/3 passo 231/938 loss=5.3771
+  época 1/3 passo 241/938 loss=5.8887
+  época 1/3 passo 251/938 loss=5.1154
+  época 1/3 passo 261/938 loss=5.5105
+  época 1/3 passo 271/938 loss=5.8371
+  época 1/3 passo 281/938 loss=5.7520
+  época 1/3 passo 291/938 loss=5.4874
+  época 1/3 passo 301/938 loss=5.2028
+  época 1/3 passo 311/938 loss=5.6379
+  época 1/3 passo 321/938 loss=5.1925
+  época 1/3 passo 331/938 loss=5.6534
+  época 1/3 passo 341/938 loss=6.0350
+  época 1/3 passo 351/938 loss=5.0965
+  época 1/3 passo 361/938 loss=5.8086
+  época 1/3 passo 371/938 loss=5.5091
+  época 1/3 passo 381/938 loss=5.4185
+  época 1/3 passo 391/938 loss=5.3592
+  época 1/3 passo 401/938 loss=5.3993
+  época 1/3 passo 411/938 loss=4.8834
+  época 1/3 passo 421/938 loss=5.4206
+  época 1/3 passo 431/938 loss=5.3914
+  época 1/3 passo 441/938 loss=4.9354
+  época 1/3 passo 451/938 loss=5.5155
+  época 1/3 passo 461/938 loss=5.2518
+  época 1/3 passo 471/938 loss=5.3509
+  época 1/3 passo 481/938 loss=5.5764
+  época 1/3 passo 491/938 loss=4.7303
+  época 1/3 passo 501/938 loss=4.5765
+  época 1/3 passo 511/938 loss=5.1742
+  época 1/3 passo 521/938 loss=5.0364
+  época 1/3 passo 531/938 loss=4.5826
+  época 1/3 passo 541/938 loss=5.6285
+  época 1/3 passo 551/938 loss=4.8811
+  época 1/3 passo 561/938 loss=5.3880
+  época 1/3 passo 571/938 loss=4.6671
+  época 1/3 passo 581/938 loss=4.8045
+  época 1/3 passo 591/938 loss=4.9153
+  época 1/3 passo 601/938 loss=4.6780
+  época 1/3 passo 611/938 loss=4.6006
+  época 1/3 passo 621/938 loss=5.3687
+  época 1/3 passo 631/938 loss=4.5232
+  época 1/3 passo 641/938 loss=4.6275
+  época 1/3 passo 651/938 loss=4.2114
+  época 1/3 passo 661/938 loss=5.1622
+  época 1/3 passo 671/938 loss=4.3159
+  época 1/3 passo 681/938 loss=4.8312
+  época 1/3 passo 691/938 loss=4.1393
+  época 1/3 passo 701/938 loss=4.7474
+  época 1/3 passo 711/938 loss=4.1522
+  época 1/3 passo 721/938 loss=4.5371
+  época 1/3 passo 731/938 loss=4.0522
+  época 1/3 passo 741/938 loss=3.8191
+  época 1/3 passo 751/938 loss=4.4739
+  época 1/3 passo 761/938 loss=4.8299
+  época 1/3 passo 771/938 loss=4.2959
+  época 1/3 passo 781/938 loss=4.4711
+  época 1/3 passo 791/938 loss=4.4460
+  época 1/3 passo 801/938 loss=5.6460
+  época 1/3 passo 811/938 loss=3.9794
+  época 1/3 passo 821/938 loss=3.7706
+  época 1/3 passo 831/938 loss=4.0407
+  época 1/3 passo 841/938 loss=4.1719
+  época 1/3 passo 851/938 loss=4.2039
+  época 1/3 passo 861/938 loss=4.6328
+  época 1/3 passo 871/938 loss=4.3123
+  época 1/3 passo 881/938 loss=4.7543
+  época 1/3 passo 891/938 loss=4.5296
+  época 1/3 passo 901/938 loss=3.5922
+  época 1/3 passo 911/938 loss=3.8971
+  época 1/3 passo 921/938 loss=3.7441
+  época 1/3 passo 931/938 loss=3.8430
+  época 1: loss médio 5.2012
+  época 2/3 passo 1/938 loss=4.1396
+  época 2/3 passo 11/938 loss=3.5916
+  época 2/3 passo 21/938 loss=4.2881
+  época 2/3 passo 31/938 loss=3.5292
+  época 2/3 passo 41/938 loss=3.8948
+  época 2/3 passo 51/938 loss=3.5624
+  época 2/3 passo 61/938 loss=3.8799
+  época 2/3 passo 71/938 loss=3.9937
+  época 2/3 passo 81/938 loss=3.8611
+  época 2/3 passo 91/938 loss=3.1822
+  época 2/3 passo 101/938 loss=3.2636
+  época 2/3 passo 111/938 loss=3.2926
+  época 2/3 passo 121/938 loss=4.1521
+  época 2/3 passo 131/938 loss=3.6211
+  época 2/3 passo 141/938 loss=4.0406
+  época 2/3 passo 151/938 loss=3.2939
+  época 2/3 passo 161/938 loss=3.6999
+  época 2/3 passo 171/938 loss=3.0287
+  época 2/3 passo 181/938 loss=3.1468
+  época 2/3 passo 191/938 loss=3.3343
+  época 2/3 passo 201/938 loss=4.0337
+  época 2/3 passo 211/938 loss=3.9163
+  época 2/3 passo 221/938 loss=2.8694
+  época 2/3 passo 231/938 loss=3.5355
+  época 2/3 passo 241/938 loss=3.7062
+  época 2/3 passo 251/938 loss=2.7181
+  época 2/3 passo 261/938 loss=3.8236
+  época 2/3 passo 271/938 loss=3.3582
+  época 2/3 passo 281/938 loss=2.9047
+  época 2/3 passo 291/938 loss=3.4721
+  época 2/3 passo 301/938 loss=3.4057
+  época 2/3 passo 311/938 loss=3.3703
+  época 2/3 passo 321/938 loss=3.9265
+  época 2/3 passo 331/938 loss=3.0637
+  época 2/3 passo 341/938 loss=3.4689
+  época 2/3 passo 351/938 loss=3.9287
+  época 2/3 passo 361/938 loss=2.9101
+  época 2/3 passo 371/938 loss=2.6597
+  época 2/3 passo 381/938 loss=3.5880
+  época 2/3 passo 391/938 loss=3.0478
+  época 2/3 passo 401/938 loss=3.3258
+  época 2/3 passo 411/938 loss=3.1483
+  época 2/3 passo 421/938 loss=3.8255
+  época 2/3 passo 431/938 loss=3.2900
+  época 2/3 passo 441/938 loss=3.2648
+  época 2/3 passo 451/938 loss=2.5731
+  época 2/3 passo 461/938 loss=2.6574
+  época 2/3 passo 471/938 loss=1.8231
+  época 2/3 passo 481/938 loss=3.2206
+  época 2/3 passo 491/938 loss=3.0438
+  época 2/3 passo 501/938 loss=2.7246
+  época 2/3 passo 511/938 loss=2.6383
+  época 2/3 passo 521/938 loss=2.8965
+  época 2/3 passo 531/938 loss=3.0711
+  época 2/3 passo 541/938 loss=3.4897
+  época 2/3 passo 551/938 loss=2.6559
+  época 2/3 passo 561/938 loss=2.6281
+  época 2/3 passo 571/938 loss=3.2340
+  época 2/3 passo 581/938 loss=2.0687
+  época 2/3 passo 591/938 loss=2.9360
+  época 2/3 passo 601/938 loss=3.3063
+  época 2/3 passo 611/938 loss=2.7949
+  época 2/3 passo 621/938 loss=1.9851
+  época 2/3 passo 631/938 loss=2.0087
+  época 2/3 passo 641/938 loss=2.8448
+  época 2/3 passo 651/938 loss=2.2888

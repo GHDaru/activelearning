@@ -88,16 +88,20 @@ def internal_split(texts, labels, seed=SEED):
 
 
 def run(classifier_name: str, pool, population, budget: int, batch: int,
-        out_dir: Path, strategy: str = "entropy", encoder=None):
+        out_dir: Path, strategy: str = "entropy", encoder=None,
+        run_seed: int = SEED):
+    """run_seed varia o sorteio inicial, os desempates e a divisão interna SEM
+    mudar o pool (fixo pela SEED global) — eixo da campanha multi-semente."""
     factory = CLASSIFIERS[classifier_name]
     pool_texts = [t for t, _ in pool]
     pool_labels = [l for _, l in pool]
     pop_texts = [t for t, _ in population]
     pop_labels = [l for _, l in population]
 
-    rng = np.random.default_rng(SEED)
-    out_path = out_dir / f"popcurve_{classifier_name}_{strategy}.jsonl"
-    state_path = out_dir / f"popcurve_{classifier_name}_{strategy}_state.json"
+    rng = np.random.default_rng(run_seed)
+    tag = "" if run_seed == SEED else f"_s{run_seed}"
+    out_path = out_dir / f"popcurve_{classifier_name}_{strategy}{tag}.jsonl"
+    state_path = out_dir / f"popcurve_{classifier_name}_{strategy}{tag}_state.json"
     if state_path.exists():  # retomada pós-reinício: recarrega a trajetória
         labeled_idx = json.loads(state_path.read_text())["labeled_idx"]
         print(f"[{classifier_name}/{strategy}] RETOMANDO em |L|={len(labeled_idx)}",
@@ -113,7 +117,7 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
     while True:
         lx = [pool_texts[i] for i in labeled_idx]
         ly = [pool_labels[i] for i in labeled_idx]
-        tr_x, te_x, tr_y, te_y = internal_split(lx, ly)
+        tr_x, te_x, tr_y, te_y = internal_split(lx, ly, seed=run_seed)
         clf = factory()
         clf.fit(tr_x, tr_y)
         pred_int = clf.predict(te_x)
@@ -147,7 +151,7 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
             chosen = list(rng.choice(unlabeled, size=take, replace=False))
         elif strategy == "drisl":
             texts_u = [pool_texts[i] for i in unlabeled]
-            sel = drisl_select(texts_u, take, encoder, seed=SEED)
+            sel = drisl_select(texts_u, take, encoder, seed=run_seed)
             chosen = [unlabeled[j] for j in sel.indices]
         elif strategy in ("drisl-c", "drisl-cs"):
             # variante guiada pelo classificador: grupos = classes previstas
@@ -158,7 +162,7 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
                 pred_u.extend(clf.predict(texts_u[k:k + 20000]))
             sel = drisl_select_by_groups(
                 texts_u, take, pred_u,
-                lexical_novelty=(strategy == "drisl-c"), seed=SEED)
+                lexical_novelty=(strategy == "drisl-c"), seed=run_seed)
             chosen = [unlabeled[j] for j in sel.indices]
         else:
             raise ValueError(strategy)
@@ -168,10 +172,11 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
         state_path.write_text(json.dumps({"labeled_idx": labeled_idx}))
 
     summary = {"classifier": classifier_name, "strategy": strategy,
+               "run_seed": run_seed,
                "budget": budget, "batch": batch,
                "pool": len(pool), "population": len(population),
                "final": curve[-1], "wall_seconds": round(time.time() - t_start, 1)}
-    (out_dir / f"popcurve_{classifier_name}_{strategy}_summary.json").write_text(
+    (out_dir / f"popcurve_{classifier_name}_{strategy}{tag}_summary.json").write_text(
         json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2), flush=True)
 
@@ -184,6 +189,8 @@ def main():
     ap.add_argument("--pool-size", type=int, default=50000)
     ap.add_argument("--strategy", choices=["entropy", "random", "drisl", "drisl-c", "drisl-cs"],
                     default="entropy")
+    ap.add_argument("--run-seed", type=int, default=SEED,
+                    help="semente da trajetória (pool permanece fixo)")
     ap.add_argument("--smoke", action="store_true")
     args = ap.parse_args()
     if args.smoke:
@@ -203,7 +210,7 @@ def main():
         encoder = PrecomputedEncoder([t for t, _ in pool])
     for n in names:
         run(n, pool, population, args.budget, args.batch, out_dir,
-            strategy=args.strategy, encoder=encoder)
+            strategy=args.strategy, encoder=encoder, run_seed=args.run_seed)
 
 
 if __name__ == "__main__":

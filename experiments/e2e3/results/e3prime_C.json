@@ -1,0 +1,20 @@
+{
+  "arm": "C",
+  "fonte": "aleatório do pool, gold, |A| itens",
+  "n_train": 8937,
+  "n_train_classes": 493,
+  "epochs": 3,
+  "batch_size": 16,
+  "max_length": 32,
+  "seed": 42,
+  "eval_n": 20092,
+  "eval_limit": 20000,
+  "accuracy": 0.7316,
+  "accuracy_wilson95": [
+    0.7255,
+    0.7377
+  ],
+  "macro_f1": 0.1888,
+  "fit_seconds": 1881.3,
+  "predict_seconds": 264.8
+}
