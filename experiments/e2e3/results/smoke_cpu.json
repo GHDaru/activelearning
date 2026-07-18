@@ -1,14 +1,14 @@
 {
-  "n_train": 900,
-  "n_eval": 300,
-  "n_classes": 30,
-  "epochs": 3,
+  "n_train": 400,
+  "n_eval": 100,
+  "n_classes": 20,
+  "epochs": 2,
   "batch_size": 16,
   "max_length": 32,
   "seed": 42,
-  "accuracy": 0.8633,
-  "macro_f1": 0.8587,
-  "fit_seconds": 235.3,
-  "predict_seconds": 5.4,
+  "accuracy": 0.77,
+  "macro_f1": 0.7553,
+  "fit_seconds": 74.9,
+  "predict_seconds": 1.4,
   "device": "cpu"
 }

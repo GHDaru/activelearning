@@ -1,0 +1,12 @@
+# Contexto de build enxuto: dados e resultados entram por volume, nunca na imagem
+.git
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+data/
+experiments/*/results/
+flowbuilder/frontend/node_modules
+flowbuilder/frontend/dist
+.env

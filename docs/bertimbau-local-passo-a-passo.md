@@ -108,3 +108,9 @@ rode 8 sementes com `--seed 0..7`). Guarde todos os JSONs de
   classificação nasce nova no fine-tuning.
 - **Download do HF falha atrás de proxy**: exporte `HF_HOME` para um caminho
   gravável e confira o certificado corporativo (`REQUESTS_CA_BUNDLE`).
+
+## Alternativa: Docker (com ou sem GPU) e execução sem GPU
+
+Se preferir não montar ambiente Python na máquina — ou não tiver GPU —, o
+experimento tem imagem Docker própria testada e cinco caminhos de execução
+(Colab, Kaggle, GPU spot, cluster, CPU pura): ver `docs/e2e3-docker.md`.

@@ -1,0 +1,41 @@
+# E2/E3 BERTimbau em contêiner — GPU e CPU.
+# Rodar SEMPRE a partir da raiz do repositório:
+#   docker compose -f experiments/e2e3/docker-compose.yml run --rm e2e3-gpu   # smoke na GPU
+#   docker compose -f experiments/e2e3/docker-compose.yml run --rm e2e3-cpu   # smoke na CPU
+# Comandos completos (E2 etc.): ver docs/e2e3-docker.md
+
+services:
+  e2e3-gpu:
+    profiles: ["gpu"]
+    build:
+      context: ../..
+      dockerfile: experiments/e2e3/Dockerfile
+    image: activelearning-e2e3:gpu
+    volumes:
+      - ../../data:/app/data:ro
+      - ./results:/app/experiments/e2e3/results
+      - hf-cache:/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  e2e3-cpu:
+    profiles: ["cpu"]
+    build:
+      context: ../..
+      dockerfile: experiments/e2e3/Dockerfile
+      args:
+        BASE_IMAGE: python:3.11-slim
+        TORCH_CHANNEL: cpu
+    image: activelearning-e2e3:cpu
+    volumes:
+      - ../../data:/app/data:ro
+      - ./results:/app/experiments/e2e3/results
+      - hf-cache:/cache
+
+volumes:
+  hf-cache:
