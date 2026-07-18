@@ -165,7 +165,9 @@ def fig_ciclo_curvas():
     res_dir = ROOT / "experiments/e5cycle/results"
     panels = []
     for name, title in (("pvbin", "PVBin"), ("sgd", "SGD logístico")):
-        p = res_dir / f"cycle_{name}.json"
+        p = res_dir / f"cycle_{name}_b15k.json"   # orçamento 15k (preferência)
+        if not p.exists():
+            p = res_dir / f"cycle_{name}.json"
         if p.exists():
             panels.append((title, json.loads(p.read_text())))
     if not panels:

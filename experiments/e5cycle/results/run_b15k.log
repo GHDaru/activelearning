@@ -1,0 +1,10 @@
+splits: pool=50000 val=2000 test=2000 classes(schema)=715
+
+=== ciclo FALCO · classificador=pvbin · oráculo=nvidia/nemotron-3-ultra-550b-a55b ===
+{"classifier": "pvbin", "final_macro_f1": 0.4567, "lce_macro_f1": 0.7609, "n_labeled": 6009, "invalid_labels": 241, "phase_boundaries": {"fase1": 148, "fase2": 6009, "fase3": 6009}, "wall_seconds": 2823.9}
+
+=== ciclo FALCO · classificador=sgd · oráculo=nvidia/nemotron-3-ultra-550b-a55b ===
+splits: pool=50000 val=2000 test=2000 classes(schema)=715
+
+=== ciclo FALCO · classificador=sgd · oráculo=nvidia/nemotron-3-ultra-550b-a55b ===
+{"classifier": "sgd", "final_macro_f1": 0.6001, "lce_macro_f1": 0.7306, "n_labeled": 4742, "invalid_labels": 208, "phase_boundaries": {"fase1": 148, "fase2": 4742, "fase3": 4742}, "wall_seconds": 1454.4}
