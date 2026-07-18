@@ -149,14 +149,16 @@ def run(classifier_name: str, pool, population, budget: int, batch: int,
             texts_u = [pool_texts[i] for i in unlabeled]
             sel = drisl_select(texts_u, take, encoder, seed=SEED)
             chosen = [unlabeled[j] for j in sel.indices]
-        elif strategy == "drisl-c":
+        elif strategy in ("drisl-c", "drisl-cs"):
             # variante guiada pelo classificador: grupos = classes previstas
             from activelearning.adapters.strategies.drisl import drisl_select_by_groups
             texts_u = [pool_texts[i] for i in unlabeled]
             pred_u = []
             for k in range(0, len(texts_u), 20000):
                 pred_u.extend(clf.predict(texts_u[k:k + 20000]))
-            sel = drisl_select_by_groups(texts_u, take, pred_u)
+            sel = drisl_select_by_groups(
+                texts_u, take, pred_u,
+                lexical_novelty=(strategy == "drisl-c"), seed=SEED)
             chosen = [unlabeled[j] for j in sel.indices]
         else:
             raise ValueError(strategy)
@@ -180,7 +182,7 @@ def main():
     ap.add_argument("--budget", type=int, default=50000)
     ap.add_argument("--batch", type=int, default=500)
     ap.add_argument("--pool-size", type=int, default=50000)
-    ap.add_argument("--strategy", choices=["entropy", "random", "drisl", "drisl-c"],
+    ap.add_argument("--strategy", choices=["entropy", "random", "drisl", "drisl-c", "drisl-cs"],
                     default="entropy")
     ap.add_argument("--smoke", action="store_true")
     args = ap.parse_args()

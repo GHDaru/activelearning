@@ -191,7 +191,8 @@ def fig_ciclo_curvas():
 
 
 E6_STRATEGIES = [("entropy", "entropia"), ("random", "aleatória"), ("drisl", "DRI-SL"),
-                 ("drisl-c", "DRI-SL-C")]
+                 ("drisl-c", "DRI-SL-C"),
+                 ("drisl-cs", "estratif. predição")]  # ablação: DRI-SL-C sem novidade lexical
 E6_CLASSIFIERS = [("pvbin", "PVBin"), ("sgd", "SGD logístico")]
 
 

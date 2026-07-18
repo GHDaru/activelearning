@@ -155,6 +155,8 @@ def drisl_select_by_groups(
     texts: Sequence[str],
     target_size: int,
     groups: Sequence[str],
+    lexical_novelty: bool = True,
+    seed: int = 42,
 ) -> DrislResult:
     """Variante guiada pelo classificador (proposta do autor, 18/07/2026).
 
@@ -171,7 +173,17 @@ def drisl_select_by_groups(
     gid = {g: i for i, g in enumerate(uniq)}
     group_of = np.asarray([gid[g] for g in groups])
     allocation = _allocate(group_of, len(uniq), target_size)
-    selected = _novelty_select(texts, group_of, allocation)
+    if lexical_novelty:
+        selected = _novelty_select(texts, group_of, allocation)
+    else:
+        # ablação: sorteio simples dentro do grupo = estratificação pela predição
+        rng = np.random.default_rng(seed)
+        selected = []
+        for c in range(len(uniq)):
+            members = np.flatnonzero(group_of == c)
+            quota = min(int(allocation[c]), len(members))
+            if quota > 0:
+                selected.extend(int(x) for x in rng.choice(members, size=quota, replace=False))
     return DrislResult(
         indices=selected,
         cluster_of=group_of,
