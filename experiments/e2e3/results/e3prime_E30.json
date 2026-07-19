@@ -1,0 +1,20 @@
+{
+  "arm": "E30",
+  "fonte": "prefixo 30000 da trajetória de entropia do E6 (SGD), gold",
+  "n_train": 30000,
+  "n_train_classes": 648,
+  "epochs": 3,
+  "batch_size": 16,
+  "max_length": 32,
+  "seed": 42,
+  "eval_n": 20092,
+  "eval_limit": 20000,
+  "accuracy": 0.8774,
+  "accuracy_wilson95": [
+    0.8728,
+    0.8818
+  ],
+  "macro_f1": 0.4562,
+  "fit_seconds": 6301.0,
+  "predict_seconds": 267.4
+}
