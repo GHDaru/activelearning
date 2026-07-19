@@ -12,7 +12,7 @@ Esta auditoria mapeia número da tese → código → artefato → estado.
 |---|---|---|---|
 | P1: sensibilidade 47×30 (amplitude 6,4 p.p. em I=100; tab. do apêndice) | `examples/L0_experimento.ipynb` | `examples/l0_random_impact_analysis_outputs/l0_stats_table_analyzed.tex` (a própria tabela do apêndice) + planilhas | **VERIFICADO** — arquivo localizado; validado indiretamente pela reexecução (≤0,7 p.p., `experiments/p1/replay_l0.jsonl`) |
 | AG: envelope evolutivo (tab:ag-evolucao) | `activetextclassification/optimization/genetic_l0_optimizerv4.py` | `examples/ag_optimization_results_L0_*/` (CSV de aptidão detalhada + best_l0 + checkpoints .pkl) e `examples/allag.xlsx` | **VERIFICADO** — configuração real confirmada NO CÓDIGO: população **50**, **100 gerações**, elitismo; 4 cenários. Sufixos `old/oldold/v1/v2` indicam re-execuções — a consolidação de qual versão alimentou a tabela da tese está em `allag.xlsx` (verificação fina pendente de abertura da planilha) |
-| P2: DRI-SL vs AG (tab:drisl-vs-ag) | `activetextclassification/cold_start/dri_cluster.py` (DRIClusterColdStart) + `examples/coldstart_evaluate.ipynb` | notebook localizado; **artefato numérico final da comparação NÃO localizado ainda** | **AUDITORIA PENDENTE** — ver ações abaixo |
+| P2: DRI-SL vs AG (tab:drisl-vs-ag) | `activetextclassification/cold_start/dri_cluster.py` (DRIClusterColdStart) + `examples/coldstart_evaluate.ipynb` | `data_splits_cache/dri_vs_random_final_log_results.csv` | **VERIFICADO 19/07** — cruzamento automático: os 10 números DRI-SL da tabela da tese (acc e Macro F1 em I=100/500/1.000/2.500/5.000) conferem EXATAMENTE (diferença < 0,05 p.p.) com o CSV |
 | Oráculo piloto (origem do RQ4: saída livre → falsos erros) | `examples/oraculo.ipynb` + `data_oraculo/` | dados do piloto presentes | **VERIFICADO** (como registro histórico; o E0 braço *free* é a réplica controlada) |
 
 ## Correções derivadas da auditoria
@@ -26,10 +26,9 @@ Esta auditoria mapeia número da tese → código → artefato → estado.
 
 ## Ações pendentes (marcadas para verificação e auditoria)
 
-- [ ] **P2**: abrir `coldstart_evaluate.ipynb` e localizar o artefato
-      numérico (CSV/planilha) que gera a tab:drisl-vs-ag; registrar o
-      caminho no catálogo; conferir os 10 números da tabela da tese
-      contra o artefato.
+- [x] **P2**: artefato localizado (`data_splits_cache/dri_vs_random_final_log_results.csv`)
+      e os 10 números da tabela conferidos automaticamente — TODOS batem
+      (19/07/2026).
 - [ ] **P2**: portar um runner reproduzível `experiments/p2/` para a
       biblioteca nova (DRI-SL da biblioteca × melhores indivíduos do AG
       carregados dos checkpoints legados), com reavaliação em teste

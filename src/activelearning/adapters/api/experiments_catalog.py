@@ -67,18 +67,21 @@ CATALOG: list[dict[str, Any]] = [
     {
         "id": "p2-drisl",
         "titulo": "P2 original — DRI-SL vs. envelope do AG (cold start)",
-        "pilar": "P2", "legado": True, "auditoria": "pendente",
+        "pilar": "P2", "legado": True, "auditoria": "verificado",
         "pergunta": "A heurística sem rótulos supera o otimizador supervisionado?",
         "descricao": "Código: cold_start/dri_cluster.py (DRIClusterColdStart: KMeans "
                      "semântico + relevância TF-IDF + novidade lexical) e "
-                     "examples/coldstart_evaluate.ipynb. Os números da tab:drisl-vs-ag "
-                     "da tese saem daqui. AUDITORIA PENDENTE: localizar e verificar os "
-                     "artefatos numéricos finais da comparação e portar um runner "
-                     "reproduzível para esta biblioteca.",
+                     "examples/coldstart_evaluate.ipynb. AUDITADO 19/07/2026: os 10 "
+                     "números DRI-SL da tab:drisl-vs-ag conferem exatamente com o "
+                     "artefato dri_vs_random_final_log_results.csv. Pendente apenas o "
+                     "porte de um runner reproduzível para esta biblioteca.",
         "duracao": "horas (original)",
         "requer_chave": False, "presets": {},
         "artefatos": [
-            {"label": "Notebook de avaliação (fonte dos números)",
+            {"label": "Resultados DRI-SL por tamanho (fonte da tab:drisl-vs-ag)",
+             "path_abs": "data_splits_cache/dri_vs_random_final_log_results.csv",
+             "kind": "csv"},
+            {"label": "Notebook de avaliação",
              "path_abs": "examples/coldstart_evaluate.ipynb", "kind": "presenca"},
         ],
     },
