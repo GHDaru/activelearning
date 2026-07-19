@@ -1,0 +1,18 @@
+{
+  "classifier": "pvbin",
+  "strategy": "random",
+  "run_seed": 50,
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8374,
+    "f1_int": 0.591,
+    "acc_ext": 0.8347,
+    "f1_ext": 0.532,
+    "elapsed_s": 634.9
+  },
+  "wall_seconds": 634.9
+}

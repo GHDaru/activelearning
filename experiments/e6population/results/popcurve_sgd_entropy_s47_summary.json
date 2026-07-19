@@ -1,0 +1,18 @@
+{
+  "classifier": "sgd",
+  "strategy": "entropy",
+  "run_seed": 47,
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8758,
+    "f1_int": 0.5789,
+    "acc_ext": 0.874,
+    "f1_ext": 0.4423,
+    "elapsed_s": 3089.8
+  },
+  "wall_seconds": 3089.8
+}

@@ -1,0 +1,112 @@
+{
+  "campanha": "E6 multi-semente",
+  "sementes": [
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+  ],
+  "n_sementes": 8,
+  "por_braco": {
+    "sgd_entropy": {
+      "teto_f1_mean": 0.5917,
+      "teto_f1_sd": 0.0039,
+      "sat_mean": 9062,
+      "sat_sd": 563,
+      "sat_min": 8500,
+      "sat_max": 10000,
+      "sats": [
+        8500,
+        8500,
+        8500,
+        9000,
+        9000,
+        9500,
+        9500,
+        10000
+      ]
+    },
+    "sgd_random": {
+      "teto_f1_mean": 0.4552,
+      "teto_f1_sd": 0.0044,
+      "sat_mean": 15500,
+      "sat_sd": 1102,
+      "sat_min": 14000,
+      "sat_max": 17500,
+      "sats": [
+        14000,
+        14500,
+        15000,
+        15500,
+        15500,
+        15500,
+        16500,
+        17500
+      ]
+    },
+    "pvbin_entropy": {
+      "teto_f1_mean": 0.5312,
+      "teto_f1_sd": 0.0015,
+      "sat_mean": 19312,
+      "sat_sd": 704,
+      "sat_min": 18500,
+      "sat_max": 20500,
+      "sats": [
+        18500,
+        18500,
+        19000,
+        19000,
+        19500,
+        19500,
+        20000,
+        20500
+      ]
+    },
+    "pvbin_random": {
+      "teto_f1_mean": 0.5282,
+      "teto_f1_sd": 0.0036,
+      "sat_mean": 40625,
+      "sat_sd": 1408,
+      "sat_min": 38500,
+      "sat_max": 42500,
+      "sats": [
+        38500,
+        39000,
+        40000,
+        40500,
+        41000,
+        41500,
+        42000,
+        42500
+      ]
+    }
+  },
+  "wilcoxon_entropia_vs_aleatorio": {
+    "sgd": {
+      "n": 8,
+      "W": 0,
+      "vitorias": "8/8",
+      "p_min_bicaudal": 0.0078
+    },
+    "pvbin": {
+      "n": 8,
+      "W": 4,
+      "vitorias": "6/8",
+      "p_min_bicaudal": 0.0078
+    }
+  },
+  "vies_int_ext_sgd_entropy_L10k": {
+    "acuracia": {
+      "mean_pp": -17.1,
+      "sd_pp": 1.0
+    },
+    "macro_f1": {
+      "mean_pp": 1.9,
+      "sd_pp": 1.7
+    }
+  }
+}
