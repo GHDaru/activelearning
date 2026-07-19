@@ -235,6 +235,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             fname = f"{ds.name}-{which}.csv".replace(" ", "_")
         return FileResponse(path, media_type="text/csv", filename=fname)
 
+    # ---- catálogo de experimentos da tese (execução + replay) ----
+    from activelearning.adapters.api import experiments_catalog as expcat
+
+    @app.get("/api/experiments")
+    def list_experiments() -> list[dict]:
+        return expcat.catalog_status()
+
+    @app.get("/api/experiments/{exp_id}/results")
+    def experiment_results(exp_id: str) -> dict:
+        try:
+            return expcat.load_results(exp_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="experimento desconhecido")
+
+    @app.post("/api/experiments/{exp_id}/execute", status_code=201)
+    def experiment_execute(exp_id: str, body: dict) -> dict:
+        try:
+            return expcat.execute(exp_id, body.get("preset", ""))
+        except KeyError:
+            raise HTTPException(status_code=404, detail="experimento desconhecido")
+        except (ValueError, RuntimeError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+
+    @app.post("/api/experiments/{exp_id}/stop")
+    def experiment_stop(exp_id: str) -> dict:
+        try:
+            return expcat.stop(exp_id)
+        except RuntimeError as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+
+    @app.get("/api/experiments/{exp_id}/log")
+    def experiment_log(exp_id: str) -> dict:
+        return {"log": expcat.tail_log(exp_id)}
+
     @app.get("/api/runs")
     def list_runs() -> list[dict]:
         with session_factory() as session:

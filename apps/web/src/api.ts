@@ -60,6 +60,22 @@ export type DatasetReport = {
   class_histogram_top: [string, number][];
 };
 
+export type Experiment = {
+  id: string; titulo: string; pilar: string; pergunta: string;
+  descricao: string; duracao: string; requer_chave: boolean;
+  presets: string[]; artefatos_disponiveis: string[]; n_artefatos: number;
+  job: { pid: number; preset: string; started: number; status: string } | null;
+};
+
+export type ResultBlock = {
+  label: string;
+  kind: "json" | "curve" | "table" | "ausente";
+  data?: Record<string, unknown>;
+  points?: { n: number; y: number }[];
+  resumo?: Record<string, unknown>;
+  rows?: Record<string, unknown>[];
+};
+
 export type DatasetStats = {
   n_rows: number;
   n_classes: number;
@@ -103,6 +119,16 @@ export const api = {
     fetch(`/api/datasets/${id}/stats`).then((r) => json<DatasetStats>(r)),
   uploadDataset: (form: FormData) =>
     fetch("/api/datasets", { method: "POST", body: form }).then((r) => json<Dataset>(r)),
+  experiments: () => fetch("/api/experiments").then((r) => json<Experiment[]>(r)),
+  experimentResults: (id: string) =>
+    fetch(`/api/experiments/${id}/results`).then((r) => json<{ id: string; titulo: string; blocks: ResultBlock[] }>(r)),
+  experimentExecute: (id: string, preset: string) =>
+    fetch(`/api/experiments/${id}/execute`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ preset }),
+    }).then((r) => json<Record<string, unknown>>(r)),
+  experimentLog: (id: string) =>
+    fetch(`/api/experiments/${id}/log`).then((r) => json<{ log: string }>(r)),
   downloadUrl: (id: string, which: "sanitized" | "original") =>
     `/api/datasets/${id}/download?which=${which}`,
 };

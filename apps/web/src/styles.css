@@ -82,3 +82,19 @@ tr.row-active td { background: #f0f5ff; }
 pre { background: #f6f8fb; padding: 0.75rem; border-radius: 8px; overflow-x: auto; font-size: 0.8rem; }
 code { background: #f0f3f8; padding: 0.1rem 0.3rem; border-radius: 4px; }
 details summary { cursor: pointer; font-size: 0.85rem; color: #2456a6; margin-top: 0.5rem; }
+
+/* ---- catálogo de experimentos ---- */
+.exp-card h2 { margin-bottom: 0.1rem; }
+.exp-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+.exp-q { font-size: 0.88rem; color: #2456a6; font-style: italic; margin: 0.15rem 0; }
+.exp-desc { font-size: 0.85rem; color: #55617a; margin: 0.15rem 0 0; line-height: 1.45; }
+.exp-badges { display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end; flex-shrink: 0; }
+.chip { font-size: 0.72rem; padding: 0.15rem 0.55rem; border-radius: 999px; background: #eef2f8; color: #2456a6; white-space: nowrap; }
+.chip.warn { background: #fdf3e0; color: #8a5b00; }
+.chip.run { background: #fff3cd; color: #7a5b00; }
+.chip.ok { background: #e6f4ea; color: #1d5c34; }
+.exp-actions { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
+button.secondary { background: #eef2f8; color: #2456a6; }
+pre.log { max-height: 320px; overflow-y: auto; background: #10192e; color: #c9d6ee; }
+.block { margin-top: 0.9rem; }
+.scroll-x { overflow-x: auto; }

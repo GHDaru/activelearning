@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, type Dataset, type DatasetStats, type OracleSpec, type Run } from "./api";
+import { api, type Dataset, type DatasetStats, type Experiment, type OracleSpec, type ResultBlock, type Run } from "./api";
 
 const STATUS_LABEL: Record<Run["status"], string> = {
   pending: "na fila",
@@ -10,7 +10,7 @@ const STATUS_LABEL: Record<Run["status"], string> = {
 
 const STRATEGIES = ["entropy", "least_confidence", "smallest_margin", "random", "hybrid"];
 
-type View = "home" | "datasets" | "runs";
+type View = "home" | "datasets" | "runs" | "experiments";
 
 function pct(x: number | undefined | null): string {
   return x === undefined || x === null ? "—" : `${(x * 100).toFixed(1)}%`;
@@ -84,6 +84,9 @@ export default function App() {
   const [selected, setSelected] = useState<Run | null>(null);
   const [selectedDs, setSelectedDs] = useState<Dataset | null>(null);
   const [dsStats, setDsStats] = useState<DatasetStats | null>(null);
+  const [experiments, setExperiments] = useState<Experiment[]>([]);
+  const [expOpen, setExpOpen] = useState<{ id: string; titulo: string; blocks: ResultBlock[] } | null>(null);
+  const [expLog, setExpLog] = useState<{ id: string; log: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -121,6 +124,21 @@ export default function App() {
     const t = setInterval(refresh, 3000);
     return () => clearInterval(t);
   }, [refresh]);
+
+  useEffect(() => {
+    if (view !== "experiments") return;
+    const load = () => api.experiments().then(setExperiments).catch((e) => setError(String(e)));
+    load();
+    const t = setInterval(load, 4000);
+    return () => clearInterval(t);
+  }, [view]);
+
+  useEffect(() => {
+    if (!expLog) return;
+    const t = setInterval(() =>
+      api.experimentLog(expLog.id).then((r) => setExpLog({ id: expLog.id, log: r.log })), 3000);
+    return () => clearInterval(t);
+  }, [expLog?.id]);
 
   async function openDataset(id: string) {
     setDsStats(null);
@@ -180,6 +198,7 @@ export default function App() {
     { key: "home", label: "Início", desc: "o que é e como usar" },
     { key: "datasets", label: "Datasets", desc: "envio, saneamento e estatísticas" },
     { key: "runs", label: "Execuções", desc: "laço de AL e avaliação de oráculo" },
+    { key: "experiments", label: "Experimentos da tese", desc: "catálogo: reproduzir e reprisar" },
   ];
 
   return (
@@ -446,6 +465,107 @@ export default function App() {
                 {selected.artifacts_dir && (
                   <p className="hint">Artefatos rastreáveis: <code>{selected.artifacts_dir}</code></p>
                 )}
+              </section>
+            )}
+          </>
+        )}
+
+        {view === "experiments" && (
+          <>
+            <section className="card hero">
+              <h1>Experimentos da tese</h1>
+              <p>
+                Catálogo executável do programa experimental do FALCO. <b>Reproduzir</b>{" "}
+                relança o runner original (com retomada por estado — pode interromper e
+                voltar). <b>Reprisar</b> carrega os artefatos gravados — os mesmos
+                arquivos que sustentam cada número da tese.
+              </p>
+            </section>
+            {experiments.map((e) => (
+              <section key={e.id} className="card exp-card">
+                <div className="exp-head">
+                  <div>
+                    <h2>{e.titulo}</h2>
+                    <p className="exp-q">{e.pergunta}</p>
+                    <p className="exp-desc">{e.descricao}</p>
+                  </div>
+                  <div className="exp-badges">
+                    <span className="chip">{e.pilar}</span>
+                    {e.requer_chave && <span className="chip warn">requer chave API</span>}
+                    {e.job?.status === "executando" && <span className="chip run">executando…</span>}
+                    <span className="chip ok">{e.artefatos_disponiveis.length}/{e.n_artefatos} artefatos</span>
+                  </div>
+                </div>
+                <div className="exp-actions">
+                  <button disabled={e.artefatos_disponiveis.length === 0}
+                    onClick={() => { setExpLog(null); api.experimentResults(e.id).then(setExpOpen).catch((err) => setError(String(err))); }}>
+                    Reprisar resultados
+                  </button>
+                  {e.presets.map((p) => (
+                    <button key={p} className="secondary"
+                      disabled={e.job?.status === "executando"}
+                      onClick={() => api.experimentExecute(e.id, p)
+                        .then(() => { setExpOpen(null); api.experimentLog(e.id).then((r) => setExpLog({ id: e.id, log: r.log })); })
+                        .catch((err) => setError(String(err)))}>
+                      Reproduzir: {p}
+                    </button>
+                  ))}
+                  {(e.job) && (
+                    <button className="secondary"
+                      onClick={() => api.experimentLog(e.id).then((r) => setExpLog({ id: e.id, log: r.log }))}>
+                      ver log
+                    </button>
+                  )}
+                  <span className="hint">{e.duracao}</span>
+                </div>
+              </section>
+            ))}
+
+            {expLog && (
+              <section className="card">
+                <h2>Log — {expLog.id}
+                  <button className="close" onClick={() => setExpLog(null)}>fechar</button></h2>
+                <pre className="log">{expLog.log || "(aguardando saída…)"}</pre>
+              </section>
+            )}
+
+            {expOpen && (
+              <section className="card">
+                <h2>{expOpen.titulo}
+                  <button className="close" onClick={() => setExpOpen(null)}>fechar</button></h2>
+                {expOpen.blocks.map((b, i) => (
+                  <div key={i} className="block">
+                    <h3>{b.label}</h3>
+                    {b.kind === "ausente" && <p className="hint">artefato ainda não gerado.</p>}
+                    {b.kind === "curve" && b.points && b.points.length > 1 && (
+                      <Curve points={b.points.map((p) => ({ n: p.n, macro_f1: p.y }))} />
+                    )}
+                    {b.kind === "curve" && b.resumo && (
+                      <div className="tiles">
+                        {Object.entries(b.resumo).filter(([, v]) => v !== null && v !== undefined)
+                          .map(([k, v]) => <StatTile key={k} label={k} value={String(v)} />)}
+                      </div>
+                    )}
+                    {b.kind === "json" && (
+                      <details open={i === 0}>
+                        <summary>conteúdo</summary>
+                        <pre>{JSON.stringify(b.data, null, 2)}</pre>
+                      </details>
+                    )}
+                    {b.kind === "table" && b.rows && b.rows.length > 0 && (
+                      <div className="scroll-x">
+                        <table>
+                          <thead><tr>{Object.keys(b.rows[0]).map((c) => <th key={c}>{c}</th>)}</tr></thead>
+                          <tbody>
+                            {b.rows.map((r, j) => (
+                              <tr key={j}>{Object.keys(b.rows![0]).map((c) => <td key={c}>{String(r[c] ?? "—")}</td>)}</tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </section>
             )}
           </>
