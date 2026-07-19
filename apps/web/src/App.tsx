@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, type Dataset, type OracleSpec, type Run } from "./api";
+import { api, type Dataset, type DatasetStats, type OracleSpec, type Run } from "./api";
 
 const STATUS_LABEL: Record<Run["status"], string> = {
   pending: "na fila",
@@ -10,16 +10,18 @@ const STATUS_LABEL: Record<Run["status"], string> = {
 
 const STRATEGIES = ["entropy", "least_confidence", "smallest_margin", "random", "hybrid"];
 
+type View = "home" | "datasets" | "runs";
+
 function pct(x: number | undefined | null): string {
   return x === undefined || x === null ? "—" : `${(x * 100).toFixed(1)}%`;
 }
 
 function Curve({ points }: { points: { n: number; macro_f1: number }[] }) {
   if (!points || points.length < 2) return null;
-  const w = 420, h = 120, pad = 28;
+  const w = 560, h = 180, pad = 34;
   const xs = points.map((p) => p.n), ys = points.map((p) => p.macro_f1);
   const xmin = Math.min(...xs), xmax = Math.max(...xs);
-  const ymin = Math.min(...ys, 0), ymax = Math.max(...ys, 1);
+  const ymin = 0, ymax = Math.max(...ys, 0.01) * 1.1;
   const X = (n: number) => pad + ((n - xmin) / (xmax - xmin || 1)) * (w - 2 * pad);
   const Y = (v: number) => h - pad - ((v - ymin) / (ymax - ymin || 1)) * (h - 2 * pad);
   const d = points.map((p, i) => `${i ? "L" : "M"}${X(p.n).toFixed(1)},${Y(p.macro_f1).toFixed(1)}`).join(" ");
@@ -27,23 +29,61 @@ function Curve({ points }: { points: { n: number; macro_f1: number }[] }) {
     <svg width={w} height={h} role="img" aria-label="Curva de aprendizado (Macro F1 × rótulos)">
       <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#cbd5e1" />
       <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#cbd5e1" />
-      <path d={d} fill="none" stroke="#2456a6" strokeWidth={2} />
-      {points.map((p) => (
-        <circle key={p.n} cx={X(p.n)} cy={Y(p.macro_f1)} r={2.6} fill="#2456a6" />
+      {[0.25, 0.5, 0.75].map((f) => (
+        <line key={f} x1={pad} x2={w - pad} y1={Y(ymax * f)} y2={Y(ymax * f)}
+          stroke="#eef1f6" />
       ))}
-      <text x={w - pad} y={h - 8} fontSize={10} textAnchor="end" fill="#55617a">rótulos</text>
-      <text x={6} y={pad} fontSize={10} fill="#55617a">MacroF1</text>
+      <path d={d} fill="none" stroke="#2456a6" strokeWidth={2.2} />
+      {points.map((p) => (
+        <circle key={p.n} cx={X(p.n)} cy={Y(p.macro_f1)} r={2.8} fill="#2456a6" />
+      ))}
+      <text x={w - pad} y={h - 10} fontSize={11} textAnchor="end" fill="#55617a">rótulos adquiridos</text>
+      <text x={8} y={pad - 8} fontSize={11} fill="#55617a">Macro F1</text>
+      <text x={w - pad} y={Y(ys[ys.length - 1]) - 8} fontSize={11} textAnchor="end" fill="#2456a6">
+        {(ys[ys.length - 1] * 100).toFixed(1)}%
+      </text>
     </svg>
   );
 }
 
+function StatTile({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
+  return (
+    <div className="tile" title={hint}>
+      <div className="tile-value">{value}</div>
+      <div className="tile-label">{label}</div>
+    </div>
+  );
+}
+
+function TopClasses({ stats }: { stats: DatasetStats }) {
+  const top = stats.top_classes;
+  if (!top?.length) return null;
+  const max = top[0].n;
+  return (
+    <div className="topclasses">
+      <h3>Top-10 classes ({stats.n_classes} no total)</h3>
+      {top.map((c) => (
+        <div key={c.label} className="bar-row">
+          <span className="bar-label">{c.label}</span>
+          <div className="bar-track">
+            <div className="bar-fill" style={{ width: `${(c.n / max) * 100}%` }} />
+          </div>
+          <span className="bar-n">{c.n.toLocaleString("pt-BR")}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function App() {
+  const [view, setView] = useState<View>("home");
   const [db, setDb] = useState("…");
   const [oracles, setOracles] = useState<OracleSpec[]>([]);
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [runs, setRuns] = useState<Run[]>([]);
   const [selected, setSelected] = useState<Run | null>(null);
   const [selectedDs, setSelectedDs] = useState<Dataset | null>(null);
+  const [dsStats, setDsStats] = useState<DatasetStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -82,6 +122,13 @@ export default function App() {
     return () => clearInterval(t);
   }, [refresh]);
 
+  async function openDataset(id: string) {
+    setDsStats(null);
+    const ds = await api.dataset(id);
+    setSelectedDs(ds);
+    api.datasetStats(id).then(setDsStats).catch(() => setDsStats(null));
+  }
+
   const oracle = oracles[oracleIdx];
   const oracleSpec = useMemo(() => {
     if (!oracle || oracle.provider === "simulated") return { provider: "simulated", noise };
@@ -101,10 +148,10 @@ export default function App() {
       form.append("label_column", labelCol);
       form.append("operational_labels", opsLabels);
       const ds = await api.uploadDataset(form);
-      setSelectedDs(ds);
       setDatasetId(ds.id);
       setFile(null); setDsName("");
       refresh();
+      openDataset(ds.id);
     } catch (err) { setError(String(err)); } finally { setBusy(false); }
   }
 
@@ -129,171 +176,281 @@ export default function App() {
     } catch (err) { setError(String(err)); } finally { setBusy(false); }
   }
 
+  const nav: { key: View; label: string; desc: string }[] = [
+    { key: "home", label: "Início", desc: "o que é e como usar" },
+    { key: "datasets", label: "Datasets", desc: "envio, saneamento e estatísticas" },
+    { key: "runs", label: "Execuções", desc: "laço de AL e avaliação de oráculo" },
+  ];
+
   return (
-    <main className="shell">
-      <header>
-        <h1>FALCO FlowBuilder</h1>
-        <span className={`badge db-${db}`}>banco: {db}</span>
-      </header>
+    <div className="layout">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-name">FALCO</div>
+          <div className="brand-sub">aprendizado ativo com oráculos LLM</div>
+        </div>
+        <nav>
+          {nav.map((n) => (
+            <button key={n.key} className={view === n.key ? "nav-item active" : "nav-item"}
+              onClick={() => setView(n.key)}>
+              <span>{n.label}</span>
+              <small>{n.desc}</small>
+            </button>
+          ))}
+        </nav>
+        <div className="sidebar-foot">
+          <span className={`badge db-${db}`}>banco: {db}</span>
+        </div>
+      </aside>
 
-      {error && <div className="error">{error}</div>}
+      <main className="content">
+        {error && <div className="error">{error}</div>}
 
-      <section className="card">
-        <h2>1 · Dados — enviar CSV (texto, rótulo)</h2>
-        <form onSubmit={doUpload} className="grid">
-          <label>Arquivo CSV
-            <input type="file" accept=".csv,text/csv"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-          </label>
-          <label>Nome
-            <input value={dsName} onChange={(e) => setDsName(e.target.value)}
-              placeholder={file?.name ?? "meu-dataset"} />
-          </label>
-          <label>Coluna de texto
-            <input value={textCol} onChange={(e) => setTextCol(e.target.value)} />
-          </label>
-          <label>Coluna de rótulo
-            <input value={labelCol} onChange={(e) => setLabelCol(e.target.value)} />
-          </label>
-          <label>Rótulos operacionais (removidos)
-            <input value={opsLabels} onChange={(e) => setOpsLabels(e.target.value)}
-              placeholder="inativo, descontinuado" />
-          </label>
-          <button disabled={!file || busy}>{busy ? "Enviando…" : "Enviar e sanear"}</button>
-        </form>
-        {datasets.length > 0 && (
-          <table>
-            <thead><tr><th>Nome</th><th>Linhas</th><th>Classes</th><th>Base saneada</th><th></th></tr></thead>
-            <tbody>
-              {datasets.map((d) => (
-                <tr key={d.id}>
-                  <td>{d.name}</td>
-                  <td>{d.n_rows ?? "—"}</td>
-                  <td>{d.n_classes ?? "—"}</td>
-                  <td><a href={api.downloadUrl(d.id, "sanitized")}>baixar CSV</a></td>
-                  <td><button onClick={() => api.dataset(d.id).then(setSelectedDs)}>relatório</button></td>
-                </tr>
+        {view === "home" && (
+          <>
+            <section className="hero card">
+              <h1>Bem-vindo ao FALCO</h1>
+              <p>
+                O FALCO (<i>Framework de Aprendizado Ativo com LLM para texto CurtO</i>)
+                treina classificadores de texto gastando o mínimo possível em rótulos:
+                em vez de anotar tudo, o laço escolhe <b>quais</b> exemplos valem a
+                anotação e usa um <b>oráculo</b> — simulado ou um LLM real — para
+                rotulá-los. Esta interface executa o ciclo completo sobre a
+                biblioteca <code>activelearning</code>, com artefatos rastreáveis para
+                cada número.
+              </p>
+            </section>
+            <section className="steps">
+              {[
+                ["1 · Envie seus dados", "Um CSV com coluna de texto e coluna de rótulo. O FALCO saneia (remove vazios e rótulos operacionais), detecta conflitos e duplicatas, e calcula as estatísticas da base — classes, vocabulário, desbalanceamento.", "datasets"],
+                ["2 · Configure o fluxo", "Escolha a estratégia de seleção (entropia é o padrão validado), o oráculo (simulado com ruído ε, ou um LLM via API), o orçamento de rótulos e o tamanho do lote.", "runs"],
+                ["3 · Execute o laço", "O servidor roda: conjunto inicial → treina → seleciona os mais incertos → oráculo rotula → re-treina, até o orçamento ou a estagnação da validação.", "runs"],
+                ["4 · Analise a curva", "Cada execução entrega a curva de aprendizado (Macro F1 × rótulos), a LCE e o relatório completo — os mesmos instrumentos dos experimentos da tese.", "runs"],
+              ].map(([t, d, dest]) => (
+                <div key={t} className="card step" onClick={() => setView(dest as View)}>
+                  <h3>{t}</h3>
+                  <p>{d}</p>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </section>
+            <section className="card hint-card">
+              <h3>Boas práticas</h3>
+              <ul>
+                <li><b>Comece com o oráculo simulado</b> (offline, ε = taxa de erro) para calibrar orçamento e lote; troque pelo LLM real depois.</li>
+                <li><b>Desconfie da autoavaliação</b>: métricas medidas nos próprios dados coletados são enviesadas — reserve um conjunto de teste externo para decisões de liberação.</li>
+                <li><b>Pare pela curva</b>: quando a validação estagna, rótulo adicional compra ruído — e pode até piorar o Macro F1.</li>
+              </ul>
+            </section>
+          </>
         )}
-      </section>
 
-      {selectedDs?.report && (
-        <section className="card">
-          <h2>Relatório de saneamento — {selectedDs.name}{" "}
-            <button onClick={() => setSelectedDs(null)}>fechar</button></h2>
-          <ul>
-            <li>{selectedDs.report.n_rows_in} linhas recebidas → <b>{selectedDs.report.n_rows_out} mantidas</b>{" "}
-              ({selectedDs.report.removed_operational} operacionais + {selectedDs.report.removed_empty} vazias removidas)</li>
-            <li>{selectedDs.report.n_classes} classes ({selectedDs.report.n_rare_classes_lt5} com &lt;5 exemplos)</li>
-            <li><b>{selectedDs.report.n_conflicting_texts} textos com rótulos conflitantes</b>{" "}
-              ({selectedDs.report.n_conflicting_rows} linhas) — mantidos e reportados</li>
-            <li>{selectedDs.report.n_exact_duplicates} duplicatas exatas — mantidas; o particionamento de treino deduplica antes do split</li>
-          </ul>
-          {selectedDs.report.conflict_examples.length > 0 && (
-            <pre>{selectedDs.report.conflict_examples.map((c) =>
-              `${c.texto}  →  {${c.rotulos.join(", ")}}`).join("\n")}</pre>
-          )}
-        </section>
-      )}
+        {view === "datasets" && (
+          <>
+            <section className="card">
+              <h2>Enviar CSV (texto, rótulo)</h2>
+              <form onSubmit={doUpload} className="grid">
+                <label>Arquivo CSV
+                  <input type="file" accept=".csv,text/csv"
+                    onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+                </label>
+                <label>Nome
+                  <input value={dsName} onChange={(e) => setDsName(e.target.value)}
+                    placeholder={file?.name ?? "meu-dataset"} />
+                </label>
+                <label>Coluna de texto
+                  <input value={textCol} onChange={(e) => setTextCol(e.target.value)} />
+                </label>
+                <label>Coluna de rótulo
+                  <input value={labelCol} onChange={(e) => setLabelCol(e.target.value)} />
+                </label>
+                <label>Rótulos operacionais (removidos)
+                  <input value={opsLabels} onChange={(e) => setOpsLabels(e.target.value)}
+                    placeholder="inativo, descontinuado" />
+                </label>
+                <button disabled={!file || busy}>{busy ? "Enviando…" : "Enviar e sanear"}</button>
+              </form>
+            </section>
 
-      <section className="card">
-        <h2>2 · Executar — parâmetros do fluxo</h2>
-        <form onSubmit={doRun} className="grid">
-          <label>Tipo
-            <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)}>
-              <option value="active-learning">Aprendizado ativo (curva completa)</option>
-              <option value="oracle-eval">Avaliação de oráculo (E0)</option>
-            </select>
-          </label>
-          <label>Nome
-            <input value={runName} onChange={(e) => setRunName(e.target.value)} placeholder="opcional" />
-          </label>
-          {kind === "active-learning" ? (
-            <>
-              <label>Dataset
-                <select value={datasetId} onChange={(e) => setDatasetId(e.target.value)}>
-                  <option value="">— escolha —</option>
-                  {datasets.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-                </select>
-              </label>
-              <label>Semente<input type="number" value={seed} onChange={(e) => setSeed(+e.target.value)} /></label>
-              <label>Orçamento (rótulos)<input type="number" min={20} value={budget} onChange={(e) => setBudget(+e.target.value)} /></label>
-              <label>Lote<input type="number" min={1} value={batchSize} onChange={(e) => setBatchSize(+e.target.value)} /></label>
-              <label>L0 inicial<input type="number" min={1} value={initialSize} onChange={(e) => setInitialSize(+e.target.value)} /></label>
-              <label>Pool máx.<input type="number" min={100} value={poolSize} onChange={(e) => setPoolSize(+e.target.value)} /></label>
-              <label>Estratégia
-                <select value={strategy} onChange={(e) => setStrategy(e.target.value)}>
-                  {STRATEGIES.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </label>
-            </>
-          ) : (
-            <>
-              <label>Amostra
-                <select value={sample} onChange={(e) => setSample(e.target.value)}>
-                  <option value="rand">S-rand</option><option value="strat">S-strat</option>
-                </select>
-              </label>
-              <label>Instâncias<input type="number" min={1} max={5000} value={limit}
-                onChange={(e) => setLimit(+e.target.value)} /></label>
-            </>
-          )}
-          <label>Oráculo
-            <select value={oracleIdx} onChange={(e) => setOracleIdx(+e.target.value)}>
-              {oracles.map((o, i) => <option key={o.label} value={i}>{o.label}</option>)}
-            </select>
-          </label>
-          {oracle?.provider === "simulated" && (
-            <label>Ruído ε<input type="number" min={0} max={0.9} step={0.05} value={noise}
-              onChange={(e) => setNoise(+e.target.value)} /></label>
-          )}
-          <button disabled={busy || (kind === "active-learning" && !datasetId)}>
-            {busy ? "Criando…" : "Executar"}
-          </button>
-        </form>
-        <p className="hint">
-          Oráculos LLM exigem chaves no <code>.env</code> do servidor; modelos :free do
-          OpenRouter têm custo zero. O simulado roda offline (ε = taxa de erro).
-        </p>
-      </section>
-
-      <section className="card">
-        <h2>3 · Runs</h2>
-        <table>
-          <thead><tr><th>Nome</th><th>Tipo</th><th>Status</th><th>Macro-F1</th><th>LCE</th><th>Rótulos</th><th></th></tr></thead>
-          <tbody>
-            {runs.map((r) => (
-              <tr key={r.id} className={`status-${r.status}`}>
-                <td>{r.name}</td>
-                <td>{r.kind}</td>
-                <td>{STATUS_LABEL[r.status]}</td>
-                <td>{pct(r.report?.final_macro_f1 ?? r.report?.macro_f1)}</td>
-                <td>{r.report?.lce_macro_f1?.toFixed(3) ?? "—"}</td>
-                <td>{r.report?.n_labeled ?? r.report?.n_total ?? "—"}</td>
-                <td><button onClick={() => api.run(r.id).then(setSelected)}>detalhes</button></td>
-              </tr>
-            ))}
-            {runs.length === 0 && (
-              <tr><td colSpan={7} className="empty">Nenhum run ainda — envie um CSV e execute.</td></tr>
+            {datasets.length > 0 && (
+              <section className="card">
+                <h2>Bases disponíveis</h2>
+                <table>
+                  <thead><tr><th>Nome</th><th>Linhas</th><th>Classes</th><th>CSV</th><th></th></tr></thead>
+                  <tbody>
+                    {datasets.map((d) => (
+                      <tr key={d.id} className={selectedDs?.id === d.id ? "row-active" : ""}>
+                        <td>{d.name}</td>
+                        <td>{d.n_rows?.toLocaleString("pt-BR") ?? "—"}</td>
+                        <td>{d.n_classes ?? "—"}</td>
+                        <td><a href={api.downloadUrl(d.id, "sanitized")}>baixar</a></td>
+                        <td><button onClick={() => openDataset(d.id)}>estatísticas</button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
             )}
-          </tbody>
-        </table>
-      </section>
 
-      {selected && (
-        <section className="card">
-          <h2>Run {selected.id} — {selected.name}{" "}
-            <button onClick={() => setSelected(null)}>fechar</button></h2>
-          {selected.error && <pre className="error">{selected.error}</pre>}
-          {selected.report?.curve && <Curve points={selected.report.curve} />}
-          <pre>{JSON.stringify(selected.report ?? selected.config, null, 2)}</pre>
-          {selected.artifacts_dir && (
-            <p className="hint">Artefatos (JSONL rastreável): <code>{selected.artifacts_dir}</code></p>
-          )}
-        </section>
-      )}
-    </main>
+            {selectedDs && (
+              <section className="card">
+                <h2>{selectedDs.name}
+                  <button className="close" onClick={() => { setSelectedDs(null); setDsStats(null); }}>fechar</button>
+                </h2>
+                {dsStats ? (
+                  <>
+                    <div className="tiles">
+                      <StatTile label="linhas" value={dsStats.n_rows.toLocaleString("pt-BR")} />
+                      <StatTile label="classes" value={dsStats.n_classes} />
+                      <StatTile label="vocabulário" value={dsStats.vocab_size.toLocaleString("pt-BR")}
+                        hint="tokens únicos (minúsculas, separados por espaço)" />
+                      <StatTile label="mediana por classe" value={dsStats.per_class.median} />
+                      <StatTile label="maior / menor classe" value={dsStats.per_class.imbalance_ratio ?? "—"}
+                        hint={`máx ${dsStats.per_class.max} · mín ${dsStats.per_class.min}`} />
+                      <StatTile label="classes com < 5 exemplos" value={dsStats.per_class.lt5} />
+                      <StatTile label="caracteres por texto (méd.)" value={dsStats.text.chars_mean} />
+                      <StatTile label="tokens por texto (méd.)" value={dsStats.text.tokens_mean} />
+                    </div>
+                    <TopClasses stats={dsStats} />
+                  </>
+                ) : <p className="hint">calculando estatísticas…</p>}
+                {selectedDs.report && (
+                  <>
+                    <h3>Relatório de saneamento</h3>
+                    <ul>
+                      <li>{selectedDs.report.n_rows_in} linhas recebidas → <b>{selectedDs.report.n_rows_out} mantidas</b>{" "}
+                        ({selectedDs.report.removed_operational} operacionais + {selectedDs.report.removed_empty} vazias removidas)</li>
+                      <li><b>{selectedDs.report.n_conflicting_texts} textos com rótulos conflitantes</b>{" "}
+                        ({selectedDs.report.n_conflicting_rows} linhas) — mantidos e reportados</li>
+                      <li>{selectedDs.report.n_exact_duplicates} duplicatas exatas — o particionamento deduplica antes do split</li>
+                    </ul>
+                    {selectedDs.report.conflict_examples.length > 0 && (
+                      <pre>{selectedDs.report.conflict_examples.map((c) =>
+                        `${c.texto}  →  {${c.rotulos.join(", ")}}`).join("\n")}</pre>
+                    )}
+                  </>
+                )}
+              </section>
+            )}
+          </>
+        )}
+
+        {view === "runs" && (
+          <>
+            <section className="card">
+              <h2>Nova execução</h2>
+              <form onSubmit={doRun} className="grid">
+                <label>Tipo
+                  <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)}>
+                    <option value="active-learning">Aprendizado ativo (curva completa)</option>
+                    <option value="oracle-eval">Avaliação de oráculo (E0)</option>
+                  </select>
+                </label>
+                <label>Nome
+                  <input value={runName} onChange={(e) => setRunName(e.target.value)} placeholder="opcional" />
+                </label>
+                {kind === "active-learning" ? (
+                  <>
+                    <label>Dataset
+                      <select value={datasetId} onChange={(e) => setDatasetId(e.target.value)}>
+                        <option value="">— escolha —</option>
+                        {datasets.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+                      </select>
+                    </label>
+                    <label>Semente<input type="number" value={seed} onChange={(e) => setSeed(+e.target.value)} /></label>
+                    <label>Orçamento (rótulos)<input type="number" min={20} value={budget} onChange={(e) => setBudget(+e.target.value)} /></label>
+                    <label>Lote<input type="number" min={1} value={batchSize} onChange={(e) => setBatchSize(+e.target.value)} /></label>
+                    <label>L0 inicial<input type="number" min={1} value={initialSize} onChange={(e) => setInitialSize(+e.target.value)} /></label>
+                    <label>Pool máx.<input type="number" min={100} value={poolSize} onChange={(e) => setPoolSize(+e.target.value)} /></label>
+                    <label>Estratégia
+                      <select value={strategy} onChange={(e) => setStrategy(e.target.value)}>
+                        {STRATEGIES.map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </label>
+                  </>
+                ) : (
+                  <>
+                    <label>Amostra
+                      <select value={sample} onChange={(e) => setSample(e.target.value)}>
+                        <option value="rand">S-rand</option><option value="strat">S-strat</option>
+                      </select>
+                    </label>
+                    <label>Instâncias<input type="number" min={1} max={5000} value={limit}
+                      onChange={(e) => setLimit(+e.target.value)} /></label>
+                  </>
+                )}
+                <label>Oráculo
+                  <select value={oracleIdx} onChange={(e) => setOracleIdx(+e.target.value)}>
+                    {oracles.map((o, i) => <option key={o.label} value={i}>{o.label}</option>)}
+                  </select>
+                </label>
+                {oracle?.provider === "simulated" && (
+                  <label>Ruído ε<input type="number" min={0} max={0.9} step={0.05} value={noise}
+                    onChange={(e) => setNoise(+e.target.value)} /></label>
+                )}
+                <button disabled={busy || (kind === "active-learning" && !datasetId)}>
+                  {busy ? "Criando…" : "Executar"}
+                </button>
+              </form>
+              <p className="hint">
+                Oráculos LLM exigem chaves no <code>.env</code> do servidor. O simulado
+                roda offline (ε = taxa de erro do oráculo).
+              </p>
+            </section>
+
+            <section className="card">
+              <h2>Execuções</h2>
+              <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Status</th><th>Macro F1</th><th>LCE</th><th>Rótulos</th><th></th></tr></thead>
+                <tbody>
+                  {runs.map((r) => (
+                    <tr key={r.id} className={`status-${r.status}`}>
+                      <td>{r.name}</td>
+                      <td>{r.kind}</td>
+                      <td>{STATUS_LABEL[r.status]}</td>
+                      <td>{pct(r.report?.final_macro_f1 ?? r.report?.macro_f1)}</td>
+                      <td>{r.report?.lce_macro_f1?.toFixed(3) ?? "—"}</td>
+                      <td>{r.report?.n_labeled ?? r.report?.n_total ?? "—"}</td>
+                      <td><button onClick={() => api.run(r.id).then(setSelected)}>detalhes</button></td>
+                    </tr>
+                  ))}
+                  {runs.length === 0 && (
+                    <tr><td colSpan={7} className="empty">Nenhuma execução ainda — envie um CSV e execute.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </section>
+
+            {selected && (
+              <section className="card">
+                <h2>{selected.name}
+                  <button className="close" onClick={() => setSelected(null)}>fechar</button>
+                </h2>
+                {selected.error && <pre className="error">{selected.error}</pre>}
+                {selected.report?.curve && <Curve points={selected.report.curve} />}
+                {selected.report && (
+                  <div className="tiles">
+                    {selected.report.final_macro_f1 !== undefined &&
+                      <StatTile label="Macro F1 final" value={pct(selected.report.final_macro_f1)} />}
+                    {selected.report.final_accuracy !== undefined &&
+                      <StatTile label="acurácia final" value={pct(selected.report.final_accuracy)} />}
+                    {selected.report.lce_macro_f1 !== undefined &&
+                      <StatTile label="LCE" value={selected.report.lce_macro_f1?.toFixed(3) ?? "—"} />}
+                    {selected.report.n_labeled !== undefined &&
+                      <StatTile label="rótulos usados" value={selected.report.n_labeled ?? "—"} />}
+                  </div>
+                )}
+                <details>
+                  <summary>relatório completo (JSON)</summary>
+                  <pre>{JSON.stringify(selected.report ?? selected.config, null, 2)}</pre>
+                </details>
+                {selected.artifacts_dir && (
+                  <p className="hint">Artefatos rastreáveis: <code>{selected.artifacts_dir}</code></p>
+                )}
+              </section>
+            )}
+          </>
+        )}
+      </main>
+    </div>
   );
 }

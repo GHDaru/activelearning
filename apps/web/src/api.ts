@@ -60,6 +60,15 @@ export type DatasetReport = {
   class_histogram_top: [string, number][];
 };
 
+export type DatasetStats = {
+  n_rows: number;
+  n_classes: number;
+  vocab_size: number;
+  per_class: { min: number; median: number; mean: number; max: number; lt5: number; imbalance_ratio: number | null };
+  text: { chars_mean: number; chars_p50: number; chars_max: number; tokens_mean: number };
+  top_classes: { label: string; n: number }[];
+};
+
 export type Dataset = {
   id: string;
   name: string;
@@ -90,6 +99,8 @@ export const api = {
     }).then((r) => json<Run>(r)),
   datasets: () => fetch("/api/datasets").then((r) => json<Dataset[]>(r)),
   dataset: (id: string) => fetch(`/api/datasets/${id}`).then((r) => json<Dataset>(r)),
+  datasetStats: (id: string) =>
+    fetch(`/api/datasets/${id}/stats`).then((r) => json<DatasetStats>(r)),
   uploadDataset: (form: FormData) =>
     fetch("/api/datasets", { method: "POST", body: form }).then((r) => json<Dataset>(r)),
   downloadUrl: (id: string, which: "sanitized" | "original") =>

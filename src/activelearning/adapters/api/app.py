@@ -168,6 +168,61 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 raise HTTPException(status_code=404, detail="dataset não encontrado")
             return ds.to_dict()
 
+    @app.get("/api/datasets/{dataset_id}/stats")
+    def dataset_stats(dataset_id: str) -> dict:
+        """Estatísticas descritivas da base saneada (cacheadas em stats.json)."""
+        import csv as _csv
+        import json as _json
+        import statistics as _st
+        from collections import Counter as _Counter
+
+        with session_factory() as session:
+            ds = session.get(Dataset, dataset_id)
+            if ds is None:
+                raise HTTPException(status_code=404, detail="dataset não encontrado")
+            sanitized = Path(ds.sanitized_path)
+            text_col, label_col = ds.text_column, ds.label_column
+        cache = sanitized.parent / "stats.json"
+        if cache.exists():
+            return _json.loads(cache.read_text())
+
+        counts: _Counter[str] = _Counter()
+        vocab: set[str] = set()
+        char_lens: list[int] = []
+        tok_lens: list[int] = []
+        with sanitized.open(encoding="utf-8") as fh:
+            for row in _csv.DictReader(fh):
+                text = (row.get(text_col) or "").strip()
+                counts[(row.get(label_col) or "").strip()] += 1
+                toks = text.lower().split()
+                vocab.update(toks)
+                char_lens.append(len(text))
+                tok_lens.append(len(toks))
+        per_class = sorted(counts.values())
+        stats = {
+            "n_rows": sum(per_class),
+            "n_classes": len(counts),
+            "vocab_size": len(vocab),
+            "per_class": {
+                "min": per_class[0] if per_class else 0,
+                "median": int(_st.median(per_class)) if per_class else 0,
+                "mean": round(_st.mean(per_class), 1) if per_class else 0,
+                "max": per_class[-1] if per_class else 0,
+                "lt5": sum(1 for c in per_class if c < 5),
+                "imbalance_ratio": (round(per_class[-1] / per_class[0], 1)
+                                    if per_class and per_class[0] else None),
+            },
+            "text": {
+                "chars_mean": round(_st.mean(char_lens), 1) if char_lens else 0,
+                "chars_p50": int(_st.median(char_lens)) if char_lens else 0,
+                "chars_max": max(char_lens) if char_lens else 0,
+                "tokens_mean": round(_st.mean(tok_lens), 1) if tok_lens else 0,
+            },
+            "top_classes": [{"label": l, "n": n} for l, n in counts.most_common(10)],
+        }
+        cache.write_text(_json.dumps(stats, ensure_ascii=False))
+        return stats
+
     @app.get("/api/datasets/{dataset_id}/download")
     def download_dataset(dataset_id: str, which: str = "sanitized"):
         if which not in ("sanitized", "original"):
