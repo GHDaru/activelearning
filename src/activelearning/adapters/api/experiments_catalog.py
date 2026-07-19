@@ -246,10 +246,21 @@ def job_status(exp_id: str) -> dict | None:
     if not jp.exists():
         return None
     job = json.loads(jp.read_text())
+    pid = job["pid"]
     try:
-        os.kill(job["pid"], 0)
-        job["status"] = "executando"
-    except (OSError, ProcessLookupError):
+        # colhe o filho se já terminou (sem isso ele vira zumbi e os.kill
+        # continuaria respondendo "vivo" para sempre)
+        done, _ = os.waitpid(pid, os.WNOHANG)
+        if done == pid:
+            job["status"] = "finalizado"
+            return job
+    except ChildProcessError:
+        pass  # não é nosso filho (ex.: servidor reiniciou) — checa /proc
+    stat = Path(f"/proc/{pid}/stat")
+    try:
+        state = stat.read_text().rsplit(") ", 1)[1].split()[0]
+        job["status"] = "finalizado" if state == "Z" else "executando"
+    except (FileNotFoundError, IndexError):
         job["status"] = "finalizado"
     return job
 

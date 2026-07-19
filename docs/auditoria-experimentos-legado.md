@@ -39,3 +39,25 @@ Esta auditoria mapeia número da tese → código → artefato → estado.
       "resultados originais no repositório activetextclassification;
       reexecuções na biblioteca activelearning" — já dito no Cap. 4,
       conferir se basta.
+
+## Porte para a biblioteca nova: estado honesto (auditado 19/07)
+
+| Componente legado | Porte na biblioteca nova | Verificação |
+|---|---|---|
+| PVBin (classificador) | `adapters/classifiers/pvbin.py` | **numérica**: igualdade exata das matrizes de escore entre implementações (declarada na tese, Cap. 4) |
+| DRI-SL (`cold_start/dri_cluster.py`) | `adapters/strategies/drisl.py` | **conceitual, NÃO numérica**: mesmo algoritmo (cluster semântico + relevância + novidade lexical), reimplementado com encoder próprio (TF-IDF+SVD). Usado APENAS nos experimentos novos (E5/E6/E3'); os números de P2 na tese vêm do artefato legado verificado. Equivalência numérica não é requerida nem alegada — registrar se a banca perguntar |
+| AG (`optimization/genetic_l0_optimizerv4.py`) | NÃO portado; `experiments/p1/replay_ga.py` reimplementa o MECANISMO em escala reduzida (Npop=30, 40 ger.) com protocolo anticircularidade | mecanismo reproduzido (+5,2 p.p. em I=50); envelope completo permanece o legado |
+| Laço de AL / oráculos | `application/run_falco.py`, `adapters/oracles/*` | testes de unidade + execuções ponta a ponta (E5 real) |
+
+**Arquitetura (DDD/hexagonal)**: os portes seguem a constituição — domínio puro
+em `domain/`, casos de uso em `application/`, tudo que toca IO/modelos/API em
+`adapters/`. O catálogo de experimentos vive em `adapters/api/` (correto:
+orquestra subprocessos e filesystem). Dívida menor conhecida: o cálculo de
+estatísticas de dataset está inline no adapter da API (funcional e testado;
+extraível para `application/` se crescer).
+
+**Testes (19/07)**: suíte com 80 casos, 100% verdes — incluindo os novos
+`test_experiments_catalog.py` (status/replay/subprocess/presets) e
+`test_dataset_stats`. A escrita dos testes do catálogo encontrou e corrigiu
+um bug real: filhos de execução viravam zumbis e o status ficava
+"executando" para sempre (corrigido com waitpid + inspeção de /proc).

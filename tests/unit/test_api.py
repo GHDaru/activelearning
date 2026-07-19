@@ -168,3 +168,38 @@ def test_active_learning_requires_dataset(client):
         "oracle": {"provider": "simulated"},
     })
     assert resp.status_code == 422
+
+
+def test_dataset_stats(client, tmp_path):
+    csv = tmp_path / "up.csv"
+    lines = ["nm_item,nm_product"]
+    for i in range(12):
+        lines.append(f"CERVEJA LATA {i},cerveja")
+    for i in range(4):
+        lines.append(f"ARROZ TIPO1 {i}KG,arroz")
+    csv.write_text("\n".join(lines), encoding="utf-8")
+    with csv.open("rb") as fh:
+        r = client.post("/api/datasets", files={"file": ("up.csv", fh, "text/csv")},
+                        data={"name": "up", "text_column": "nm_item",
+                              "label_column": "nm_product"})
+    assert r.status_code == 201, r.text
+    ds_id = r.json()["id"]
+    r = client.get(f"/api/datasets/{ds_id}/stats")
+    assert r.status_code == 200, r.text
+    stats = r.json()
+    assert stats["n_rows"] == 16
+    assert stats["n_classes"] == 2
+    assert stats["per_class"]["max"] == 12
+    assert stats["per_class"]["min"] == 4
+    assert stats["per_class"]["imbalance_ratio"] == 3.0
+    assert stats["top_classes"][0]["label"] == "cerveja"
+    assert stats["vocab_size"] > 0
+    # segunda chamada usa o cache e devolve o mesmo conteúdo
+    assert client.get(f"/api/datasets/{ds_id}/stats").json() == stats
+
+
+def test_experiments_endpoint_lista_catalogo(client):
+    r = client.get("/api/experiments")
+    assert r.status_code == 200
+    ids = [e["id"] for e in r.json()]
+    assert "e6" in ids and "e3prime" in ids and "ag-envelope" in ids
