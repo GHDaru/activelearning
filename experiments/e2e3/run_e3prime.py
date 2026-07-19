@@ -138,10 +138,16 @@ def build_arms(pool, valid_labels, arm_names):
     if "D" in arm_names:
         arms["D"] = ([t for t, _ in pool], [l for _, l in pool],
                      {"fonte": "pool inteiro, gold (régua)"})
-    if "E" in arm_names:
-        traj = json.loads(E6_ENTROPY_STATE.read_text())["labeled_idx"][:15_000]
-        arms["E"] = ([pool[i][0] for i in traj], [pool[i][1] for i in traj],
-                     {"fonte": "prefixo 15k da trajetória de entropia do E6 (SGD), gold"})
+    traj = None
+    for name in arm_names:
+        if name == "E" or (name.startswith("E") and name[1:].isdigit()):
+            if traj is None:
+                traj = json.loads(E6_ENTROPY_STATE.read_text())["labeled_idx"]
+            k = 15_000 if name == "E" else int(name[1:]) * 1_000
+            prefix = traj[:k]
+            arms[name] = ([pool[i][0] for i in prefix],
+                          [pool[i][1] for i in prefix],
+                          {"fonte": f"prefixo {k} da trajetória de entropia do E6 (SGD), gold"})
     return arms
 
 
@@ -156,6 +162,8 @@ def main():
     ap.add_argument("--force", action="store_true", help="reexecuta braços já concluídos")
     args = ap.parse_args()
     arm_names = [a.strip().upper() for a in args.arms.split(",") if a.strip()]
+    # braços E<k> = prefixo de k mil rótulos da trajetória de entropia
+    # (varredura de orçamento do E3' corrigido: onde F1 cruza 0,95*F1(D))
 
     dedup = load_base()
     pool = dedup[:POOL_SIZE]
@@ -210,13 +218,29 @@ def main():
         print(json.dumps(result, ensure_ascii=False), flush=True)
 
     done = {p.stem.split("_")[1]: json.loads(p.read_text())
-            for p in OUT.glob("e3prime_?.json")}
+            for p in OUT.glob("e3prime_*.json")
+            if p.stem.count("_") == 1 and not p.stem.endswith("pred")}
     if "A" in done and "D" in done:
         fa, fd = done["A"]["macro_f1"], done["D"]["macro_f1"]
         frac = done["A"]["n_train"] / done["D"]["n_train"]
         print(f"\nHIPÓTESE: F1(A)={fa} vs 0,95×F1(D)={0.95 * fd:.4f} "
               f"com {frac:.1%} dos rótulos -> "
               f"{'SUSTENTADA' if fa >= 0.95 * fd else 'NÃO sustentada'}", flush=True)
+    if "D" in done:
+        fd = done["D"]["macro_f1"]
+        sweep = sorted((d["n_train"], d["macro_f1"], d["accuracy"], a)
+                       for a, d in done.items()
+                       if a.startswith("E") or a == "D")
+        if len(sweep) > 1:
+            print("VARREDURA (n, F1, acc, braço) vs critério "
+                  f"F1>={0.95 * fd:.4f} / acc>={0.95 * done['D']['accuracy']:.4f}:",
+                  flush=True)
+            for n, f1, acc, a in sweep:
+                ok_f1 = "OK" if f1 >= 0.95 * fd else "--"
+                ok_ac = "OK" if acc >= 0.95 * done["D"]["accuracy"] else "--"
+                print(f"  {a:>4} n={n:>6} F1={f1:.4f} [{ok_f1}] "
+                      f"acc={acc:.4f} [{ok_ac}] ({n / done['D']['n_train']:.0%})",
+                      flush=True)
 
 
 if __name__ == "__main__":
