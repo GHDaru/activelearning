@@ -491,6 +491,8 @@ export default function App() {
                   </div>
                   <div className="exp-badges">
                     <span className="chip">{e.pilar}</span>
+                    {e.legado && <span className="chip legacy">legado</span>}
+                    {e.auditoria === "pendente" && <span className="chip warn">auditoria pendente</span>}
                     {e.requer_chave && <span className="chip warn">requer chave API</span>}
                     {e.job?.status === "executando" && <span className="chip run">executando…</span>}
                     <span className="chip ok">{e.artefatos_disponiveis.length}/{e.n_artefatos} artefatos</span>
@@ -536,7 +538,8 @@ export default function App() {
                 {expOpen.blocks.map((b, i) => (
                   <div key={i} className="block">
                     <h3>{b.label}</h3>
-                    {b.kind === "ausente" && <p className="hint">artefato ainda não gerado.</p>}
+                    {b.kind === "ausente" && <p className="hint">artefato ainda não gerado (ou repositório legado ausente nesta máquina).</p>}
+                    {b.kind === "text" && b.text && <pre>{b.text}</pre>}
                     {b.kind === "curve" && b.points && b.points.length > 1 && (
                       <Curve points={b.points.map((p) => ({ n: p.n, macro_f1: p.y }))} />
                     )}

@@ -98,3 +98,4 @@ button.secondary { background: #eef2f8; color: #2456a6; }
 pre.log { max-height: 320px; overflow-y: auto; background: #10192e; color: #c9d6ee; }
 .block { margin-top: 0.9rem; }
 .scroll-x { overflow-x: auto; }
+.chip.legacy { background: #ece8f8; color: #5b3fa8; }

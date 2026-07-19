@@ -64,12 +64,14 @@ export type Experiment = {
   id: string; titulo: string; pilar: string; pergunta: string;
   descricao: string; duracao: string; requer_chave: boolean;
   presets: string[]; artefatos_disponiveis: string[]; n_artefatos: number;
+  legado?: boolean; auditoria?: string | null;
   job: { pid: number; preset: string; started: number; status: string } | null;
 };
 
 export type ResultBlock = {
   label: string;
-  kind: "json" | "curve" | "table" | "ausente";
+  kind: "json" | "curve" | "table" | "text" | "ausente";
+  text?: string;
   data?: Record<string, unknown>;
   points?: { n: number; y: number }[];
   resumo?: Record<string, unknown>;

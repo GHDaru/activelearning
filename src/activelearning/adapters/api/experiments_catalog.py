@@ -18,9 +18,84 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[4]
 EXP = ROOT / "experiments"
 JOBS = EXP / "api_jobs"
+# repositório do programa experimental original (P1/P2/AG/oráculo-piloto)
+LEGACY = Path(os.environ.get("FALCO_LEGACY_ROOT",
+                             str(ROOT.parent / "activetextclassification")))
 
-# kind: json (objeto chave-valor) | curve (jsonl com campos x/y) | table (jsonl -> linhas)
+# kind: json | curve | table | csv (tabela) | text (trecho)
+# legado=True: código/artefatos no repositório activetextclassification
 CATALOG: list[dict[str, Any]] = [
+    {
+        "id": "p1-original",
+        "titulo": "P1 original — Sensibilidade de L0 (47 tamanhos × 30 repetições)",
+        "pilar": "P1", "legado": True, "auditoria": "verificado",
+        "pergunta": "O estudo original que a reexecução (P1-replay) valida.",
+        "descricao": "Código: examples/L0_experimento.ipynb (repositório "
+                     "activetextclassification). Artefatos: "
+                     "l0_random_impact_analysis_outputs/ (inclui a tabela do "
+                     "apêndice da tese). Divergência da reexecução: ≤0,7 p.p.",
+        "duracao": "dias (execução original; use o replay para reproduzir)",
+        "requer_chave": False, "presets": {},
+        "artefatos": [
+            {"label": "Tabela estatística original (apêndice da tese)",
+             "path_abs": "examples/l0_random_impact_analysis_outputs/l0_stats_table_analyzed.tex",
+             "kind": "text"},
+        ],
+    },
+    {
+        "id": "ag-envelope",
+        "titulo": "AG original — Envelope evolutivo de L0 (pop. 50 × 100 gerações)",
+        "pilar": "P1", "legado": True, "auditoria": "verificado",
+        "pergunta": "Quanto a composição pode render além do sorteio? (limites max/min)",
+        "descricao": "Código: optimization/genetic_l0_optimizerv4.py — população 50, "
+                     "100 gerações, elitismo, 4 cenários (max/min × acurácia/Macro F1), "
+                     "checkpoints .pkl por célula. Artefatos: "
+                     "examples/ag_optimization_results_L0_*/ + allag.xlsx. "
+                     "ATENÇÃO: protocolo original é circular (aptidão = relato); a "
+                     "quantificação da inflação (−6,3 p.p.) está no P1-replay.",
+        "duracao": "dias (original); mecanismo reproduzível pelo replay do AG",
+        "requer_chave": False, "presets": {},
+        "artefatos": [
+            {"label": "Evolução da aptidão — acurácia máx. (L0=100.000, v2)",
+             "path_abs": "examples/ag_optimization_results_L0_100000v2/ag_detailed_fitnessACCURACY_MAXIMIZE.csv",
+             "kind": "csv"},
+            {"label": "Melhor indivíduo — acurácia máx. (L0=30.000, v1)",
+             "path_abs": "examples/ag_optimization_results_L0_30000v1/ag_best_l0_ACCURACY_MAXIMIZE.csv",
+             "kind": "csv"},
+        ],
+    },
+    {
+        "id": "p2-drisl",
+        "titulo": "P2 original — DRI-SL vs. envelope do AG (cold start)",
+        "pilar": "P2", "legado": True, "auditoria": "pendente",
+        "pergunta": "A heurística sem rótulos supera o otimizador supervisionado?",
+        "descricao": "Código: cold_start/dri_cluster.py (DRIClusterColdStart: KMeans "
+                     "semântico + relevância TF-IDF + novidade lexical) e "
+                     "examples/coldstart_evaluate.ipynb. Os números da tab:drisl-vs-ag "
+                     "da tese saem daqui. AUDITORIA PENDENTE: localizar e verificar os "
+                     "artefatos numéricos finais da comparação e portar um runner "
+                     "reproduzível para esta biblioteca.",
+        "duracao": "horas (original)",
+        "requer_chave": False, "presets": {},
+        "artefatos": [
+            {"label": "Notebook de avaliação (fonte dos números)",
+             "path_abs": "examples/coldstart_evaluate.ipynb", "kind": "presenca"},
+        ],
+    },
+    {
+        "id": "oraculo-piloto",
+        "titulo": "Oráculo piloto (legado) — instrumento sem restrição de saída",
+        "pilar": "P3", "legado": True, "auditoria": "verificado",
+        "pergunta": "A origem do achado RQ4: o instrumento defeituoso replicado no E0.",
+        "descricao": "Código: examples/oraculo.ipynb + data_oraculo/ (repositório "
+                     "legado). O esquema de saída livre deste piloto gerou os falsos "
+                     "erros de fraseado que motivaram o modo enum e o braço free do E0.",
+        "duracao": "—", "requer_chave": True, "presets": {},
+        "artefatos": [
+            {"label": "Notebook do piloto", "path_abs": "examples/oraculo.ipynb",
+             "kind": "presenca"},
+        ],
+    },
     {
         "id": "p1",
         "titulo": "P1 — Sensibilidade do conjunto inicial (replay)",
@@ -146,9 +221,15 @@ CATALOG: list[dict[str, Any]] = [
 ]
 
 
+def _artifact_path(spec: dict) -> Path:
+    if "path_abs" in spec:
+        return LEGACY / spec["path_abs"]
+    return EXP / spec["path"]
+
+
 def _artifact_ready(spec: dict) -> bool:
-    p = EXP / spec["path"]
-    if "*" in spec["path"]:
+    p = _artifact_path(spec)
+    if "path" in spec and "*" in spec.get("path", ""):
         return any(p.parent.glob(p.name))
     return p.exists()
 
@@ -177,6 +258,8 @@ def catalog_status() -> list[dict]:
         out.append({
             **{k: exp[k] for k in ("id", "titulo", "pilar", "pergunta",
                                    "descricao", "duracao", "requer_chave")},
+            "legado": exp.get("legado", False),
+            "auditoria": exp.get("auditoria"),
             "presets": list(exp["presets"].keys()),
             "artefatos_disponiveis": ready,
             "n_artefatos": len(exp["artefatos"]),
@@ -191,7 +274,7 @@ def load_results(exp_id: str) -> dict:
         raise KeyError(exp_id)
     blocks: list[dict] = []
     for spec in exp["artefatos"]:
-        p = EXP / spec["path"]
+        p = _artifact_path(spec)
         if spec["kind"] == "json-glob":
             for f in sorted(p.parent.glob(p.name)):
                 if f.name.endswith("_pred.json"):
@@ -224,6 +307,17 @@ def load_results(exp_id: str) -> dict:
                         pts.append({"n": x, "y": d.get(spec["y"])})
             pts.sort(key=lambda q: q["n"])
             blocks.append({"label": spec["label"], "kind": "curve", "points": pts})
+        elif spec["kind"] == "text":
+            blocks.append({"label": spec["label"], "kind": "text",
+                           "text": "\n".join(p.read_text(errors="replace").splitlines()[:50])})
+        elif spec["kind"] == "csv":
+            import csv as _csv
+            with p.open(encoding="utf-8", errors="replace") as fh:
+                rows = list(_csv.DictReader(fh))[:20]
+            blocks.append({"label": spec["label"], "kind": "table", "rows": rows})
+        elif spec["kind"] == "presenca":
+            blocks.append({"label": spec["label"], "kind": "text",
+                           "text": f"artefato presente no repositório legado: {p}"})
         elif spec["kind"] == "table":
             rows = [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
             blocks.append({"label": spec["label"], "kind": "table", "rows": rows[:30]})

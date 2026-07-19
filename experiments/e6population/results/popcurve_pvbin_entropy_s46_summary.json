@@ -1,0 +1,18 @@
+{
+  "classifier": "pvbin",
+  "strategy": "entropy",
+  "run_seed": 46,
+  "budget": 50000,
+  "batch": 500,
+  "pool": 50000,
+  "population": 181490,
+  "final": {
+    "n_labels": 50000,
+    "acc_int": 0.8384,
+    "f1_int": 0.5914,
+    "acc_ext": 0.8343,
+    "f1_ext": 0.5284,
+    "elapsed_s": 745.4
+  },
+  "wall_seconds": 745.4
+}
