@@ -4,6 +4,7 @@ site_author: Gilsiley Henrique Darú
 site_url: https://ghdaru.github.io/activelearning/
 repo_url: https://github.com/GHDaru/activelearning
 repo_name: GHDaru/activelearning
+edit_uri: edit/main/docs/
 copyright: "© 2026 Gilsiley Henrique Darú — MIT"
 docs_dir: docs
 
@@ -27,6 +28,7 @@ theme:
     - navigation.sections
     - navigation.top
     - content.code.copy
+    - content.action.edit
     - search.suggest
     - toc.integrate
 
