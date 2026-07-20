@@ -87,6 +87,16 @@ export type DatasetStats = {
   top_classes: { label: string; n: number }[];
 };
 
+export type KgSummary = {
+  n_nodes: number;
+  n_edges: number;
+  n_artigos: number;
+  n_pendentes: number;
+  by_node_type: Record<string, number>;
+  by_edge_type: Record<string, number>;
+  generated_at: number;
+};
+
 export type Dataset = {
   id: string;
   name: string;
@@ -133,4 +143,6 @@ export const api = {
     fetch(`/api/experiments/${id}/log`).then((r) => json<{ log: string }>(r)),
   downloadUrl: (id: string, which: "sanitized" | "original") =>
     `/api/datasets/${id}/download?which=${which}`,
+  kgSummary: () => fetch("/api/kg/summary").then((r) => json<KgSummary>(r)),
+  kgViewUrl: () => "/api/kg/view",
 };

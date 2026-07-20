@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, type Dataset, type DatasetStats, type Experiment, type OracleSpec, type ResultBlock, type Run } from "./api";
+import { api, type Dataset, type DatasetStats, type Experiment, type KgSummary, type OracleSpec, type ResultBlock, type Run } from "./api";
 
 const STATUS_LABEL: Record<Run["status"], string> = {
   pending: "na fila",
@@ -10,7 +10,7 @@ const STATUS_LABEL: Record<Run["status"], string> = {
 
 const STRATEGIES = ["entropy", "least_confidence", "smallest_margin", "random", "hybrid"];
 
-type View = "home" | "datasets" | "runs" | "experiments";
+type View = "home" | "datasets" | "runs" | "experiments" | "conhecimento";
 
 function pct(x: number | undefined | null): string {
   return x === undefined || x === null ? "—" : `${(x * 100).toFixed(1)}%`;
@@ -87,6 +87,8 @@ export default function App() {
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [expOpen, setExpOpen] = useState<{ id: string; titulo: string; blocks: ResultBlock[] } | null>(null);
   const [expLog, setExpLog] = useState<{ id: string; log: string } | null>(null);
+  const [kg, setKg] = useState<KgSummary | null>(null);
+  const [kgError, setKgError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -132,6 +134,12 @@ export default function App() {
     const t = setInterval(load, 4000);
     return () => clearInterval(t);
   }, [view]);
+
+  useEffect(() => {
+    if (view !== "conhecimento" || kg) return;
+    api.kgSummary().then((s) => { setKg(s); setKgError(null); })
+      .catch((e) => setKgError(String(e)));
+  }, [view, kg]);
 
   useEffect(() => {
     if (!expLog) return;
@@ -199,6 +207,7 @@ export default function App() {
     { key: "datasets", label: "Datasets", desc: "envio, saneamento e estatísticas" },
     { key: "runs", label: "Execuções", desc: "laço de AL e avaliação de oráculo" },
     { key: "experiments", label: "Experimentos da tese", desc: "catálogo: reproduzir e reprisar" },
+    { key: "conhecimento", label: "Base de conhecimento", desc: "grafo de fichamentos e conceitos" },
   ];
 
   return (
@@ -569,6 +578,52 @@ export default function App() {
                     )}
                   </div>
                 ))}
+              </section>
+            )}
+          </>
+        )}
+
+        {view === "conhecimento" && (
+          <>
+            <section className="card hero">
+              <h1>Base de conhecimento</h1>
+              <p>
+                Grafo dos <b>fichamentos</b> da revisão de literatura: cada artigo é
+                um nó, ligado aos <b>conceitos</b> que propõe ou usa (métodos, modelos,
+                tarefas, bases, pilares) e a <b>outros artigos</b> por relações tipadas
+                (<i>estende</i>, <i>compara</i>, <i>contradiz</i>, <i>baseia-se em</i>).
+                As arestas em destaque ligam a literatura ao próprio FALCO. Nós em tom
+                apagado são artigos <i>referenciados mas ainda não fichados</i>.
+              </p>
+              {kg && (
+                <div className="tiles">
+                  <StatTile label="nós" value={kg.n_nodes} />
+                  <StatTile label="arestas" value={kg.n_edges} />
+                  <StatTile label="artigos fichados" value={kg.n_artigos} />
+                  <StatTile label="pendentes de fichamento" value={kg.n_pendentes}
+                    hint="alvos de relações artigo→artigo ainda sem nota própria" />
+                </div>
+              )}
+              <p className="hint">
+                O grafo é gerado a partir do <i>front-matter</i> dos fichamentos
+                (<code>build_kg.py</code>). Arraste os nós, use a roda para dar zoom e
+                clique para inspecionar. <a href={api.kgViewUrl()} target="_blank"
+                  rel="noreferrer">abrir em nova aba ↗</a>
+              </p>
+            </section>
+            {kgError ? (
+              <section className="card">
+                <p className="error">{kgError}</p>
+                <p className="hint">
+                  A base de conhecimento vive no repositório da tese. Defina{" "}
+                  <code>FALCO_THESIS_ROOT</code> apontando para a pasta da tese e rode{" "}
+                  <code>python fichamentos/build_kg.py</code> para gerar o grafo.
+                </p>
+              </section>
+            ) : (
+              <section className="card kg-frame">
+                <iframe title="Knowledge Graph — fichamentos FALCO"
+                  src={api.kgViewUrl()} />
               </section>
             )}
           </>

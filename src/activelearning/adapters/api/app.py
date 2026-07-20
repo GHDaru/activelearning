@@ -269,6 +269,51 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def experiment_log(exp_id: str) -> dict:
         return {"log": expcat.tail_log(exp_id)}
 
+    # ---- base de conhecimento (knowledge graph dos fichamentos) ----
+    def _kg_dir() -> Path:
+        return settings.thesis_root / "fichamentos"
+
+    @app.get("/api/kg/summary")
+    def kg_summary() -> dict:
+        """Contagens do grafo por tipo de nó + aresta (para o cabeçalho da view)."""
+        from collections import Counter
+
+        kg_json = _kg_dir() / "kg.json"
+        if not kg_json.exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"kg.json não encontrado em {kg_json}. Rode build_kg.py na tese "
+                "ou defina FALCO_THESIS_ROOT.",
+            )
+        graph = json.loads(kg_json.read_text(encoding="utf-8"))
+        by_node = Counter(n.get("type", "?") for n in graph.get("nodes", []))
+        by_edge = Counter(e.get("type", "?") for e in graph.get("edges", []))
+        return {
+            "n_nodes": len(graph.get("nodes", [])),
+            "n_edges": len(graph.get("edges", [])),
+            "n_artigos": by_node.get("artigo", 0),
+            "n_pendentes": by_node.get("artigo-pendente", 0),
+            "by_node_type": dict(by_node),
+            "by_edge_type": dict(by_edge),
+            "generated_at": kg_json.stat().st_mtime,
+        }
+
+    @app.get("/api/kg")
+    def kg_graph() -> dict:
+        """Grafo completo (nós + arestas tipadas) — consumível por qualquer cliente."""
+        kg_json = _kg_dir() / "kg.json"
+        if not kg_json.exists():
+            raise HTTPException(status_code=404, detail="kg.json não encontrado")
+        return json.loads(kg_json.read_text(encoding="utf-8"))
+
+    @app.get("/api/kg/view")
+    def kg_view():
+        """Visualização autocontida (canvas force-graph) para embutir em iframe."""
+        kg_html = _kg_dir() / "kg.html"
+        if not kg_html.exists():
+            raise HTTPException(status_code=404, detail="kg.html não encontrado")
+        return FileResponse(kg_html, media_type="text/html")
+
     @app.get("/api/runs")
     def list_runs() -> list[dict]:
         with session_factory() as session:

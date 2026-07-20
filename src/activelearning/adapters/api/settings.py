@@ -24,6 +24,7 @@ class Settings:
     database_url: str | None
     experiment_config: Path
     artifacts_root: Path
+    thesis_root: Path
     cors_origins: list[str] = field(default_factory=list)
 
     @classmethod
@@ -38,6 +39,9 @@ class Settings:
             ),
             artifacts_root=Path(
                 os.environ.get("FLOWBUILDER_ARTIFACTS", root / "experiments/api_runs")
+            ),
+            thesis_root=Path(
+                os.environ.get("FALCO_THESIS_ROOT", root.parent / "tesedaru")
             ),
             cors_origins=[
                 o.strip()
