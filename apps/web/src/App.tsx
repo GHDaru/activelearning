@@ -13,7 +13,7 @@ const STRATEGIES = ["entropy", "least_confidence", "smallest_margin", "random", 
 // Modo hospedado (demo público no Vercel): só leitura da base de conhecimento.
 const HOSTED = import.meta.env.VITE_HOSTED === "1";
 
-type View = "home" | "datasets" | "runs" | "experiments" | "conhecimento";
+type View = "home" | "datasets" | "runs" | "experiments" | "conhecimento" | "ajuda";
 
 function pct(x: number | undefined | null): string {
   return x === undefined || x === null ? "—" : `${(x * 100).toFixed(1)}%`;
@@ -231,9 +231,12 @@ export default function App() {
     { key: "runs", label: "Execuções", desc: "laço de AL e avaliação de oráculo" },
     { key: "experiments", label: "Experimentos da tese", desc: "catálogo: reproduzir e reprisar" },
     { key: "conhecimento", label: "Base de conhecimento", desc: "grafo de fichamentos e conceitos" },
+    { key: "ajuda", label: "Ajuda", desc: "como usar cada parte" },
   ];
-  // no modo hospedado só há leitura da base de conhecimento
-  const navItems = HOSTED ? nav.filter((n) => n.key === "home" || n.key === "conhecimento") : nav;
+  // no modo hospedado só há leitura da base de conhecimento (+ início e ajuda)
+  const navItems = HOSTED
+    ? nav.filter((n) => n.key === "home" || n.key === "conhecimento" || n.key === "ajuda")
+    : nav;
 
   return (
     <div className="layout">
@@ -698,6 +701,45 @@ export default function App() {
                   src={`${api.kgViewUrl()}?v=${kgNonce}`} />
               </section>
             )}
+          </>
+        )}
+
+        {view === "ajuda" && (
+          <>
+            <section className="card hero">
+              <h1>Ajuda — como usar o FALCO</h1>
+              <p>
+                Guia rápido de cada parte da interface. Para a <b>biblioteca</b>{" "}
+                (uso via código, <code>pip install falco-active-learning</code>),
+                a documentação completa está em{" "}
+                <a href="https://ghdaru.github.io/activelearning/" target="_blank"
+                  rel="noreferrer">ghdaru.github.io/activelearning ↗</a>.
+              </p>
+            </section>
+
+            {[
+              ["Datasets", "Suba um CSV com uma coluna de texto e uma de rótulo. O FALCO saneia (remove vazios e rótulos operacionais), detecta conflitos de gabarito e duplicatas, e calcula estatísticas da base — nº de classes, vocabulário, desbalanceamento, tamanho dos textos. Comece por aqui: quase tudo depende de um dataset saneado.", HOSTED],
+              ["Execuções (aprendizado ativo)", "Escolha o dataset, a estratégia de seleção (entropia é o padrão validado), o oráculo (simulado com ruído ε, offline; ou um LLM real via chave no .env), o orçamento de rótulos e o tamanho do lote. O laço roda: L0 → treina → seleciona os mais incertos → oráculo rotula → re-treina, até o orçamento ou a estagnação da validação. Cada execução entrega a curva de aprendizado (Macro F1 × rótulos), a LCE e o relatório completo.", HOSTED],
+              ["Lendo a curva", "A curva mostra o Macro F1 em função dos rótulos adquiridos. O ponto onde ela estabiliza é o sinal de parada: a partir dali, rótulo adicional compra ruído — e pode até piorar a métrica macro. A LCE resume a área sob a curva: quanto desempenho cada rótulo comprou.", HOSTED],
+              ["Experimentos da tese", "Catálogo executável do programa experimental. Reprisar carrega os artefatos gravados (os mesmos que sustentam cada número da tese). Reproduzir relança o runner original, com retomada por estado — pode interromper e voltar. Alguns exigem chave de API ou GPU (indicado nos selos).", HOSTED],
+              ["Base de conhecimento", "O grafo dos fichamentos da revisão de literatura: artigos ligados aos conceitos que propõem/usam e a outros artigos por relações tipadas. Clique num nó para focar suas relações e abrir a ficha (link do publicador e onde o artigo é citado na tese). Arraste os nós, use a roda para zoom.", false],
+              ["Adicionar artigo (PDF → fichamento)", "Na Base de conhecimento, suba um PDF: o FALCO extrai título, ano e DOI e cria um rascunho de fichamento no padrão do grafo. É um rascunho para você revisar (status a-ler); entidades e relações ficam para confirmação — nada é inventado.", HOSTED],
+            ].filter(([, , hiddenWhenHosted]) => !(HOSTED && hiddenWhenHosted)).map(([title, body]) => (
+              <section key={title as string} className="card help-item">
+                <h2>{title}</h2>
+                <p>{body}</p>
+              </section>
+            ))}
+
+            <section className="card hint-card">
+              <h3>Boas práticas</h3>
+              <ul>
+                <li><b>Comece com o oráculo simulado</b> (offline, ε = taxa de erro) para calibrar orçamento e lote; troque pelo LLM real depois.</li>
+                <li><b>Desconfie da autoavaliação</b>: métricas medidas nos próprios dados coletados são enviesadas — reserve um conjunto de teste externo para decisões de liberação.</li>
+                <li><b>Pare pela curva</b>: quando a validação estagna, rótulo adicional compra ruído.</li>
+                <li><b>Nenhum número sem artefato</b>: toda execução grava config, sementes e um relatório rastreável.</li>
+              </ul>
+            </section>
           </>
         )}
       </main>

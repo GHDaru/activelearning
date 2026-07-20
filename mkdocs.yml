@@ -1,0 +1,64 @@
+site_name: falco-active-learning
+site_description: Aprendizado Ativo com oráculos LLM para classificação de texto curto (framework FALCO)
+site_author: Gilsiley Henrique Darú
+site_url: https://ghdaru.github.io/activelearning/
+repo_url: https://github.com/GHDaru/activelearning
+repo_name: GHDaru/activelearning
+copyright: "© 2026 Gilsiley Henrique Darú — MIT"
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Modo escuro
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Modo claro
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - toc.integrate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_source: false
+            docstring_style: google
+            members_order: source
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Início: index.md
+  - Instalação: instalacao.md
+  - Início rápido: quickstart.md
+  - Conceitos: conceitos.md
+  - Guia da biblioteca: biblioteca.md
+  - Arquitetura: architecture.md
+  - Referência da API: api.md
+  - Software (FlowBuilder): flowbuilder.md
+  - Experimentos: experimentos.md
+  - Reprodutibilidade: reproducibilidade.md

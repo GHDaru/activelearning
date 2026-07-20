@@ -7,6 +7,7 @@ FlowBuilder.
 > **Instalação (PyPI):** `pip install falco-active-learning`
 > (o nome de importação continua `import activelearning`). Extras opcionais:
 > `pip install "falco-active-learning[classifiers,oracles,api]"`.
+> 📖 **Documentação:** <https://ghdaru.github.io/activelearning/> ·
 > Deploy e publicações: [DEPLOY_AND_PUBLISH.md](DEPLOY_AND_PUBLISH.md).
 
 Arquitetura **DDD + Hexagonal**: domínio puro, capacidades externas via ports/adapters.

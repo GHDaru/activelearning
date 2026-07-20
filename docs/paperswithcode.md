@@ -1,7 +1,7 @@
 # Papers with Code — material para submissão
 
 Copie/cole nos campos do formulário em <https://paperswithcode.com>. Ver o fluxo
-em [`../DEPLOY_AND_PUBLISH.md`](../DEPLOY_AND_PUBLISH.md) (seção 4).
+em [`../DEPLOY_AND_PUBLISH.md`](https://github.com/GHDaru/activelearning/blob/main/DEPLOY_AND_PUBLISH.md) (seção 4).
 
 ## Título
 FALCO: Aprendizado Ativo com Oráculos LLM para Classificação de Texto Curto em Português
