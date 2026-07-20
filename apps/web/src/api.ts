@@ -97,6 +97,19 @@ export type KgSummary = {
   generated_at: number;
 };
 
+export type FichamentoDraft = {
+  key: string;
+  md_path: string;
+  pdf_path: string;
+  title: string;
+  authors: string[];
+  year: number | null;
+  doi: string;
+  n_chars: number;
+  kg_regenerated: boolean;
+  warnings: string[];
+};
+
 export type Dataset = {
   id: string;
   name: string;
@@ -145,4 +158,6 @@ export const api = {
     `/api/datasets/${id}/download?which=${which}`,
   kgSummary: () => fetch("/api/kg/summary").then((r) => json<KgSummary>(r)),
   kgViewUrl: () => "/api/kg/view",
+  uploadFichamento: (form: FormData) =>
+    fetch("/api/fichamentos", { method: "POST", body: form }).then((r) => json<FichamentoDraft>(r)),
 };

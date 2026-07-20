@@ -314,6 +314,56 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="kg.html não encontrado")
         return FileResponse(kg_html, media_type="text/html")
 
+    def _pdf_path_for(node_id: str) -> Path:
+        """Resolve o PDF de um nó via kg.json, restrito a referencias-pdf/ (anti-traversal)."""
+        kg_json = _kg_dir() / "kg.json"
+        if not kg_json.exists():
+            raise HTTPException(status_code=404, detail="kg.json não encontrado")
+        graph = json.loads(kg_json.read_text(encoding="utf-8"))
+        node = next((n for n in graph.get("nodes", []) if n.get("id") == node_id), None)
+        if node is None or not node.get("pdf"):
+            raise HTTPException(status_code=404, detail="artigo ou PDF não encontrado")
+        pdf_dir = (settings.thesis_root / "referencias-pdf").resolve()
+        target = (settings.thesis_root / node["pdf"]).resolve()
+        if pdf_dir not in target.parents or not target.exists():
+            raise HTTPException(status_code=404, detail="PDF indisponível")
+        return target
+
+    @app.post("/api/fichamentos", status_code=201)
+    async def create_fichamento(file: UploadFile = File(...)) -> dict:
+        """Recebe um PDF e gera um rascunho de fichamento (padrão KG-ready).
+
+        Escreve ``fichamentos/{Chave}.md`` + ``referencias-pdf/{Chave}.pdf`` na
+        tese e regenera o grafo. O resultado é um rascunho (status a-ler) para
+        revisão do autor — segue o SKILL de fichamento.
+        """
+        from activelearning.application.fichamento_draft import generate_draft
+
+        if not (file.filename or "").lower().endswith(".pdf"):
+            raise HTTPException(status_code=422, detail="envie um arquivo .pdf")
+        data = await file.read()
+        try:
+            draft = generate_draft(data, file.filename or "artigo.pdf", settings.thesis_root)
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except Exception as exc:  # PDF corrompido / ilegível
+            raise HTTPException(status_code=422, detail=f"falha ao processar o PDF: {exc}")
+        return draft.to_dict()
+
+    @app.get("/api/fichamentos/{node_id}/pdf")
+    def fichamento_pdf(node_id: str):
+        """Serve o PDF do artigo apenas para visualização embutida (inline).
+
+        Sem botão de download na interface; o cabeçalho força ``inline`` e a
+        visualização foca o leitor no link do publicador (direitos autorais).
+        """
+        target = _pdf_path_for(node_id)
+        return FileResponse(
+            target,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "inline"},
+        )
+
     @app.get("/api/runs")
     def list_runs() -> list[dict]:
         with session_factory() as session:

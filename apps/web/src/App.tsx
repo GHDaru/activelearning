@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, type Dataset, type DatasetStats, type Experiment, type KgSummary, type OracleSpec, type ResultBlock, type Run } from "./api";
+import { api, type Dataset, type DatasetStats, type Experiment, type FichamentoDraft, type KgSummary, type OracleSpec, type ResultBlock, type Run } from "./api";
 
 const STATUS_LABEL: Record<Run["status"], string> = {
   pending: "na fila",
@@ -89,6 +89,10 @@ export default function App() {
   const [expLog, setExpLog] = useState<{ id: string; log: string } | null>(null);
   const [kg, setKg] = useState<KgSummary | null>(null);
   const [kgError, setKgError] = useState<string | null>(null);
+  const [kgNonce, setKgNonce] = useState(0);
+  const [fichFile, setFichFile] = useState<File | null>(null);
+  const [fichBusy, setFichBusy] = useState(false);
+  const [fichDraft, setFichDraft] = useState<FichamentoDraft | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -200,6 +204,21 @@ export default function App() {
       setRunName("");
       refresh();
     } catch (err) { setError(String(err)); } finally { setBusy(false); }
+  }
+
+  async function doFichamento(e: React.FormEvent) {
+    e.preventDefault();
+    if (!fichFile) return;
+    setFichBusy(true); setError(null); setFichDraft(null);
+    try {
+      const form = new FormData();
+      form.append("file", fichFile);
+      const draft = await api.uploadFichamento(form);
+      setFichDraft(draft);
+      setFichFile(null);
+      setKg(null);              // recarrega o resumo do KG
+      setKgNonce((n) => n + 1); // força o iframe a recarregar o grafo
+    } catch (err) { setError(String(err)); } finally { setFichBusy(false); }
   }
 
   const nav: { key: View; label: string; desc: string }[] = [
@@ -606,11 +625,50 @@ export default function App() {
               )}
               <p className="hint">
                 O grafo é gerado a partir do <i>front-matter</i> dos fichamentos
-                (<code>build_kg.py</code>). Arraste os nós, use a roda para dar zoom e
-                clique para inspecionar. <a href={api.kgViewUrl()} target="_blank"
-                  rel="noreferrer">abrir em nova aba ↗</a>
+                (<code>build_kg.py</code>). <b>Clique num nó</b> para focar suas
+                relações e abrir a ficha (PDF só visualização, link do publicador e
+                onde o artigo é citado na tese). <a href={api.kgViewUrl()}
+                  target="_blank" rel="noreferrer">abrir em nova aba ↗</a>
               </p>
             </section>
+
+            <section className="card">
+              <h2>Adicionar artigo (PDF → fichamento)</h2>
+              <p className="hint">
+                Suba um PDF: o FALCO extrai título, ano e DOI e cria um{" "}
+                <b>rascunho</b> de fichamento (<code>status: a-ler</code>) no padrão
+                do grafo, seguindo o <i>skill</i> de fichamento. Entidades e relações
+                ficam para você confirmar — nada é inventado.
+              </p>
+              <form onSubmit={doFichamento} className="grid">
+                <label>Arquivo PDF
+                  <input type="file" accept=".pdf,application/pdf"
+                    onChange={(ev) => setFichFile(ev.target.files?.[0] ?? null)} />
+                </label>
+                <button disabled={!fichFile || fichBusy}>
+                  {fichBusy ? "Processando…" : "Gerar fichamento"}
+                </button>
+              </form>
+              {fichDraft && (
+                <div className="draft-out">
+                  <p>
+                    Rascunho criado: <b>{fichDraft.key}</b> — “{fichDraft.title}”
+                    {fichDraft.year ? ` (${fichDraft.year})` : ""}.{" "}
+                    <code>{fichDraft.md_path}</code>
+                  </p>
+                  <p className="hint">
+                    {fichDraft.kg_regenerated ? "Grafo atualizado. " : "Grafo NÃO regenerado automaticamente. "}
+                    {fichDraft.n_chars} caracteres extraídos.
+                  </p>
+                  {fichDraft.warnings.length > 0 && (
+                    <ul className="warn-list">
+                      {fichDraft.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </section>
+
             {kgError ? (
               <section className="card">
                 <p className="error">{kgError}</p>
@@ -623,7 +681,7 @@ export default function App() {
             ) : (
               <section className="card kg-frame">
                 <iframe title="Knowledge Graph — fichamentos FALCO"
-                  src={api.kgViewUrl()} />
+                  src={`${api.kgViewUrl()}?v=${kgNonce}`} />
               </section>
             )}
           </>

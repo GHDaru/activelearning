@@ -24,7 +24,7 @@ class Settings:
     database_url: str | None
     experiment_config: Path
     artifacts_root: Path
-    thesis_root: Path
+    thesis_root: Path = field(default_factory=lambda: Path("../tesedaru"))
     cors_origins: list[str] = field(default_factory=list)
 
     @classmethod
