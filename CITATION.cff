@@ -1,12 +1,24 @@
 cff-version: 1.2.0
 message: "Se usar esta biblioteca ou os artefatos experimentais, cite a tese."
-title: "activelearning — Aprendizado Ativo com Oráculos LLM para Texto Curto (framework FALCO)"
+title: "falco-active-learning — Aprendizado Ativo com Oráculos LLM para Texto Curto (framework FALCO)"
 type: software
+version: 0.1.0
+date-released: 2026-01-01
 authors:
   - family-names: "Darú"
     given-names: "Gilsiley Henrique"
+    email: "ghdaru@gmail.com"
+    affiliation: "PPGMNE — Universidade Federal do Paraná (UFPR)"
 repository-code: "https://github.com/GHDaru/activelearning"
 license: MIT
+keywords:
+  - active learning
+  - text classification
+  - large language models
+  - cold start
+  - short text
+  - portuguese
+  - FALCO
 preferred-citation:
   type: thesis
   title: "Aprendizado Ativo com Modelos de Linguagem para Textos Curtos em Português"

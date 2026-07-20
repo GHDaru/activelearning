@@ -1,0 +1,31 @@
+{
+  "title": "falco-active-learning: Aprendizado Ativo com oráculos LLM para texto curto (framework FALCO)",
+  "description": "Motor experimental do framework FALCO (Framework de Aprendizado Ativo com LLM para texto CurtO): aprendizado ativo para classificação de texto curto em português, com oráculos LLM progressivos, cold start sem rótulos (DRI-SL) e instrumentação estatística. Arquitetura DDD/Hexagonal, instalável via pip (falco-active-learning), com interface web (FlowBuilder) para reproduzir/reprisar os experimentos da tese.",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Darú, Gilsiley Henrique",
+      "affiliation": "PPGMNE — Universidade Federal do Paraná (UFPR)"
+    }
+  ],
+  "keywords": [
+    "active learning",
+    "text classification",
+    "large language models",
+    "LLM oracle",
+    "cold start",
+    "short text",
+    "portuguese",
+    "FALCO",
+    "DRI-SL"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.34740/kaggle/dsv/4265348",
+      "relation": "isSupplementTo",
+      "resource_type": "dataset"
+    }
+  ]
+}

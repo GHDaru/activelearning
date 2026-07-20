@@ -4,6 +4,11 @@ Biblioteca de **Aprendizado Ativo para classificação de texto com oráculos LL
 motor experimental da tese de doutorado (framework **FALCO**) e futuro núcleo do
 FlowBuilder.
 
+> **Instalação (PyPI):** `pip install falco-active-learning`
+> (o nome de importação continua `import activelearning`). Extras opcionais:
+> `pip install "falco-active-learning[classifiers,oracles,api]"`.
+> Deploy e publicações: [DEPLOY_AND_PUBLISH.md](DEPLOY_AND_PUBLISH.md).
+
 Arquitetura **DDD + Hexagonal**: domínio puro, capacidades externas via ports/adapters.
 Governança por spec-kit: veja [.specify/memory/constitution.md](.specify/memory/constitution.md)
 e [docs/architecture.md](docs/architecture.md).

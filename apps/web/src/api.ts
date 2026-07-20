@@ -128,7 +128,7 @@ async function json<T>(response: Response): Promise<T> {
 }
 
 export const api = {
-  health: () => fetch("/api/health").then((r) => json<{ status: string; database: string }>(r)),
+  health: () => fetch("/api/health").then((r) => json<{ status: string; database?: string; mode?: string }>(r)),
   oracles: () => fetch("/api/oracles").then((r) => json<OracleSpec[]>(r)),
   runs: () => fetch("/api/runs").then((r) => json<Run[]>(r)),
   run: (id: string) => fetch(`/api/runs/${id}`).then((r) => json<Run>(r)),

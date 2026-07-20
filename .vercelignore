@@ -1,0 +1,11 @@
+# O deploy do Vercel só precisa do front (apps/web) e da função read-only (api/).
+# Exclui a biblioteca, experimentos e artefatos pesados.
+src/
+tests/
+experiments/
+docs/
+dist/
+.venv/
+uv.lock
+*.db
+referencias-pdf/

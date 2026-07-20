@@ -1,14 +1,37 @@
 [project]
-name = "activelearning"
+name = "falco-active-learning"
 version = "0.1.0"
 description = "Active Learning para classificação de texto com oráculos LLM — motor experimental da tese FALCO (DDD + Hexagonal)"
-authors = [{ name = "Gilsiley Henrique Darú" }]
+authors = [{ name = "Gilsiley Henrique Darú", email = "ghdaru@gmail.com" }]
+maintainers = [{ name = "Gilsiley Henrique Darú", email = "ghdaru@gmail.com" }]
+readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
+keywords = [
+    "active-learning", "text-classification", "llm", "oracle", "cold-start",
+    "short-text", "portuguese", "nlp", "falco",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
+    "Natural Language :: Portuguese (Brazilian)",
+]
 dependencies = [
     "numpy>=1.26",
     "scipy>=1.11",
 ]
+
+[project.urls]
+Homepage = "https://github.com/GHDaru/activelearning"
+Repository = "https://github.com/GHDaru/activelearning"
+"Thesis (FALCO)" = "https://github.com/GHDaru/tesedaru"
+Dataset = "https://doi.org/10.34740/kaggle/dsv/4265348"
 
 [project.optional-dependencies]
 oracles = [
@@ -43,6 +66,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/activelearning"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/activelearning", "README.md", "LICENSE", "CITATION.cff", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

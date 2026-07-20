@@ -10,6 +10,9 @@ const STATUS_LABEL: Record<Run["status"], string> = {
 
 const STRATEGIES = ["entropy", "least_confidence", "smallest_margin", "random", "hybrid"];
 
+// Modo hospedado (demo público no Vercel): só leitura da base de conhecimento.
+const HOSTED = import.meta.env.VITE_HOSTED === "1";
+
 type View = "home" | "datasets" | "runs" | "experiments" | "conhecimento";
 
 function pct(x: number | undefined | null): string {
@@ -124,7 +127,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    api.health().then((h) => setDb(h.database)).catch(() => setDb("offline"));
+    api.health().then((h) => setDb(h.database ?? "somente leitura")).catch(() => setDb("offline"));
+    if (HOSTED) return;   // sem backend completo: não busca oráculos/runs/datasets
     api.oracles().then(setOracles).catch((e) => setError(String(e)));
     refresh();
     const t = setInterval(refresh, 3000);
@@ -228,6 +232,8 @@ export default function App() {
     { key: "experiments", label: "Experimentos da tese", desc: "catálogo: reproduzir e reprisar" },
     { key: "conhecimento", label: "Base de conhecimento", desc: "grafo de fichamentos e conceitos" },
   ];
+  // no modo hospedado só há leitura da base de conhecimento
+  const navItems = HOSTED ? nav.filter((n) => n.key === "home" || n.key === "conhecimento") : nav;
 
   return (
     <div className="layout">
@@ -237,7 +243,7 @@ export default function App() {
           <div className="brand-sub">aprendizado ativo com oráculos LLM</div>
         </div>
         <nav>
-          {nav.map((n) => (
+          {navItems.map((n) => (
             <button key={n.key} className={view === n.key ? "nav-item active" : "nav-item"}
               onClick={() => setView(n.key)}>
               <span>{n.label}</span>
@@ -251,6 +257,12 @@ export default function App() {
       </aside>
 
       <main className="content">
+        {HOSTED && (
+          <div className="demo-banner">
+            Demonstração pública (somente leitura): a base de conhecimento da tese.
+            Para rodar experimentos, subir datasets ou fichar PDFs, use a versão local.
+          </div>
+        )}
         {error && <div className="error">{error}</div>}
 
         {view === "home" && (
@@ -632,6 +644,7 @@ export default function App() {
               </p>
             </section>
 
+            {!HOSTED && (
             <section className="card">
               <h2>Adicionar artigo (PDF → fichamento)</h2>
               <p className="hint">
@@ -668,6 +681,7 @@ export default function App() {
                 </div>
               )}
             </section>
+            )}
 
             {kgError ? (
               <section className="card">

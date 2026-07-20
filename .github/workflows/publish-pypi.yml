@@ -1,0 +1,40 @@
+name: Publish to PyPI
+
+# Publica no PyPI quando você cria um Release no GitHub (ou dispara manualmente).
+# Usa "Trusted Publishing" (OIDC) — NÃO precisa de token/senha nos secrets.
+# Configure uma vez em https://pypi.org/manage/account/publishing/ :
+#   PyPI project: falco-active-learning
+#   Owner: GHDaru | Repository: activelearning
+#   Workflow: publish-pypi.yml | Environment: pypi
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Build sdist + wheel
+        run: uv build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # obrigatório para Trusted Publishing (OIDC)
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

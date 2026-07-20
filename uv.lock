@@ -7,68 +7,6 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "activelearning"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-]
-
-[package.optional-dependencies]
-api = [
-    { name = "fastapi" },
-    { name = "psycopg", extra = ["binary"] },
-    { name = "pypdf" },
-    { name = "python-multipart" },
-    { name = "pyyaml" },
-    { name = "sqlalchemy" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-classifiers = [
-    { name = "scikit-learn" },
-    { name = "sentence-transformers" },
-    { name = "torch" },
-    { name = "transformers" },
-]
-dev = [
-    { name = "httpx" },
-    { name = "pytest" },
-    { name = "ruff" },
-]
-oracles = [
-    { name = "google-genai" },
-    { name = "ollama" },
-    { name = "openai" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.115" },
-    { name = "google-genai", marker = "extra == 'oracles'", specifier = ">=1.0" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "ollama", marker = "extra == 'oracles'", specifier = ">=0.4" },
-    { name = "openai", marker = "extra == 'oracles'", specifier = ">=1.40" },
-    { name = "psycopg", extras = ["binary"], marker = "extra == 'api'", specifier = ">=3.2" },
-    { name = "pypdf", marker = "extra == 'api'", specifier = ">=4.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.9" },
-    { name = "pyyaml", marker = "extra == 'api'", specifier = ">=6.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
-    { name = "scikit-learn", marker = "extra == 'classifiers'", specifier = ">=1.4" },
-    { name = "scipy", specifier = ">=1.11" },
-    { name = "sentence-transformers", marker = "extra == 'classifiers'", specifier = ">=3.0" },
-    { name = "sqlalchemy", marker = "extra == 'api'", specifier = ">=2.0" },
-    { name = "torch", marker = "extra == 'classifiers'", specifier = ">=2.2" },
-    { name = "transformers", marker = "extra == 'classifiers'", specifier = ">=4.40" },
-    { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
-]
-provides-extras = ["oracles", "classifiers", "api", "dev"]
-
-[[package]]
 name = "annotated-doc"
 version = "0.0.4"
 source = { registry = "https://pypi.org/simple" }
@@ -442,6 +380,68 @@ sdist = { url = "https://files.pythonhosted.org/packages/fc/f8/98eea607f65de6527
 wheels = [
     { url = "https://files.pythonhosted.org/packages/12/b3/231ffd4ab1fc9d679809f356cebee130ac7daa00d6d6f3206dd4fd137e9e/distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2", size = 20277, upload-time = "2023-12-24T09:54:30.421Z" },
 ]
+
+[[package]]
+name = "falco-active-learning"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+
+[package.optional-dependencies]
+api = [
+    { name = "fastapi" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "pypdf" },
+    { name = "python-multipart" },
+    { name = "pyyaml" },
+    { name = "sqlalchemy" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+classifiers = [
+    { name = "scikit-learn" },
+    { name = "sentence-transformers" },
+    { name = "torch" },
+    { name = "transformers" },
+]
+dev = [
+    { name = "httpx" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+oracles = [
+    { name = "google-genai" },
+    { name = "ollama" },
+    { name = "openai" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.115" },
+    { name = "google-genai", marker = "extra == 'oracles'", specifier = ">=1.0" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "ollama", marker = "extra == 'oracles'", specifier = ">=0.4" },
+    { name = "openai", marker = "extra == 'oracles'", specifier = ">=1.40" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'api'", specifier = ">=3.2" },
+    { name = "pypdf", marker = "extra == 'api'", specifier = ">=4.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.9" },
+    { name = "pyyaml", marker = "extra == 'api'", specifier = ">=6.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
+    { name = "scikit-learn", marker = "extra == 'classifiers'", specifier = ">=1.4" },
+    { name = "scipy", specifier = ">=1.11" },
+    { name = "sentence-transformers", marker = "extra == 'classifiers'", specifier = ">=3.0" },
+    { name = "sqlalchemy", marker = "extra == 'api'", specifier = ">=2.0" },
+    { name = "torch", marker = "extra == 'classifiers'", specifier = ">=2.2" },
+    { name = "transformers", marker = "extra == 'classifiers'", specifier = ">=4.40" },
+    { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
+]
+provides-extras = ["oracles", "classifiers", "api", "dev"]
 
 [[package]]
 name = "fastapi"
