@@ -25,11 +25,18 @@ Wilson 95%; Macro F1; predições salvas por braço para pareamento (McNemar).
 
 Retomada: braço com results/e3prime_<braço>.json existente é pulado.
 
+Robustez: --seed varia a semente de TREINO (init do BERTimbau + braço aleatório
+C); o particionamento pool/população e a amostra de avaliação ficam fixos em
+DATA_SEED=42. Rode >=3 sementes distintas e reporte média +- desvio. Cada saída
+fica em e3prime_<braço>_s<semente>.json (use --out-dir p/ persistir no Drive).
+
 Uso:
   GPU : python experiments/e2e3/run_e3prime.py --arms A,B,C,D,E \
-            --batch-size 128 --eval-limit 0
+            --batch-size 128 --eval-limit 0 --seed 42
+  +sem: python experiments/e2e3/run_e3prime.py --arms A,B,C,D,E,E20,E25,E30,E35 \
+            --batch-size 128 --eval-limit 0 --seed 7
   CPU : python experiments/e2e3/run_e3prime.py --arms A,B,C \
-            --batch-size 16 --eval-limit 20000
+            --batch-size 16 --eval-limit 20000 --seed 42
 """
 from __future__ import annotations
 
@@ -51,12 +58,13 @@ from sklearn.metrics import accuracy_score, f1_score  # noqa: E402
 from activelearning.adapters.classifiers.bertimbau import BertimbauClassifier  # noqa: E402
 from activelearning.domain.instances import normalize_label  # noqa: E402
 
-SEED = 42
+DATA_SEED = 42                 # fixa o particionamento pool/população e a amostra
+                               # de avaliação — idêntico em toda semente de treino,
+                               # para que os braços continuem pareáveis entre sementes.
 POOL_SIZE = 50_000
 CYCLE_HOLDOUT = 4_000          # val 2k + teste 2k do ciclo real (dedup[50000:54000])
 CACHE = _ROOT / "experiments/e5cycle/results/annotation_cache_nemotron.jsonl"
 E6_ENTROPY_STATE = _ROOT / "experiments/e6population/results/popcurve_sgd_entropy_state.json"
-OUT = Path(__file__).parent / "results"
 
 
 def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
@@ -83,7 +91,7 @@ def load_base(min_per_class: int = 2):
         if k not in seen:
             seen.add(k)
             dedup.append((t, l))
-    rng = random.Random(SEED)
+    rng = random.Random(DATA_SEED)
     rng.shuffle(dedup)
     return dedup
 
@@ -95,7 +103,7 @@ def eval_sample(population, limit: int):
     by_class = defaultdict(list)
     for i, (_, l) in enumerate(population):
         by_class[l].append(i)
-    rng = random.Random(SEED)
+    rng = random.Random(DATA_SEED)
     frac = limit / len(population)
     chosen = []
     for l in sorted(by_class):
@@ -105,8 +113,12 @@ def eval_sample(population, limit: int):
     return sorted(chosen)
 
 
-def build_arms(pool, valid_labels, arm_names):
-    """Retorna {braço: (texts, labels, meta)} apenas dos braços pedidos."""
+def build_arms(pool, valid_labels, arm_names, seed):
+    """Retorna {braço: (texts, labels, meta)} apenas dos braços pedidos.
+
+    ``seed`` afeta só o sorteio do braço C (subconjunto aleatório do pool), de modo
+    que cada semente de treino avalia um baseline aleatório independente; os demais
+    braços têm itens determinísticos (cache/trajetória/pool inteiro)."""
     arms = {}
     need_cache = {"A", "B", "C"} & set(arm_names)
     if need_cache:
@@ -130,7 +142,7 @@ def build_arms(pool, valid_labels, arm_names):
                          [pool[i][1] for i in idx_sorted],
                          {**meta_a, "fonte": "mesmos itens de A, rótulos gold"})
         if "C" in arm_names:
-            rng = random.Random(SEED)
+            rng = random.Random(seed)
             ridx = sorted(rng.sample(range(len(pool)), len(idx_sorted)))
             arms["C"] = ([pool[i][0] for i in ridx],
                          [pool[i][1] for i in ridx],
@@ -159,8 +171,17 @@ def main():
     ap.add_argument("--max-length", type=int, default=32)
     ap.add_argument("--eval-limit", type=int, default=20_000,
                     help="tamanho da amostra de avaliação na população (0 = inteira)")
+    ap.add_argument("--seed", type=int, default=42,
+                    help="semente de TREINO (init do BERTimbau + braço aleatório C); "
+                         "o particionamento dos dados fica fixo em DATA_SEED=42. "
+                         "Rode >=3 sementes distintas para medir robustez.")
+    ap.add_argument("--out-dir", default=str(Path(__file__).parent / "results"),
+                    help="pasta dos resultados; aponte para um caminho persistente "
+                         "(ex.: Google Drive) para sobreviver a quedas de sessão")
     ap.add_argument("--force", action="store_true", help="reexecuta braços já concluídos")
     args = ap.parse_args()
+    out_dir = Path(args.out_dir)
+    sfx = f"_s{args.seed}"
     arm_names = [a.strip().upper() for a in args.arms.split(",") if a.strip()]
     # braços E<k> = prefixo de k mil rótulos da trajetória de entropia
     # (varredura de orçamento do E3' corrigido: onde F1 cruza 0,95*F1(D))
@@ -169,8 +190,8 @@ def main():
     pool = dedup[:POOL_SIZE]
     population = dedup[POOL_SIZE + CYCLE_HOLDOUT:]
     valid_labels = {l for _, l in dedup}
-    print(f"pool={len(pool)} população={len(population)} classes={len(valid_labels)}",
-          flush=True)
+    print(f"pool={len(pool)} população={len(population)} classes={len(valid_labels)} "
+          f"| semente de treino={args.seed} (dados fixos em {DATA_SEED})", flush=True)
 
     sample_idx = eval_sample(population, args.eval_limit)
     ev_texts = [population[i][0] for i in sample_idx]
@@ -178,10 +199,10 @@ def main():
     print(f"avaliação: {len(sample_idx)} instâncias "
           f"({len(set(ev_gold))} classes na amostra)", flush=True)
 
-    OUT.mkdir(exist_ok=True)
-    arms = build_arms(pool, valid_labels, arm_names)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    arms = build_arms(pool, valid_labels, arm_names, args.seed)
     for name in arm_names:
-        res_path = OUT / f"e3prime_{name}.json"
+        res_path = out_dir / f"e3prime_{name}{sfx}.json"
         if res_path.exists() and not args.force:
             print(f"[{name}] já concluído — pulando (use --force p/ repetir)", flush=True)
             continue
@@ -189,7 +210,7 @@ def main():
         print(f"\n=== braço {name}: {meta['fonte']} · n={len(texts)} "
               f"classes={len(set(labels))} ===", flush=True)
         clf = BertimbauClassifier(epochs=args.epochs, batch_size=args.batch_size,
-                                  max_length=args.max_length, seed=SEED, progress=True)
+                                  max_length=args.max_length, seed=args.seed, progress=True)
         t0 = time.time()
         clf.fit(texts, labels)
         fit_s = time.time() - t0
@@ -205,25 +226,28 @@ def main():
             "arm": name, **meta, "n_train": len(texts),
             "n_train_classes": len(set(labels)),
             "epochs": args.epochs, "batch_size": args.batch_size,
-            "max_length": args.max_length, "seed": SEED,
+            "max_length": args.max_length, "seed": args.seed, "data_seed": DATA_SEED,
             "eval_n": len(ev_texts), "eval_limit": args.eval_limit,
             "accuracy": round(acc, 4),
             "accuracy_wilson95": wilson_ci(round(acc * len(ev_texts)), len(ev_texts)),
             "macro_f1": round(f1_score(ev_gold, pred, average="macro"), 4),
             "fit_seconds": round(fit_s, 1), "predict_seconds": round(pred_s, 1),
         }
-        (OUT / f"e3prime_{name}_pred.json").write_text(json.dumps(
+        (out_dir / f"e3prime_{name}{sfx}_pred.json").write_text(json.dumps(
             {"sample_idx": sample_idx, "pred": pred}))
         res_path.write_text(json.dumps(result, indent=2, ensure_ascii=False))
         print(json.dumps(result, ensure_ascii=False), flush=True)
 
-    done = {p.stem.split("_")[1]: json.loads(p.read_text())
-            for p in OUT.glob("e3prime_*.json")
-            if p.stem.count("_") == 1 and not p.stem.endswith("pred")}
+    done = {}
+    for p in out_dir.glob(f"e3prime_*{sfx}.json"):
+        if p.stem.endswith("_pred"):
+            continue
+        done[p.stem.split("_")[1]] = json.loads(p.read_text())
     if "A" in done and "D" in done:
         fa, fd = done["A"]["macro_f1"], done["D"]["macro_f1"]
         frac = done["A"]["n_train"] / done["D"]["n_train"]
-        print(f"\nHIPÓTESE: F1(A)={fa} vs 0,95×F1(D)={0.95 * fd:.4f} "
+        print(f"\n[semente {args.seed}] "
+              f"HIPÓTESE: F1(A)={fa} vs 0,95×F1(D)={0.95 * fd:.4f} "
               f"com {frac:.1%} dos rótulos -> "
               f"{'SUSTENTADA' if fa >= 0.95 * fd else 'NÃO sustentada'}", flush=True)
     if "D" in done:
