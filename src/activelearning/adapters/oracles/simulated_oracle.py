@@ -19,6 +19,12 @@ class SimulatedOracle:
         self.prompt_version = "n/a"
 
     def annotate(self, batch: list[Instance], schema: CategorySchema) -> list[Annotation]:
+        """Devolve o rótulo-ouro de cada instância, trocado por um aleatório com prob. ``noise``.
+
+        Oráculo offline (sem rede/chave) para calibrar orçamento e lote; o ruído
+        ε é uniforme sobre o esquema — um limite pessimista frente ao ruído real
+        (estruturado) de um LLM.
+        """
         annotations: list[Annotation] = []
         values = schema.values
         for instance in batch:

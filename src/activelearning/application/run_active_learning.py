@@ -29,6 +29,12 @@ from activelearning.domain.strategies import (
 
 
 class TaskClassifier(Protocol):
+    """Contrato do classificador do laço: ``fit`` / ``predict`` / ``predict_proba``.
+
+    Qualquer objeto com estes métodos e o atributo ``classes_`` serve
+    (PVBin, SGD, BERTimbau). ``predict_proba`` alimenta a seleção por incerteza.
+    """
+
     classes_: list[str]
 
     def fit(self, texts: list[str], labels: list[str]) -> "TaskClassifier": ...
@@ -37,6 +43,8 @@ class TaskClassifier(Protocol):
 
 
 class OraclePort(Protocol):
+    """Contrato mínimo de oráculo usado pelo laço (ver ``ports.oracle`` para o completo)."""
+
     oracle_id: str
 
     def annotate(self, batch: list[Instance], schema: CategorySchema) -> list: ...
@@ -52,6 +60,13 @@ STRATEGIES = tuple(UNCERTAINTY) + ("random", "hybrid")
 
 @dataclass
 class ALResult:
+    """Resultado de um laço de AL: curvas de aprendizado, LCE, desempenho final e custos.
+
+    ``curve_*`` são as trajetórias (|L|, métrica); ``lce_macro_f1`` resume a área
+    sob a curva de Macro F1; ``n_labeled`` e ``invalid_labels`` contam o consumo
+    de orçamento (respostas inválidas do oráculo incluídas).
+    """
+
     strategy: str
     seed: int
     curve_macro_f1: LearningCurve
@@ -64,6 +79,7 @@ class ALResult:
     records: list[dict] = field(default_factory=list)
 
     def summary(self) -> dict:
+        """Resumo serializável (JSON) das métricas principais do laço."""
         return {
             "strategy": self.strategy,
             "seed": self.seed,

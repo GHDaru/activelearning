@@ -15,6 +15,12 @@ from .prompt import PROMPT_VERSION, SYSTEM_PROMPT, user_prompt
 
 
 class OllamaOracle:
+    """Oráculo LLM local via Ollama (modelos abertos, sem chave nem custo).
+
+    Útil para rodar o laço offline com um LLM real; exige o serviço Ollama no
+    ``host`` e o modelo já baixado (``ollama pull <model>``).
+    """
+
     def __init__(
         self,
         model: str = "gemma3",

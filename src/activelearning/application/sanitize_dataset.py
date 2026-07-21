@@ -27,6 +27,14 @@ DEFAULT_OPERATIONAL_LABELS = ("inativo",)
 
 @dataclass
 class SanitizationReport:
+    """Diagnóstico do saneamento de um CSV: linhas removidas, conflitos e duplicatas.
+
+    Conta o que entrou/saiu, quantas linhas foram removidas (vazias, rótulos
+    operacionais), quantos textos têm rótulo conflitante (mantidos e reportados,
+    não descartados), duplicatas exatas e o perfil de classes (histograma,
+    classes raras < 5).
+    """
+
     n_rows_in: int = 0
     n_rows_out: int = 0
     removed_empty: int = 0
@@ -52,6 +60,12 @@ def sanitize_csv(
     operational_labels: tuple[str, ...] = DEFAULT_OPERATIONAL_LABELS,
     max_conflict_examples: int = 10,
 ) -> SanitizationReport:
+    """Saneia ``input_path`` (texto, rótulo) e grava o CSV limpo em ``output_path``.
+
+    Remove linhas vazias e de rótulos operacionais, detecta conflitos de gabarito
+    e duplicatas exatas (a deduplicação para o particionamento vem depois, para
+    evitar vazamento). Devolve um :class:`SanitizationReport`.
+    """
     report = SanitizationReport(operational_labels=list(operational_labels))
     operational = {normalize_label(l) for l in operational_labels}
 

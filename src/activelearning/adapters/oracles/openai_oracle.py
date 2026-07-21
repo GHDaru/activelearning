@@ -16,6 +16,13 @@ _PRICING_USD_PER_MTOK: dict[str, tuple[float, float, float]] = {
 
 
 class OpenAIOracle(OpenAICompatibleOracle):
+    """Oráculo LLM via API da OpenAI, com saída estruturada restrita ao esquema.
+
+    Desenhado para *prompt caching*: o prefixo estático (system + enum de
+    categorias) é idêntico entre chamadas e reportado em ``OracleUsage``
+    (``cached_input_tokens``, ``cache_hit_rate``). Requer ``OPENAI_API_KEY``.
+    """
+
     def __init__(
         self,
         model: str = "gpt-4o-mini",

@@ -3,6 +3,14 @@ from __future__ import annotations
 
 
 def build_oracle(spec: dict):
+    """Constrói um oráculo (``OraclePort``) a partir de uma spec JSON.
+
+    A spec é a mesma dos configs do E0. Campo obrigatório ``provider`` — um de
+    ``simulated``, ``openai``, ``huawei-maas``, ``openrouter``, ``nvidia``,
+    ``openai-compatible``, ``gemini``, ``ollama``. Demais chaves (``model``,
+    ``mode``, ``temperature``, ``pricing_usd_per_mtok``, ``items_per_call``, …)
+    dependem do provider. Levanta ``ValueError`` para provider desconhecido.
+    """
     kind = spec["provider"]
     mode = spec.get("mode", "enum")
     temperature = float(spec.get("temperature", 0.0))

@@ -18,6 +18,13 @@ from activelearning.domain.instances import CategorySchema, Instance
 
 
 class CachedOracle:
+    """Envolve outro oráculo e persiste as anotações em JSONL, por instância.
+
+    Numa segunda passada, respostas já vistas são servidas do cache (evita
+    re-pagar o LLM); só as instâncias novas chamam o oráculo interno. O cache é
+    validado contra o ``oracle_id`` para não misturar proveniências.
+    """
+
     def __init__(self, inner, cache_path: Path) -> None:
         self._inner = inner
         self._path = Path(cache_path)

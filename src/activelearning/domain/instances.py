@@ -69,10 +69,12 @@ class CategorySchema:
 
     @classmethod
     def from_raw(cls, raw_labels: list[str] | set[str], include_rare: bool = True) -> CategorySchema:
+        """Constrói o esquema a partir de rótulos crus (normaliza cada um em ``Label``)."""
         return cls(labels=frozenset(Label(v) for v in raw_labels), include_rare=include_rare)
 
     @property
     def values(self) -> tuple[str, ...]:
+        """Rótulos válidos, ordenados (inclui ``_rare_`` quando ``include_rare``)."""
         return self._sorted
 
     def __len__(self) -> int:

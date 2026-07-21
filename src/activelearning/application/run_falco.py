@@ -28,6 +28,14 @@ from .run_active_learning import OraclePort, TaskClassifier, _macro_f1
 
 @dataclass
 class FalcoResult:
+    """Resultado do runner FALCO completo (cold start → fases → parada).
+
+    Separa a métrica de **relato** (``curve_macro_f1``, no teste) da de
+    **decisão** (``curve_val_macro_f1``, na validação — o que dispara a parada);
+    ``phase_boundaries`` marca quantos rótulos ao fim de cada fase e
+    ``oracle_calls`` conta as chamadas por oráculo (Inicial/Avançado).
+    """
+
     seed: int
     curve_macro_f1: LearningCurve          # medida no TESTE (relato)
     curve_val_macro_f1: list[tuple[int, float]]  # medida na VALIDAÇÃO (decisão)
@@ -40,6 +48,7 @@ class FalcoResult:
     records: list[dict] = field(default_factory=list)
 
     def summary(self) -> dict:
+        """Resumo serializável (JSON) do ciclo FALCO."""
         return {
             "seed": self.seed,
             "phase_boundaries": self.phase_boundaries,
@@ -68,6 +77,14 @@ def run_falco(
     baseline_performance: float | None = None,
     output_path: Path | None = None,
 ) -> FalcoResult:
+    """Executa o ciclo FALCO completo sobre o pool (cold start → fases → parada).
+
+    Combina o cold start sem rótulos (``drisl_selector``), a seleção por
+    incerteza e um oráculo progressivo (``oracle_initial`` → ``oracle_advanced``),
+    parando por estagnação da **validação** (``stagnation_patience``/``_eps``). A
+    decisão de parada usa a validação; o relato usa o ``test``. Devolve um
+    :class:`FalcoResult`.
+    """
     if budget > len(pool):
         raise ValueError("orçamento maior que o pool.")
     rng = np.random.default_rng(seed)

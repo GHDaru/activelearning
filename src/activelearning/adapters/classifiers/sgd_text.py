@@ -37,6 +37,7 @@ class SgdTextClassifier:
         self.classes_: list[str] = []
 
     def fit(self, texts: list[str], labels: list[str]) -> "SgdTextClassifier":
+        """Treina TF-IDF + regressão logística (SGD, ``log_loss``). Retorna ``self``."""
         if not texts or len(texts) != len(labels):
             raise ValueError("fit exige texts e labels não vazios e do mesmo tamanho.")
         self._vectorizer = TfidfVectorizer(
@@ -53,10 +54,12 @@ class SgdTextClassifier:
         return self
 
     def predict_proba(self, texts: list[str]) -> np.ndarray:
+        """Probabilidades por classe ``(n_amostras, n_classes)``, alinhadas a ``classes_``."""
         if self._model is None or self._vectorizer is None:
             raise RuntimeError("Chame fit antes de predict_proba.")
         return self._model.predict_proba(self._vectorizer.transform(texts))
 
     def predict(self, texts: list[str]) -> list[str]:
+        """Rótulo mais provável de cada texto."""
         proba = self.predict_proba(texts)
         return [self.classes_[i] for i in proba.argmax(axis=1)]

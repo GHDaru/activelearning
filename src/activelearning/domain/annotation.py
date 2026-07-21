@@ -24,6 +24,7 @@ class OracleUsage:
 
     @property
     def cache_hit_rate(self) -> float:
+        """Fração dos tokens de entrada servidos do cache (0 se não houve entrada)."""
         return self.cached_input_tokens / self.input_tokens if self.input_tokens else 0.0
 
     def __add__(self, other: "OracleUsage") -> "OracleUsage":
@@ -55,6 +56,7 @@ class Annotation:
 
     @property
     def is_valid_label(self) -> bool:
+        """True se o oráculo respondeu um rótulo dentro do esquema (``label`` não é None)."""
         return self.label is not None
 
     def is_correct(self, gold: Label | None) -> bool | None:

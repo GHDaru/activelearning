@@ -17,6 +17,12 @@ _PRICING_USD_PER_MTOK: dict[str, tuple[float, float]] = {
 
 
 class GeminiOracle:
+    """Oráculo LLM via API do Google Gemini, com saída estruturada pelo esquema.
+
+    Requer ``GEMINI_API_KEY``. Rótulo fora do esquema vira anotação inválida
+    (``label=None``), contabilizada.
+    """
+
     def __init__(
         self,
         model: str = "gemini-2.0-flash",

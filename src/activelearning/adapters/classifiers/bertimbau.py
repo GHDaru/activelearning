@@ -66,6 +66,12 @@ class BertimbauClassifier:
 
     # -- porta TaskClassifier ----------------------------------------------
     def fit(self, texts: list[str], labels: list[str]) -> "BertimbauClassifier":
+        """Faz *fine-tuning* do BERTimbau (transformer PT-BR) na tarefa. Retorna ``self``.
+
+        Requer o extra ``classifiers`` (torch/transformers) e é pesado — pensado
+        para o classificador "forte" fora do laço, 1× no fim. ``texts`` e
+        ``labels`` devem ter o mesmo tamanho (> 0).
+        """
         if not texts or len(texts) != len(labels):
             raise ValueError("fit exige texts e labels não vazios e do mesmo tamanho.")
         torch, AutoTokenizer, AutoModel = self._lazy_imports()
@@ -112,6 +118,7 @@ class BertimbauClassifier:
         return self
 
     def predict_proba(self, texts: list[str]) -> np.ndarray:
+        """Probabilidades por classe ``(n_amostras, n_classes)`` (softmax dos logits)."""
         if self._model is None:
             raise RuntimeError("Chame fit antes de predict_proba.")
         torch, _, _ = self._lazy_imports()
@@ -129,5 +136,6 @@ class BertimbauClassifier:
         return np.vstack(probs)
 
     def predict(self, texts: list[str]) -> list[str]:
+        """Rótulo mais provável de cada texto."""
         proba = self.predict_proba(texts)
         return [self.classes_[i] for i in proba.argmax(axis=1)]

@@ -12,6 +12,13 @@ from ..ports.oracle import OraclePort
 
 @dataclass
 class OracleEvaluationReport:
+    """Relatório do experimento E0: qualidade e custo de um oráculo contra o gabarito.
+
+    Agrega acurácia, Macro F1 (da matriz de confusão), taxa de resposta inválida
+    (fora do esquema), uso de tokens/custo e o custo por 1.000 rótulos — os
+    instrumentos com que a tese compara oráculos.
+    """
+
     oracle_id: str
     prompt_version: str
     n_total: int = 0
@@ -24,10 +31,12 @@ class OracleEvaluationReport:
 
     @property
     def accuracy(self) -> float:
+        """Fração de anotações corretas sobre o total avaliado."""
         return self.n_correct / self.n_total if self.n_total else 0.0
 
     @property
     def invalid_rate(self) -> float:
+        """Fração de respostas fora do esquema (rótulo inválido)."""
         return self.n_invalid_label / self.n_total if self.n_total else 0.0
 
     @property
@@ -47,6 +56,7 @@ class OracleEvaluationReport:
 
     @property
     def cost_per_1k_labels_usd(self) -> float:
+        """Custo em US$ para rotular 1.000 instâncias com este oráculo."""
         return (self.usage.cost_usd / self.n_total * 1000) if self.n_total else 0.0
 
     def to_summary(self) -> dict:
@@ -86,6 +96,11 @@ class EvaluateOracle:
     def run(
         self, instances: list[Instance], schema: CategorySchema, batch_size: int = 25
     ) -> OracleEvaluationReport:
+        """Anota as instâncias (retomando o que já houver) e devolve o relatório do E0.
+
+        Grava anotações e relatório em ``output_dir``; instâncias já anotadas em
+        execuções anteriores são puladas.
+        """
         done_ids = self._already_annotated()
         pending = [i for i in instances if i.id not in done_ids]
         gold_by_id = {i.id: i.gold_label for i in instances}

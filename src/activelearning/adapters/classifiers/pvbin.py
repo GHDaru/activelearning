@@ -63,6 +63,10 @@ class PVBinClassifier:
 
     # ------------------------------------------------------------------ API
     def fit(self, texts: list[str], labels: list[str]) -> "PVBinClassifier":
+        """Treina um protótipo por classe (concatenação dos textos) e o vetoriza.
+
+        ``texts`` e ``labels`` devem ter o mesmo tamanho (> 0). Retorna ``self``.
+        """
         if len(texts) != len(labels) or not texts:
             raise ValueError("texts e labels devem ter o mesmo tamanho (> 0).")
         texts_arr = np.asarray(texts, dtype=object)
@@ -89,18 +93,25 @@ class PVBinClassifier:
         return np.asarray((self._prototype_matrix @ query.T).todense()).T
 
     def predict_proba(self, texts: list[str]) -> np.ndarray:
+        """Distribuição de probabilidade por classe (softmax dos escores/temperatura).
+
+        Retorna array ``(n_amostras, n_classes)`` alinhado a ``classes_``.
+        """
         scores = self._scores(texts)
         return softmax(scores / self._temperature, axis=1)
 
     def predict(self, texts: list[str]) -> list[str]:
+        """Rótulo mais provável de cada texto (``argmax`` sobre ``classes_``)."""
         scores = self._scores(texts)
         return [self.classes_[i] for i in scores.argmax(axis=1)]
 
     def score_macro_f1(self, texts: list[str], gold: list[str]) -> float:
+        """Macro F1 das predições contra ``gold`` (implacável com classes raras)."""
         from sklearn.metrics import f1_score
 
         return float(f1_score(gold, self.predict(texts), average="macro", zero_division=0))
 
     def score_accuracy(self, texts: list[str], gold: list[str]) -> float:
+        """Acurácia das predições contra ``gold``."""
         pred = self.predict(texts)
         return float(np.mean([p == g for p, g in zip(pred, gold)]))

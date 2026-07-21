@@ -66,6 +66,14 @@ class SbertEncoder:
 
 @dataclass
 class DrislResult:
+    """Saída do DRI-SL: os índices escolhidos para o L0 e o diagnóstico do agrupamento.
+
+    - ``indices``: instâncias selecionadas para o conjunto inicial;
+    - ``cluster_of``: grupo (k-means) de cada instância do pool;
+    - ``n_clusters``: número de grupos usados;
+    - ``allocation``: cota de seleção alocada a cada grupo (proporcional à massa).
+    """
+
     indices: list[int]
     cluster_of: np.ndarray
     n_clusters: int

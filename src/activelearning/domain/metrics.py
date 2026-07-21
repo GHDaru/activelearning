@@ -14,6 +14,7 @@ class LearningCurve:
     scores: list[float] = field(default_factory=list)
 
     def append(self, l_size: int, score: float) -> None:
+        """Adiciona um ponto (|L|, métrica) à curva; ``l_size`` deve crescer estritamente."""
         if self.l_sizes and l_size <= self.l_sizes[-1]:
             raise ValueError("l_size deve ser estritamente crescente.")
         self.l_sizes.append(l_size)
