@@ -48,9 +48,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     Base.metadata.create_all(engine)
     session_factory = make_session_factory(engine)
 
-    experiment_config = json.loads(
-        Path(settings.experiment_config).read_text(encoding="utf-8")
-    )
+    # Fora do repositório (instalação via pip) o config do E0 não existe:
+    # a API sobe com catálogo vazio em vez de falhar no import — aponte
+    # FLOWBUILDER_CONFIG para um config real para habilitar oráculos/execuções.
+    cfg_path = Path(settings.experiment_config)
+    if cfg_path.is_file():
+        experiment_config = json.loads(cfg_path.read_text(encoding="utf-8"))
+    else:
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "experiment_config não encontrado em %s — subindo com catálogo "
+            "vazio (defina FLOWBUILDER_CONFIG)", cfg_path)
+        experiment_config = {"oracles": [], "samples": {}}
 
     app = FastAPI(title="FALCO FlowBuilder API", version="0.1.0")
     app.state.session_factory = session_factory
