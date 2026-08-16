@@ -22,10 +22,12 @@
 ## Living documentation (same pull request)
 
 - [x] **T5** — O dicionário É a documentação viva; `DICIONARIO.md` aponta o
-  script e vice-versa; plano de revisão da tese atualizado (v9) com links.
+  script e vice-versa; plano de revisão da tese atualizado NA MAIN do tesedaru
+  (v9, commit 'Plano v9') com links — a cópia do plano nesta branch é anterior
+  (v8) e converge no merge.
 
 ## Closing tail — MANDATORY, one line each, never delete
 
-- [ ] `TAIL:review` — revisão independente em contexto fresco antes do gate (evidência no qa-report).
-- [ ] `TAIL:security` — varredura de segredos/injeção no diff (evidência no qa-report).
+- [x] `TAIL:review` — revisão independente em contexto fresco antes do gate (evidência no qa-report).
+- [x] `TAIL:security` — varredura de segredos/injeção no diff (evidência no qa-report).
 - [ ] `TAIL:gate` — gate humano do autor no merge da branch (aguardando).

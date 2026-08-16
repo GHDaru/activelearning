@@ -40,7 +40,7 @@ partir do CSV publicado usando as funções reais do pipeline.
 
 ## Acceptance criteria (DoD)
 
-- `python3 scripts/check_dataset_invariants.py` → exit 0, 12 linhas `[OK ]`.
+- `python3 scripts/check_dataset_invariants.py` → exit 0, 16 linhas `[OK ]`.
 - WHEN o CSV é alterado (uma linha removida) THE SYSTEM SHALL sair com exit 1
   nomeando os invariantes violados (segunda lei do verifiable-dod: checagem
   provada em vermelho).

@@ -52,13 +52,16 @@ import run_e3prime  # noqa: E402
 ESPERADO = {
     "linhas_csv": 250_221,
     "md5_csv": "0682ee5ba077c180fb7a727fb200f154",
+    "classes_normalizadas": 794,
+    "classes_em_rare": 174,       # 794 - 620
     "schema_total": 621,          # 620 classes + _rare_
     "schema_classes": 620,
+    "linhas_pos_filtro_ge2": 250_142,
+    "classes_ge2": 715,
     "dedup_textos": 231_490,
     "dedup_classes": 714,
     "pool": 50_000,
     "classes_no_pool": 649,
-    "holdout_ciclo": 4_000,
     "populacao": 177_490,
 }
 
@@ -89,6 +92,9 @@ def main() -> int:
 
     # load_base lê ROOT/data/dataset.csv fixo; para caminho alternativo,
     # reaponta o _ROOT do módulo (mesma função, outra base — modo de teste).
+    # Limitação documentada: o caminho alternativo precisa do layout
+    # <raiz>/data/dataset.csv; fora dele, load_base falha com FileNotFoundError
+    # (exit != 0 do mesmo jeito, mas sem nomear o invariante).
     if csv_path.resolve() != (ROOT / "data/dataset.csv").resolve():
         run_e3prime._ROOT = csv_path.resolve().parents[1]
     dedup = run_e3prime.load_base()
@@ -100,15 +106,22 @@ def main() -> int:
     populacao = dedup[run_e3prime.POOL_SIZE + run_e3prime.CYCLE_HOLDOUT:]
     check("pool", len(pool), ESPERADO["pool"])
     check("classes_no_pool", len({l for _, l in pool}), ESPERADO["classes_no_pool"])
-    check("holdout_ciclo", run_e3prime.CYCLE_HOLDOUT, ESPERADO["holdout_ciclo"])
+    check("particoes_somam_dedup (pool + holdout 4k + população)",
+          len(pool) + run_e3prime.CYCLE_HOLDOUT + len(populacao), len(dedup))
     check("populacao", len(populacao), ESPERADO["populacao"])
 
-    # coerência interna do dicionário: filtro ≥2 antes do dedup
-    cnt = Counter(l for _, l in rows)
+    # coerência interna do dicionário (cadeia completa da prosa):
     from activelearning.domain.instances import normalize_label
     norm = Counter(normalize_label(l) for _, l in rows)
+    check("classes_normalizadas", len(norm), ESPERADO["classes_normalizadas"])
     check("classes_norm_ge5 (base do schema)",
           sum(1 for n in norm.values() if n >= 5), ESPERADO["schema_classes"])
+    check("classes_em_rare (794 - 620)",
+          sum(1 for n in norm.values() if n < 5), ESPERADO["classes_em_rare"])
+    check("linhas_pos_filtro_ge2",
+          sum(n for n in norm.values() if n >= 2), ESPERADO["linhas_pos_filtro_ge2"])
+    check("classes_ge2 (715; o dedup elimina 1 -> 714)",
+          sum(1 for n in norm.values() if n >= 2), ESPERADO["classes_ge2"])
 
     if _falhas:
         print(f"\nRESULTADO: FALHOU ({len(_falhas)} invariante(s)): {', '.join(_falhas)}")

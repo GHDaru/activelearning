@@ -79,7 +79,9 @@ Notas de leitura:
 ## Invariantes executáveis
 
 `python3 scripts/check_dataset_invariants.py` verifica, com as funções REAIS
-do pipeline (não cópias): 250.221 linhas · schema 621 com `_rare_` · dedup
-231.490 · 714 classes · pool/holdout/população 50.000/4.000/177.490 · 649
-classes no pool · md5 do CSV. Sai com código 0 (tudo verde) ou 1 (violação),
-imprimindo cada invariante.
+do pipeline (não cópias), TODA contagem citada nesta página: md5 · 250.221
+linhas · 794 classes normalizadas · schema 621 com `_rare_` (620 + 174 em
+`_rare_`) · filtro ≥2 (250.142 linhas, 715 classes) · dedup 231.490 · 714
+classes · pool 50.000 (649 classes) · partições que somam o dedup · população
+177.490. Sai com código 0 (tudo verde) ou 1 (violação), imprimindo cada
+invariante.
