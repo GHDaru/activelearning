@@ -9,6 +9,7 @@ data/*
 !data/dataset.csv
 !data/README.md
 !data/CORRECTIONS.md
+!data/DICIONARIO.md
 !data/data_old/
 .env
 node_modules/
