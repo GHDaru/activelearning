@@ -9,8 +9,10 @@
 #
 # Pré-requisitos
 #   pip install kaggle
-#   credenciais em ~/.kaggle/kaggle.json (chmod 600) OU nas variáveis
-#   KAGGLE_USERNAME e KAGGLE_KEY. NUNCA commite essas credenciais.
+#   credenciais, em qualquer um dos formatos que o cliente aceita:
+#     - token novo: ~/.kaggle/access_token (chmod 600) ou KAGGLE_API_TOKEN
+#     - par antigo: ~/.kaggle/kaggle.json  ou KAGGLE_USERNAME + KAGGLE_KEY
+#   NUNCA commite credenciais: elas moram em $HOME, fora de qualquer repositório.
 #
 # Uso
 #   experiments/e2e3/kaggle/run_kaggle.sh
@@ -39,12 +41,21 @@ BRACOS_SEM_ORACULO=(E D E20 E25 E30 E35)
 # ---------------------------------------------------------------- pré-checagem
 command -v kaggle >/dev/null || { echo "ERRO: 'kaggle' não está no PATH (pip install kaggle)"; exit 1; }
 
+# O Kaggle tem duas formas de credencial e elas guardam o usuário em lugares
+# diferentes: o par usuário+chave vive em ~/.kaggle/kaggle.json, e o token novo
+# (~/.kaggle/access_token, KGAT_...) não guarda usuário nenhum. Por isso a
+# última tentativa é perguntar ao próprio cliente.
 if [[ -n "${KAGGLE_USERNAME:-}" ]]; then
   USUARIO="$KAGGLE_USERNAME"
 elif [[ -f "$HOME/.kaggle/kaggle.json" ]]; then
   USUARIO="$(python3 -c 'import json,os;print(json.load(open(os.path.expanduser("~/.kaggle/kaggle.json")))["username"])')"
 else
-  echo "ERRO: sem credenciais do Kaggle (~/.kaggle/kaggle.json ou KAGGLE_USERNAME/KAGGLE_KEY)."
+  USUARIO="$(kaggle config view 2>/dev/null | sed -n 's/^- username: //p' | head -1)"
+fi
+if [[ -z "${USUARIO:-}" || "$USUARIO" == "None" ]]; then
+  echo "ERRO: sem credenciais do Kaggle utilizáveis."
+  echo "  token novo : ~/.kaggle/access_token (chmod 600) ou KAGGLE_API_TOKEN"
+  echo "  formato par: ~/.kaggle/kaggle.json ou KAGGLE_USERNAME + KAGGLE_KEY"
   exit 1
 fi
 KERNEL="${USUARIO}/falco-e3prime-seed7"
