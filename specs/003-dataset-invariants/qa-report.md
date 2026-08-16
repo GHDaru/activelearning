@@ -6,7 +6,7 @@
 
 | Check | Expected | Result |
 |---|---|---|
-| `python3 scripts/check_dataset_invariants.py` | exit 0, 16 linhas `[OK ]` | exit 0, `grep -c "[OK ]"` = 16 ✅ |
+| `python3 scripts/check_dataset_invariants.py` | exit 0, 17 linhas `[OK ]` | exit 0, `grep -c "[OK ]"` = 17 ✅ |
 | mesmo script com CSV truncado (1 linha removida) | exit 1 nomeando invariantes | exit 1 — "FALHOU (6 invariante(s)): md5_csv, linhas_csv, dedup_textos, classes_no_pool, populacao, linhas_pos_filtro_ge2" ✅ |
 | `grep -c "_rare_" data/DICIONARIO.md` | ≥ 1 | 6 ✅ |
 | `git check-ignore data/DICIONARIO.md` | exit 1 (versionável) | exit 1 ✅ |
@@ -38,6 +38,17 @@
   `scripts/check_dataset.py`); os números conferem entre as duas (verificação
   cruzada §6) — escolher UMA para merge e usar a outra como registro de
   verificação.
+
+## Consolidação com o revisor1 (2026-08-16, pós-review)
+
+A entrega equivalente do revisor1 (`branch claude/maestro-cycles-statistical-analysis-fwla6a`,
+`data/DICIONARIO.md` + `scripts/check_dataset.py`) trazia um achado que o meu
+não tinha: a causa-raiz NOMINAL do 715→714. Reproduzi de forma independente
+(a classe é `pomada massageadora`; suas 2 instâncias têm textos que já ocorrem
+antes sob `outro farma`, logo somem no dedup) e incorporei como 17º invariante
+executável + nota no dicionário. Nada do trabalho do revisor1 se perde: o que
+era complementar foi absorvido, o que era equivalente está registrado em
+`tesedaru:docs/verificacao-cruzada-revisor2.md`.
 
 ## Requirement coverage
 

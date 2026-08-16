@@ -56,8 +56,7 @@ Fonte: `experiments/e2e3/run_e3prime.py` (`load_base`, `min_per_class = 2`,
 250.221 linhas do CSV
   → filtro: classe (normalizada) com ≥ 2 ocorrências  → 250.142 linhas (715 classes)
   → dedup por texto (strip + lower, 1ª ocorrência)    → 231.490 textos únicos
-      (714 classes — uma classe perde todas as instâncias no dedup,
-       pois seus textos duplicam textos anteriores de outra classe)
+      (714 classes — ver nota da causa-raiz abaixo)
   → shuffle determinístico (semente de dados 42)
   → pool           = dedup[      :50.000]  (50.000 itens · 649 classes presentes)
   → holdout ciclo  = dedup[50.000:54.000]  (val 2k + teste 2k do ciclo real)
@@ -71,6 +70,12 @@ Notas de leitura:
 - **649** = classes efetivamente presentes no pool de 50k (é a contagem a que
   o artigo a5 se referia como "649 raw classes"; a correção do a5 é usar 714
   para a base e 649 para o pool).
+- **715 → 714 (causa-raiz nominal, verificada)**: a classe perdida é
+  `pomada massageadora`. Ela tem exatamente 2 instâncias
+  (`POMADA MASSAGEADORA FISIOFORT PREM 15OG` e `POMADA FISIOFORT 150G BIONATUS`)
+  e os dois textos já ocorrem antes rotulados como `outro farma` — o dedup
+  guarda a 1ª ocorrência de cada texto, então a classe fica sem nenhuma
+  instância. (Achado do revisor1, reproduzido de forma independente aqui.)
 - O filtro ≥ 2 é aplicado ANTES do dedup: no conjunto deduplicado a menor
   classe pode ter 1 ocorrência.
 - O particionamento é fixado por `DATA_SEED = 42` independentemente da semente

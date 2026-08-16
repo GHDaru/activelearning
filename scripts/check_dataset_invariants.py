@@ -58,6 +58,7 @@ ESPERADO = {
     "schema_classes": 620,
     "linhas_pos_filtro_ge2": 250_142,
     "classes_ge2": 715,
+    "classe_perdida_no_dedup": {"pomada massageadora"},
     "dedup_textos": 231_490,
     "dedup_classes": 714,
     "pool": 50_000,
@@ -122,6 +123,9 @@ def main() -> int:
           sum(n for n in norm.values() if n >= 2), ESPERADO["linhas_pos_filtro_ge2"])
     check("classes_ge2 (715; o dedup elimina 1 -> 714)",
           sum(1 for n in norm.values() if n >= 2), ESPERADO["classes_ge2"])
+    check("classe_perdida_no_dedup (causa-raiz nominal do 715->714)",
+          {l for l in norm if norm[l] >= 2} - classes,
+          ESPERADO["classe_perdida_no_dedup"])
 
     if _falhas:
         print(f"\nRESULTADO: FALHOU ({len(_falhas)} invariante(s)): {', '.join(_falhas)}")
