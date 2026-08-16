@@ -127,37 +127,49 @@ async function json<T>(response: Response): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+// Origem da API. Vazio (padrão) mantém tudo relativo: em dev o Vite proxya /api
+// para o :8000 e no Vercel o /api cai na função read-only do grafo. Definir
+// VITE_API_BASE aponta o front para o backend completo hospedado em contêiner —
+// o único que executa run e experimento (spec 004). Como aí são duas origens,
+// esse endereço precisa estar em FLOWBUILDER_CORS no backend.
+// A barra final é removida para não gerar `https://host//api/...`.
+export const API_BASE = (import.meta.env.VITE_API_BASE ?? "").replace(/\/+$/, "");
+
+// Usada também por href/src (download, grafo): esses não passam por fetch e
+// ficariam apontando para o site estático, onde a rota não existe.
+export const apiUrl = (path: string): string => `${API_BASE}${path}`;
+
 export const api = {
-  health: () => fetch("/api/health").then((r) => json<{ status: string; database?: string; mode?: string }>(r)),
-  oracles: () => fetch("/api/oracles").then((r) => json<OracleSpec[]>(r)),
-  runs: () => fetch("/api/runs").then((r) => json<Run[]>(r)),
-  run: (id: string) => fetch(`/api/runs/${id}`).then((r) => json<Run>(r)),
+  health: () => fetch(apiUrl("/api/health")).then((r) => json<{ status: string; database?: string; mode?: string }>(r)),
+  oracles: () => fetch(apiUrl("/api/oracles")).then((r) => json<OracleSpec[]>(r)),
+  runs: () => fetch(apiUrl("/api/runs")).then((r) => json<Run[]>(r)),
+  run: (id: string) => fetch(apiUrl(`/api/runs/${id}`)).then((r) => json<Run>(r)),
   createRun: (body: Record<string, unknown>) =>
-    fetch("/api/runs", {
+    fetch(apiUrl("/api/runs"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }).then((r) => json<Run>(r)),
-  datasets: () => fetch("/api/datasets").then((r) => json<Dataset[]>(r)),
-  dataset: (id: string) => fetch(`/api/datasets/${id}`).then((r) => json<Dataset>(r)),
+  datasets: () => fetch(apiUrl("/api/datasets")).then((r) => json<Dataset[]>(r)),
+  dataset: (id: string) => fetch(apiUrl(`/api/datasets/${id}`)).then((r) => json<Dataset>(r)),
   datasetStats: (id: string) =>
-    fetch(`/api/datasets/${id}/stats`).then((r) => json<DatasetStats>(r)),
+    fetch(apiUrl(`/api/datasets/${id}/stats`)).then((r) => json<DatasetStats>(r)),
   uploadDataset: (form: FormData) =>
-    fetch("/api/datasets", { method: "POST", body: form }).then((r) => json<Dataset>(r)),
-  experiments: () => fetch("/api/experiments").then((r) => json<Experiment[]>(r)),
+    fetch(apiUrl("/api/datasets"), { method: "POST", body: form }).then((r) => json<Dataset>(r)),
+  experiments: () => fetch(apiUrl("/api/experiments")).then((r) => json<Experiment[]>(r)),
   experimentResults: (id: string) =>
-    fetch(`/api/experiments/${id}/results`).then((r) => json<{ id: string; titulo: string; blocks: ResultBlock[] }>(r)),
+    fetch(apiUrl(`/api/experiments/${id}/results`)).then((r) => json<{ id: string; titulo: string; blocks: ResultBlock[] }>(r)),
   experimentExecute: (id: string, preset: string) =>
-    fetch(`/api/experiments/${id}/execute`, {
+    fetch(apiUrl(`/api/experiments/${id}/execute`), {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ preset }),
     }).then((r) => json<Record<string, unknown>>(r)),
   experimentLog: (id: string) =>
-    fetch(`/api/experiments/${id}/log`).then((r) => json<{ log: string }>(r)),
+    fetch(apiUrl(`/api/experiments/${id}/log`)).then((r) => json<{ log: string }>(r)),
   downloadUrl: (id: string, which: "sanitized" | "original") =>
-    `/api/datasets/${id}/download?which=${which}`,
-  kgSummary: () => fetch("/api/kg/summary").then((r) => json<KgSummary>(r)),
-  kgViewUrl: () => "/api/kg/view",
+    apiUrl(`/api/datasets/${id}/download?which=${which}`),
+  kgSummary: () => fetch(apiUrl("/api/kg/summary")).then((r) => json<KgSummary>(r)),
+  kgViewUrl: () => apiUrl("/api/kg/view"),
   uploadFichamento: (form: FormData) =>
-    fetch("/api/fichamentos", { method: "POST", body: form }).then((r) => json<FichamentoDraft>(r)),
+    fetch(apiUrl("/api/fichamentos"), { method: "POST", body: form }).then((r) => json<FichamentoDraft>(r)),
 };

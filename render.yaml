@@ -1,0 +1,44 @@
+# Blueprint do backend completo do FlowBuilder (spec 004) — Render.
+# https://render.com/docs/blueprint-spec
+#
+# O que este blueprint NÃO faz: não cria o Postgres (Neon, fora do Render —
+# DATABASE_URL é secret manual) nem as chaves de oráculo. Esses valores têm
+# sync: false e ficam pendentes no dashboard até o autor colar (DEPLOY_AND_PUBLISH.md §1.4).
+
+services:
+  - type: web
+    name: falco-flowbuilder-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      # Postgres externo (Neon) — sem ele a API cai para SQLite local, que não
+      # sobrevive a um redeploy: runs e datasets desapareceriam a cada deploy.
+      - key: DATABASE_URL
+        sync: false
+      # Sem isto o catálogo de experimentos sobe vazio (ver settings.py) —
+      # não é opcional para o objetivo desta spec (rodar um experimento real).
+      - key: FLOWBUILDER_CONFIG
+        value: /app/experiments/e0/config.json
+      # Onde os artefatos JSONL de cada run ficam — precisa do disco abaixo
+      # para sobreviver a redeploy (Princípio I: artefato rastreável).
+      - key: FLOWBUILDER_ARTIFACTS
+        value: /data/api_runs
+      # Origem do front no Vercel; sem isto o navegador bloqueia por CORS.
+      # Editar para o subdomínio definitivo assim que o DNS estiver apontado.
+      - key: FLOWBUILDER_CORS
+        value: https://tese.ghdaru.com.br
+      # Chaves dos oráculos reais (o catálogo público usa "simulated" por
+      # padrão — spec 004 §Riscos assumidos; só preencher ao decidir habilitar
+      # oráculo com custo real por visitante).
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+    disk:
+      name: flowbuilder-artifacts
+      mountPath: /data
+      sizeGB: 1

@@ -39,16 +39,50 @@ Arquivos já prontos: `vercel.json`, `api/index.py`, `api/requirements.txt`,
 Vercel → Project → **Settings → Domains** → adicione `falco.seudominio.com` e
 aponte o DNS (CNAME para `cname.vercel-dns.com`) conforme as instruções da tela.
 
-### 1.4 Backend completo (opcional, quando quiser rodar experimentos online)
-O FastAPI inteiro (`activelearning.adapters.api.app:create_app`) roda bem num
-host de contêiner. Sugestão (Render):
-- New **Web Service** → repo `activelearning`.
-- Build: `uv sync --extra api` · Start:
-  `uv run uvicorn --factory activelearning.adapters.api.app:create_app --host 0.0.0.0 --port $PORT`
-- Env: `DATABASE_URL` (Neon/Postgres), `FALCO_THESIS_ROOT`, chaves de oráculo.
-- No front, troque as chamadas para essa URL (hoje o front usa `/api` relativo;
-  para um back externo, sirva o front atrás do mesmo domínio ou adicione um
-  `VITE_API_BASE`). Me avise se quiser esse caminho — preparo o `VITE_API_BASE`.
+### 1.4 Backend completo — executar um experimento de aprendizado ativo de verdade
+
+Decisão do autor (16/08/2026, spec `specs/004-site-da-tese/`): o site publica
+com **backend real hospedado**, não simulação no navegador. Já está pronto:
+
+- `apps/web/src/api.ts` lê `VITE_API_BASE` (vazio = `/api` relativo, o que
+  continua funcionando local e no demo read-only do Vercel).
+- `Dockerfile` (raiz) — imagem CPU da API completa (distinta da imagem GPU do
+  E2/E3 em `experiments/e2e3/Dockerfile`).
+- `render.yaml` — blueprint do serviço, pronto para `render blueprint launch`
+  ou para importar em <https://dashboard.render.com/blueprints>.
+
+**Passos [VOCÊ]:**
+1. Neon (Postgres) — crie um projeto em <https://neon.tech>, copie a
+   `DATABASE_URL`. Sem isto a API cai para SQLite local, que **não sobrevive a
+   um redeploy** (runs e datasets desapareceriam).
+2. Render → **New → Blueprint** → aponte para este repositório. Ele lê
+   `render.yaml` e cria o serviço `falco-flowbuilder-api` com disco persistente
+   (artefatos de run) e `healthCheckPath: /api/health` já configurados.
+3. No dashboard do serviço, preencha as variáveis marcadas `sync: false`:
+   - `DATABASE_URL` — a do passo 1.
+   - `FLOWBUILDER_ADMIN_TOKEN` — **gere um segredo forte** (ex.:
+     `openssl rand -hex 32`) e guarde-o. Sem esta variável, `POST
+     /api/fichamentos` fica **aberta a qualquer visitante da internet** —
+     ela escreve arquivos no repositório `tesedaru` e executa
+     `fichamentos/build_kg.py` de lá. Definir o token é o que fecha essa
+     rota (spec 004 §Riscos assumidos).
+   - `OPENAI_API_KEY` / `OPENROUTER_API_KEY` — **deixe em branco por
+     enquanto**. O catálogo público usa o oráculo `simulated` (sem custo);
+     habilitar oráculo real expõe sua chave ao consumo de qualquer visitante
+     e depende de um teto por visitante que ainda não existe (R2 da spec).
+4. Deploy. Confira `curl https://<seu-serviço>.onrender.com/api/health` →
+   `{"status":"ok","database":"postgres"}`.
+5. Vercel → Project → **Settings → Environment Variables** → adicione
+   `VITE_API_BASE = https://<seu-serviço>.onrender.com` e faça um redeploy
+   (Vercel → Deployments → **Redeploy**, sem cache). A partir daí o botão de
+   executar experimento no front chama o backend real.
+6. Edite `FLOWBUILDER_CORS` em `render.yaml` (ou direto na env var do Render)
+   para o endereço definitivo do front (o subdomínio escolhido no passo 3 de
+   §1.3) — sem isso o navegador bloqueia as chamadas por CORS.
+
+**Plano gratuito hiberna**: a primeira chamada após um período ocioso demora
+(o serviço "acorda"). Normal; nada a corrigir agora — se incomodar, o plano
+pago do Render remove a hibernação.
 
 ---
 

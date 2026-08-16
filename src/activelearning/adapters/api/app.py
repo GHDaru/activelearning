@@ -8,9 +8,10 @@ Banco: SQLite local por padrão; Neon/Postgres via ``DATABASE_URL`` no ``.env``.
 from __future__ import annotations
 
 import json
+import secrets
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
@@ -340,13 +341,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return target
 
     @app.post("/api/fichamentos", status_code=201)
-    async def create_fichamento(file: UploadFile = File(...)) -> dict:
+    async def create_fichamento(
+        file: UploadFile = File(...),
+        x_admin_token: str | None = Header(default=None),
+    ) -> dict:
         """Recebe um PDF e gera um rascunho de fichamento (padrão KG-ready).
 
         Escreve ``fichamentos/{Chave}.md`` + ``referencias-pdf/{Chave}.pdf`` na
-        tese e regenera o grafo. O resultado é um rascunho (status a-ler) para
-        revisão do autor — segue o SKILL de fichamento.
+        tese e regenera o grafo (executando ``build_kg.py`` do repositório da
+        tese). Isso é aceitável quando só o autor alcança a API (dev local); num
+        host público exige ``FLOWBUILDER_ADMIN_TOKEN`` (spec 004 §Riscos) — sem
+        ele, escrita não autenticada no repositório da tese via internet.
         """
+        if settings.admin_token is not None and not (
+            x_admin_token and secrets.compare_digest(x_admin_token, settings.admin_token)
+        ):
+            raise HTTPException(status_code=401, detail="X-Admin-Token ausente ou inválido")
+
         from activelearning.application.fichamento_draft import generate_draft
 
         if not (file.filename or "").lower().endswith(".pdf"):

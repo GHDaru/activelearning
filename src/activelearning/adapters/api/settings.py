@@ -26,6 +26,7 @@ class Settings:
     artifacts_root: Path
     thesis_root: Path = field(default_factory=lambda: Path("../tesedaru"))
     cors_origins: list[str] = field(default_factory=list)
+    admin_token: str | None = None
 
     @classmethod
     def from_env(cls, root: Path | None = None) -> "Settings":
@@ -50,4 +51,9 @@ class Settings:
                 ).split(",")
                 if o.strip()
             ],
+            # /api/fichamentos escreve em thesis_root e executa build_kg.py de lá
+            # (spec 004 §Riscos): sem token definido, a rota fica aberta — correto
+            # em dev local, onde só o autor alcança a API. Definir esta variável
+            # no host público fecha a rota a quem não conhece o segredo.
+            admin_token=os.environ.get("FLOWBUILDER_ADMIN_TOKEN") or None,
         )

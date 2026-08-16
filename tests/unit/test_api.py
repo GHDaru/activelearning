@@ -48,6 +48,55 @@ def client(tmp_path):
     return TestClient(create_app(settings))
 
 
+def _pdf_bytes() -> bytes:
+    return b"%PDF-1.4\n%fake\n"
+
+
+def test_fichamentos_requires_admin_token_when_configured(client, tmp_path, monkeypatch):
+    # Reconstrói o client com admin_token setado — spec 004: /api/fichamentos
+    # escreve fora deste repositório (thesis_root) e por isso, num host
+    # público, exige o segredo compartilhado (FLOWBUILDER_ADMIN_TOKEN).
+    settings = Settings(
+        root=tmp_path,
+        database_url=f"sqlite:///{tmp_path / 'admin.db'}",
+        experiment_config=tmp_path / "config.json",
+        artifacts_root=tmp_path / "artifacts",
+        admin_token="segredo-de-teste",
+    )
+    (tmp_path / "config.json").write_text(json.dumps({"oracles": [], "samples": {}}))
+    admin_client = TestClient(create_app(settings))
+
+    no_token = admin_client.post(
+        "/api/fichamentos", files={"file": ("x.pdf", _pdf_bytes(), "application/pdf")}
+    )
+    assert no_token.status_code == 401
+
+    wrong_token = admin_client.post(
+        "/api/fichamentos",
+        files={"file": ("x.pdf", _pdf_bytes(), "application/pdf")},
+        headers={"X-Admin-Token": "chave-errada"},
+    )
+    assert wrong_token.status_code == 401
+
+    right_token = admin_client.post(
+        "/api/fichamentos",
+        files={"file": ("x.pdf", _pdf_bytes(), "application/pdf")},
+        headers={"X-Admin-Token": "segredo-de-teste"},
+    )
+    # Passou do gate — o próximo erro é de negócio (thesis_root inexistente
+    # neste teste), nunca 401.
+    assert right_token.status_code != 401
+
+
+def test_fichamentos_open_when_admin_token_unset(client):
+    # Sem FLOWBUILDER_ADMIN_TOKEN (comportamento pré-spec-004 preservado):
+    # a rota segue alcançável sem header — é o modo dev local esperado.
+    resp = client.post(
+        "/api/fichamentos", files={"file": ("x.pdf", _pdf_bytes(), "application/pdf")}
+    )
+    assert resp.status_code != 401
+
+
 def test_health(client):
     body = client.get("/api/health").json()
     assert body == {"status": "ok", "database": "sqlite"}
