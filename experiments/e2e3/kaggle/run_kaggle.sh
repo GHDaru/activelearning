@@ -25,6 +25,7 @@
 #                   rodam (o cache do oráculo não está versionado no git).
 #   MAX_RODADAS     quantas vezes reempurrar após queda (padrão: 6)
 #   INTERVALO       segundos entre consultas de status (padrão: 300)
+#   ACELERADOR      NvidiaTeslaT4 (padrão) | NvidiaTeslaP100 | Tpu1VmV38
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
@@ -34,6 +35,9 @@ SEED="${SEED:-7}"
 BRANCH="${BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
 MAX_RODADAS="${MAX_RODADAS:-6}"
 INTERVALO="${INTERVALO:-300}"
+# T4 = sm_75, compatível com o torch da imagem do Kaggle. NÃO troque para
+# NvidiaTeslaP100 sem checar: a P100 é sm_60 e o torch atual começa em sm_70.
+ACELERADOR="${ACELERADOR:-NvidiaTeslaT4}"
 RESULTADOS="experiments/e2e3/results"
 BRACOS_TODOS=(A B C E D E20 E25 E30 E35)
 BRACOS_SEM_ORACULO=(E D E20 E25 E30 E35)
@@ -133,7 +137,12 @@ for ((rodada = 1; rodada <= MAX_RODADAS; rodada++)); do
   echo "=== rodada $rodada/$MAX_RODADAS — faltam: $FALTA ==="
 
   preparar
-  SAIDA_PUSH="$(kaggle kernels push -p "$STAGE" 2>&1)"
+  # O tipo de acelerador NÃO sai do kernel-metadata.json: o cliente só lê
+  # 'enable_gpu' de lá, e um campo 'accelerator' no arquivo é silenciosamente
+  # ignorado. Escolher a placa é este argumento — e escolher importa: com
+  # 'enable_gpu' sozinho o Kaggle entregou uma P100 (sm_60), que o torch da
+  # imagem não suporta. Valores aceitos: NvidiaTeslaT4, NvidiaTeslaP100, Tpu1VmV38.
+  SAIDA_PUSH="$(kaggle kernels push -p "$STAGE" --accelerator "$ACELERADOR" 2>&1)"
   echo "$SAIDA_PUSH"
   # O aviso abaixo é fatal, não cosmético: com título e id divergentes o kernel
   # nasce num slug e o resto do script conversa com outro.
