@@ -58,7 +58,13 @@ if [[ -z "${USUARIO:-}" || "$USUARIO" == "None" ]]; then
   echo "  formato par: ~/.kaggle/kaggle.json ou KAGGLE_USERNAME + KAGGLE_KEY"
   exit 1
 fi
-KERNEL="${USUARIO}/falco-e3prime-seed7"
+# O slug sai do kernel-metadata.json — uma fonte só. Cuidado herdado de uma
+# lição prática: o Kaggle deriva a URL real do TÍTULO, não do id. Se os dois não
+# baterem, o kernel nasce num slug e o acompanhamento consulta outro, para
+# sempre. Por isso o título ali é escrito de forma a produzir exatamente este
+# slug, e a checagem logo abaixo se recusa a seguir se isso deixar de valer.
+SLUG="$(python3 -c 'import json;print(json.load(open("experiments/e2e3/kaggle/kernel-metadata.json"))["id"].split("/")[-1])')"
+KERNEL="${USUARIO}/${SLUG}"
 
 # Sem o cache do oráculo, A/B/C não rodam: avisa alto, mas não impede o resto.
 if [[ -n "${CACHE_DATASET:-}" ]]; then
@@ -127,16 +133,39 @@ for ((rodada = 1; rodada <= MAX_RODADAS; rodada++)); do
   echo "=== rodada $rodada/$MAX_RODADAS — faltam: $FALTA ==="
 
   preparar
-  kaggle kernels push -p "$STAGE"
+  SAIDA_PUSH="$(kaggle kernels push -p "$STAGE" 2>&1)"
+  echo "$SAIDA_PUSH"
+  # O aviso abaixo é fatal, não cosmético: com título e id divergentes o kernel
+  # nasce num slug e o resto do script conversa com outro.
+  if grep -qi "does not resolve to the specified id" <<<"$SAIDA_PUSH"; then
+    echo "ERRO: o título do kernel-metadata.json não resolve para o id '$SLUG'."
+    echo "      Ajuste o título para gerar exatamente esse slug e rode de novo."
+    exit 1
+  fi
 
-  # acompanha até sair de running/queued
+  # acompanha até sair de running/queued.
+  # Status desconhecido NÃO é 'terminou': o cliente devolve texto de erro em
+  # caso de slug errado ou kernel privado, e tratar isso como fim faria o script
+  # baixar output inexistente e reempurrar por cima de uma execução viva.
+  ERROS_SEGUIDOS=0
   while true; do
     sleep "$INTERVALO"
     STATUS="$(kaggle kernels status "$KERNEL" 2>&1 || true)"
     echo "[$(date -u +%H:%M:%SZ)] $STATUS"
     case "$STATUS" in
-      *running*|*queued*) continue ;;
-      *) break ;;
+      *running*|*RUNNING*|*queued*|*QUEUED*)
+        ERROS_SEGUIDOS=0; continue ;;
+      *complete*|*COMPLETE*|*error*|*ERROR*|*cancel*|*CANCEL*)
+        break ;;
+      *)
+        ERROS_SEGUIDOS=$((ERROS_SEGUIDOS + 1))
+        echo "  (status não reconhecido — tentativa $ERROS_SEGUIDOS de 3)"
+        [[ "$ERROS_SEGUIDOS" -ge 3 ]] && {
+          echo "ERRO: não consigo ler o status de '$KERNEL'. Confira o slug em"
+          echo "      https://www.kaggle.com/code/${KERNEL} e o kernel-metadata.json."
+          exit 1
+        }
+        continue ;;
     esac
   done
 
