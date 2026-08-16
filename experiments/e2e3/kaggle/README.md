@@ -9,6 +9,22 @@ usam os mesmos dois arquivos.
 |---|---|
 | `e3prime_kaggle.ipynb` | o notebook. `SEED` e `MODO` ficam na célula 2 |
 | `run_kaggle.py` | push + acompanhamento + download pela API, sem navegador |
+| `build_nb.py` | gera o `.ipynb` a partir de fonte legível — **edite aqui**, não no JSON |
+
+## A pegadinha que custa 2 h: a GPU P100 não serve
+
+O Kaggle entrega **T4 ou P100**, conforme disponibilidade. A **P100 é compute
+capability 6.0 (`sm_60`)** e o PyTorch pré-instalado na imagem só cobre
+**`sm_70` a `sm_120`** — com uma P100 todo lançamento de kernel CUDA falha, e o
+notebook morre dentro do primeiro braço:
+
+    Tesla P100-PCIE-16GB with CUDA capability sm_60 is not compatible with the
+    current PyTorch installation.
+
+Por isso o `kernel-metadata.json` gerado fixa `"machine_shape": "NvidiaTeslaT4"`
+(sobrescreva com `--maquina`), e a célula 3 confere a compute capability e roda
+um `matmul` de prova antes de gastar horas. **Quem sobe pela interface tem que
+escolher `GPU T4 x2` à mão.**
 
 ## Caminho A — com o token da API (automático)
 
