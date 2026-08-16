@@ -137,11 +137,16 @@ for ((rodada = 1; rodada <= MAX_RODADAS; rodada++)); do
   echo "=== rodada $rodada/$MAX_RODADAS — faltam: $FALTA ==="
 
   preparar
-  # O tipo de acelerador NÃO sai do kernel-metadata.json: o cliente só lê
-  # 'enable_gpu' de lá, e um campo 'accelerator' no arquivo é silenciosamente
-  # ignorado. Escolher a placa é este argumento — e escolher importa: com
-  # 'enable_gpu' sozinho o Kaggle entregou uma P100 (sm_60), que o torch da
-  # imagem não suporta. Valores aceitos: NvidiaTeslaT4, NvidiaTeslaP100, Tpu1VmV38.
+  # Escolher a placa importa: com 'enable_gpu' sozinho o Kaggle entregou uma
+  # P100 (sm_60), que o torch da imagem não suporta. Há dois caminhos, e o
+  # cliente resolve assim (kaggle_api_extended.py):
+  #     request.machine_shape = acc if acc else meta_data["machine_shape"]
+  # ou seja: este argumento vence, e na falta dele vale o campo `machine_shape`
+  # do kernel-metadata.json. A chave no arquivo é `machine_shape` — um campo
+  # chamado `accelerator` é silenciosamente ignorado (foi o erro que me custou
+  # uma execução). Aqui usamos os DOIS: o metadata protege quem empurrar sem a
+  # flag, e a flag protege quem editar o metadata.
+  # Valores aceitos: NvidiaTeslaT4, NvidiaTeslaP100, Tpu1VmV38.
   SAIDA_PUSH="$(kaggle kernels push -p "$STAGE" --accelerator "$ACELERADOR" 2>&1)"
   echo "$SAIDA_PUSH"
   # O aviso abaixo é fatal, não cosmético: com título e id divergentes o kernel
