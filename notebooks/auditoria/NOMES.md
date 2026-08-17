@@ -68,11 +68,18 @@ classificador-forte_E35_s42_pareado.json
 classificador-forte_E35_s42_canonico.json
 ```
 
-Enquanto o `run_e3prime.py` não adotar isso (é superfície compartilhada, e a
-mudança precisa preservar a retomada, que hoje procura o nome antigo), os
-artefatos canônicos ficam isolados em
-`experiments/e2e3/results/canonico/` com sufixo `_canonico`. É contenção, não
-solução: a solução é o runner escrever o regime.
+**Convenção adotada (do `executor02`, mergeada na main em 17/08)**: o regime
+publicado foi movido para `experiments/e2e3/results/legacy_s42_bs16_eval20k/` e
+a raiz passou a guardar o canônico. Eu havia proposto o inverso — isolar o
+canônico em `canonico/` — e converge para a dele: uma convenção só vale se for
+uma. A minha pasta foi removida.
+
+Isso resolve a perda de dado, mas **não** a ambiguidade: o nome
+`e3prime_D_s42.json` continua sem dizer o regime, e quem o lê fora de contexto
+não sabe qual dos dois tem na mão. A solução de verdade é o `run_e3prime.py`
+escrever o regime no nome — mudança de superfície compartilhada, que precisa
+preservar a retomada (hoje ela procura o nome antigo) e é decisão do
+`principal`.
 
 ## Por que não renomear os arquivos publicados agora
 
