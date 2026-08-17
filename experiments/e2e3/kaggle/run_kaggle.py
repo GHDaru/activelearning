@@ -218,11 +218,28 @@ def main() -> int:
         if args.sem_push and tentativa == 1:
             print("[tentativa 1] --sem-push: só acompanhando o kernel já em execução")
         else:
-            with tempfile.TemporaryDirectory() as tmp:
-                monta_pasta(Path(tmp), args.seed, kid, args.modo, args.dataset,
-                            kernels_retomada, args.maquina)
-                print(f"[tentativa {tentativa}] push...")
-                print(kaggle("kernels", "push", "-p", tmp).stdout.strip())
+            while True:  # espera de cota não conta como tentativa de verdade
+                with tempfile.TemporaryDirectory() as tmp:
+                    monta_pasta(Path(tmp), args.seed, kid, args.modo, args.dataset,
+                                kernels_retomada, args.maquina)
+                    print(f"[tentativa {tentativa}] push...")
+                    saida_push = kaggle("kernels", "push", "-p", tmp).stdout.strip()
+                    print(saida_push)
+                # O CLI do Kaggle pode imprimir "Kernel push error: ..." (ex.:
+                # cota de sessoes de GPU em lote esgotada) e AINDA ASSIM sair
+                # com codigo 0 — visto na pratica. "successfully pushed" e o
+                # unico sinal confiavel de que a versao nova foi aceita; sem
+                # ele, `status`/`output` acabam consultando uma versao antiga
+                # e o laco de espera nunca corresponde ao que pedimos.
+                if "successfully pushed" in saida_push.lower():
+                    break
+                if "maximum batch gpu session count" in saida_push.lower():
+                    print(f"  cota de GPU em lote esgotada — aguardando "
+                         f"{args.intervalo}s e tentando de novo (sem contar "
+                         f"como tentativa)", flush=True)
+                    time.sleep(args.intervalo)
+                    continue
+                sys.exit(f"push não confirmado (sem 'successfully pushed'):\n{saida_push}")
 
         desconhecidos = 0
         while True:
