@@ -52,24 +52,22 @@ da mesma base deduplicada (231.490 textos, 714 classes, embaralho com semente
 usados nas decisões de parada). Logo `dedup[54000:]` = **177.490**, e não os
 181.490 do E6. Os dois números estão certos, para experimentos diferentes.
 
-> ⚠️ **Dois regimes convivem, e só um par é comparável.** Existem três
-> conjuntos de resultados:
+> ⚠️ **Dois regimes convivem. Não os misture.**
 >
-> | Conjunto | Lote | Avaliação | Papel |
-> |---|---|---|---|
-> | **s42 pareado** | 16 | 20.092 (amostra estratificada) | é o **publicado** no Cap. 5 |
-> | **s42 canônico** | 128 | 177.490 (população inteira) | reexecução do `executor02` |
-> | **s7 canônico** | 128 | 177.490 | execução do `executor01` |
+> | Regime | Lote | Avaliação | Onde mora | Papel |
+> |---|---|---|---|---|
+> | **pareado** | 16 | 20.092 | `results/legacy_s42_bs16_eval20k/` | o **publicado** no Cap. 5 |
+> | **canônico** | 128 | 177.490 | `results/e3prime_*_s{42,7,123}.json` | três sementes |
 >
-> Comparar **s42 pareado** com qualquer canônico mede *regime*, não semente —
-> mudam lote e conjunto de avaliação junto. O par legítimo para medir semente é
-> **s42 canônico × s7 canônico**, e ele só passou a existir em 17/08. Este
-> notebook separa as duas leituras em vez de embolá-las.
+> Comparar pareado com canônico mede **regime**, não semente. As três sementes
+> canônicas são homogêneas entre si, e é só entre elas que a robustez à semente
+> — pendência nº 1 do parecer da banca — pode ser medida. A célula 7 faz isso.
 >
 > ⚠️ **Cuidado de arquivo**: os dois regimes gravam o MESMO nome
-> (`e3prime_D_s42.json`). Os canônicos foram isolados em
-> `results/canonico/` com sufixo `_canonico` para não sobrescreverem os números
-> que a tese cita. Ver `NOMES.md`.
+> (`e3prime_D_s42.json`). Quando a semente 42 foi reexecutada em canônico, o
+> nome simples mudou de significado e o publicado foi para `legacy_`. Por isso
+> este notebook lê o pareado do diretório `legacy_`, nunca da raiz. Ver
+> `NOMES.md`.
 
 **Regra desta auditoria.** Divergência é acusada, nunca corrigida.
 """.rstrip()))
@@ -170,26 +168,28 @@ def carregar(semente):
         saida[d["arm"]] = d
     return saida
 
-def carregar_canonico():
-    """Regime canônico: lote 128 e avaliação na população inteira.
+# LAYOUT DOS ARTEFATOS (convenção adotada pelo executor02 e mergeada na main):
+#   results/e3prime_*_s<n>.json            -> regime CANÔNICO (lote 128, pop. inteira)
+#   results/legacy_s42_bs16_eval20k/...    -> regime PAREADO, o publicado no Cap. 5
+# O nome simples mudou de significado quando a s42 foi reexecutada em canônico.
+# Por isso o pareado é lido do diretório legacy_, nunca da raiz.
+PAREADO = RES / "legacy_s42_bs16_eval20k"
 
-    Fica em results/canonico/ com sufixo _canonico porque o runner escreve com
-    o MESMO nome do regime pareado — copiar por cima destruiria os números que
-    o Cap. 5 cita. Ver NOMES.md."""
+def carregar_pareado():
     saida = {}
-    pasta = RES / "canonico"
-    if not pasta.is_dir():
-        return saida
-    for caminho in pasta.glob("e3prime_*_canonico.json"):
-        if "_pred_" in caminho.stem:
+    for caminho in PAREADO.glob("e3prime_*_s42.json"):
+        if caminho.stem.endswith("_pred"):
             continue
         d = json.loads(caminho.read_text())
         saida[d["arm"]] = d
     return saida
 
-s42 = carregar(42)          # regime PAREADO (lote 16) — o publicado na tese
-s7 = carregar(7)            # regime canônico (lote 128)
-s42c = carregar_canonico()  # regime canônico, semente 42 — do executor02
+s42p = carregar_pareado()                       # publicado no Cap. 5 (lote 16)
+CANONICAS = {n: carregar(n) for n in (42, 7, 123)}
+CANONICAS = {n: d for n, d in CANONICAS.items() if d}
+s42 = s42p                                      # o Cap. 5 fala deste
+print(f"regime pareado (publicado): {len(s42p)} braços · "
+      f"canônicas disponíveis: {sorted(CANONICAS)}")
 FONTE = {"A": "pipeline real, rótulos do oráculo", "B": "mesmos itens, gabarito",
          "C": "aleatório, gabarito", "E": "15k por entropia (E6), gabarito",
          "D": "pool inteiro, gabarito (régua)"}
@@ -263,10 +263,12 @@ celulas.append(code(r'''
 #    É o que transforma mcnemar_s42.json em resultado conferível: as predições
 #    de todos os braços vêm da mesma amostra de avaliação, então o pareamento
 #    por instância é legítimo.
-def predicoes(braco, semente):
-    return json.loads((RES / f"e3prime_{braco}_s{semente}_pred.json").read_text())
+def predicoes(braco, semente, pasta=None):
+    pasta = pasta or RES
+    return json.loads((pasta / f"e3prime_{braco}_s{semente}_pred.json").read_text())
 
-base = predicoes("A", 42)
+# as predições do Cap. 5 são as do regime PAREADO, que hoje vivem em legacy_
+base = predicoes("A", 42, PAREADO)
 gabarito = [populacao[i][1] for i in base["sample_idx"]]
 
 def mcnemar(x, y):
@@ -281,7 +283,7 @@ pub_mc = json.loads((RES / "mcnemar_s42.json").read_text())
 print(f"{'par':<8}{'b pub':>7}{'b rec':>7}{'c pub':>7}{'c rec':>7}{'p publicado':>14}  veredito")
 for par in ["A-B", "B-C", "E35-D"]:
     X, Y = par.split("-")
-    idx_x, idx_y = predicoes(X, 42), predicoes(Y, 42)
+    idx_x, idx_y = predicoes(X, 42, PAREADO), predicoes(Y, 42, PAREADO)
     assert idx_x["sample_idx"] == base["sample_idx"] == idx_y["sample_idx"], \
         "amostras de avaliação diferentes — pareamento inválido"
     b, c, _ = mcnemar(idx_x["pred"], idx_y["pred"])
@@ -304,7 +306,7 @@ pub_bs = json.loads((RES / "bootstrap_f1_s42.json").read_text())
 N_BOOT = pub_bs["n_boot"]
 BRACOS_BS = list(pub_bs["macro_f1_braco"])
 
-preds = {a: predicoes(a, 42)["pred"] for a in BRACOS_BS}
+preds = {a: predicoes(a, 42, PAREADO)["pred"] for a in BRACOS_BS}
 
 # O conjunto de rótulos é POR BRAÇO — união(gabarito, predições daquele braço) —
 # e não uma união global. Não é detalhe de implementação: é o que o
@@ -361,78 +363,59 @@ print("\nOs três IC excluem zero em ambas as versões — é o que o capítulo 
 '''))
 
 celulas.append(code(r'''
-# 7) OS DOIS REGIMES LADO A LADO. Esta é a célula que motiva o achado aberto
-#    com o principal. NÃO é comparação de sementes: mudam semente, lote e
-#    conjunto de avaliação ao mesmo tempo.
-def linha_regime(rot, d):
-    return (f"{rot:<26}{d['epochs']:>3} épocas  lote {d['batch_size']:>3}  "
-            f"avaliação em {d['eval_n']:>7}")
+# 7) ROBUSTEZ MULTI-SEMENTE — a pendência nº 1 do parecer da banca.
+#
+#    Só é legítimo agora: as três sementes (42, 7, 123) rodaram no MESMO regime
+#    canônico, lote 128 e avaliação na população inteira. Comparar qualquer uma
+#    delas com o s42 pareado mede regime, não semente.
+import statistics as est
 
 VARREDURA_NOMES = ["E", "E20", "E25", "E30", "E35"]
+ORDEM = VARREDURA_NOMES + ["D"]
 
-print(linha_regime("s42 pareado (publicado)", s42["D"]))
-if s42c:
-    print(linha_regime("s42 canônico (executor02)", s42c["D"]))
-print(linha_regime("s7  canônico (executor01)", s7["D"]))
-
-crit42 = 0.95 * s42["D"]["macro_f1"]
-crit7 = 0.95 * s7["D"]["macro_f1"]
-print(f"\ncritério de Macro F1  ·  s42: {crit42:.4f}   s7: {crit7:.4f}")
-crit42c = 0.95 * s42c["D"]["macro_f1"] if s42c else None
-if crit42c:
-    print(f"critério no canônico    ·  s42: {crit42c:.4f}   s7: {crit7:.4f}")
-
-print(f"\n{'braço':<6}{'n':>7}{'s42 pareado':>13}{'s42 canôn.':>13}{'s7 canôn.':>13}")
-for a in ["E", "E20", "E25", "E30", "E35", "D"]:
-    if a not in s42:
+print("regime canônico · 3 épocas · lote 128 · avaliação em 177.490")
+cab = "".join(f"{'s'+str(n):>10}" for n in sorted(CANONICAS))
+print(f"\n{'braço':<6}{'n':>7}{cab}{'média':>10}{'desvio':>9}")
+media_f1 = {}
+for a in ORDEM:
+    vals = [CANONICAS[n][a]["macro_f1"] for n in sorted(CANONICAS) if a in CANONICAS[n]]
+    if len(vals) < len(CANONICAS):
         continue
-    def cel(d, crit):
-        if not d or a not in d:
-            return "—"
-        marca = "" if a == "D" else (" *" if d[a]["macro_f1"] >= crit else "  ")
-        return f"{d[a]['macro_f1']:.4f}{marca}"
-    print(f"{a:<6}{s42[a]['n_train']:>7}{cel(s42, crit42):>13}"
-          f"{cel(s42c, crit42c):>13}{cel(s7, crit7):>13}")
-print("  * = cruza o critério 0,95xF1(D) do PRÓPRIO regime")
+    m, sd = est.mean(vals), est.stdev(vals)
+    media_f1[a] = (m, sd)
+    celulas_v = "".join(f"{v:>10.4f}" for v in vals)
+    n_tr = CANONICAS[sorted(CANONICAS)[0]][a]["n_train"]
+    print(f"{a:<6}{n_tr:>7}{celulas_v}{m:>10.4f}{sd:>9.4f}")
 
-# A semente 42 refeita em canônico (executor02) é o que torna a comparação
-# entre sementes legítima pela primeira vez: mesmo lote, mesma avaliação,
-# muda só a semente. Sem ela, tudo aqui seria confundido com o regime.
-print("\n" + "=" * 66)
-print("'E35 supera a régua' — a leitura (iii) do Cap. 5, nos três conjuntos")
-print("=" * 66)
-for rot, d in [("s42 PAREADO (o publicado)", s42),
-               ("s42 canônico (executor02)", s42c),
-               ("s7  canônico (executor01)", s7)]:
-    if not d or "E35" not in d or "D" not in d:
-        print(f"  {rot:<28} (indisponível)")
-        continue
-    supera = d["E35"]["macro_f1"] > d["D"]["macro_f1"]
-    print(f"  {rot:<28} {'SIM' if supera else 'NÃO':>3}  "
-          f"(E35 {d['E35']['macro_f1']:.4f} vs D {d['D']['macro_f1']:.4f})")
+# o critério é relativo à régua DE CADA SEMENTE, então varia com ela
+print(f"\n{'braço':<6}  cruza 0,95xF1(D) em quantas sementes?")
+consenso = {}
+for a in VARREDURA_NOMES:
+    quantas = [n for n in sorted(CANONICAS)
+               if a in CANONICAS[n] and CANONICAS[n][a]["macro_f1"] >= 0.95 * CANONICAS[n]["D"]["macro_f1"]]
+    consenso[a] = quantas
+    print(f"{a:<6}  {len(quantas)} de {len(CANONICAS)}"
+          + (f"  (sementes {', '.join(str(x) for x in quantas)})" if quantas else "  (nenhuma)"))
 
-if s42c:
-    print("\nCom DUAS sementes no MESMO regime canônico, dá para separar as duas")
-    print("perguntas que antes vinham emboladas:")
-    print("  1) efeito do REGIME: a leitura (iii) só vale com lote 16. Nas duas")
-    print("     sementes canônicas o E35 NÃO supera a régua.")
-    c42, c7 = 0.95 * s42c["D"]["macro_f1"], 0.95 * s7["D"]["macro_f1"]
-    cruza42 = [a for a in VARREDURA_NOMES if a in s42c and s42c[a]["macro_f1"] >= c42]
-    cruza7 = [a for a in VARREDURA_NOMES if a in s7 and s7[a]["macro_f1"] >= c7]
-    print(f"  2) efeito da SEMENTE: quem cruza o critério em s42 canônico: "
-          f"{', '.join(cruza42) or 'nenhum'}; em s7: {', '.join(cruza7) or 'nenhum'}.")
-    print("     As duas sementes DISCORDAM sobre o piso de orçamento — é")
-    print("     sensibilidade real à semente, que é o que a banca mandou medir.")
-else:
-    print("\nSem a semente 42 em canônico, regime e semente ficam confundidos.")
+supera = [n for n in sorted(CANONICAS)
+          if CANONICAS[n]["E35"]["macro_f1"] > CANONICAS[n]["D"]["macro_f1"]]
+print(f"\n'E35 supera a régua' (leitura (iii) do Cap. 5):")
+print(f"  no regime PAREADO, publicado: SIM "
+      f"({s42p['E35']['macro_f1']:.4f} vs {s42p['D']['macro_f1']:.4f})")
+print(f"  no regime canônico: {len(supera)} de {len(CANONICAS)} sementes"
+      + (f" ({supera})" if supera else " — em NENHUMA"))
+print("\nLeitura: a afirmação (iii) é um efeito do regime de lote 16, não um")
+print("achado robusto. E o piso de orçamento não é estável entre sementes —")
+print("é a variabilidade que a banca mandou medir, agora medida.")
 '''))
 
 celulas.append(code(r'''
-# 8) Gráficos.
+# 8) Gráficos: o publicado contra a faixa das três sementes canônicas.
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.ticker import FuncFormatter
 
-AZUL, LARANJA, VERDE, AMARELO = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
+AZUL, LARANJA, VERDE = "#2a78d6", "#eb6834", "#1baf7a"
 TINTA, TINTA2, GRADE = "#0b0b0b", "#52514e", "#d8d7d2"
 vg = FuncFormatter(lambda v, _: f"{v:.2f}".replace(".", ","))
 
@@ -441,39 +424,44 @@ plt.rcParams.update({"figure.dpi": 120, "font.size": 9,
                      "xtick.color": TINTA2, "ytick.color": TINTA2,
                      "axes.spines.top": False, "axes.spines.right": False})
 
-VARREDURA = ["E", "E20", "E25", "E30", "E35"]
 fig, eixos = plt.subplots(1, 2, figsize=(11, 4.3))
 for eixo, metrica, rotulo in [(eixos[0], "macro_f1", "Macro F1"),
                               (eixos[1], "accuracy", "acurácia")]:
-    for dados, cor, nome in [(s42, AZUL, "semente 42 · lote 16 · aval. 20.092"),
-                             (s7, LARANJA, "semente 7 · lote 128 · aval. 177.490")]:
-        xs = [dados[a]["n_train"] for a in VARREDURA if a in dados]
-        ys = [dados[a][metrica] for a in VARREDURA if a in dados]
-        if not xs:
-            continue
-        eixo.plot(xs, ys, color=cor, linewidth=2, marker="o", markersize=6,
-                  markeredgecolor="#fcfcfb", markeredgewidth=1.2, label=nome)
-        criterio = 0.95 * dados["D"][metrica]
-        eixo.axhline(criterio, color=cor, linewidth=1.2, linestyle="--", alpha=0.55)
-        # rótulo do critério na borda DIREITA e deslocado por série, senão as
-        # duas linhas tracejadas ficam próximas e os textos se sobrepõem
-        eixo.annotate(f"critério {criterio:.3f}".replace(".", ","),
-                      (xs[-1], criterio), color=cor, fontsize=7.5, ha="right",
-                      xytext=(0, 4 if dados is s42 else -11),
-                      textcoords="offset points")
+    xs = [s42p[a]["n_train"] for a in VARREDURA_NOMES]
+
+    # publicado (regime pareado, lote 16)
+    eixo.plot(xs, [s42p[a][metrica] for a in VARREDURA_NOMES], color=AZUL,
+              linewidth=2, marker="o", markersize=6, markeredgecolor="#fcfcfb",
+              markeredgewidth=1.2, label="publicado · s42 · lote 16 · aval. 20.092")
+    eixo.axhline(0.95 * s42p["D"][metrica], color=AZUL, linewidth=1.2,
+                 linestyle="--", alpha=0.55)
+
+    # canônico: média das 3 sementes, com faixa de mín–máx
+    vals = np.array([[CANONICAS[n][a][metrica] for a in VARREDURA_NOMES]
+                     for n in sorted(CANONICAS)])
+    eixo.fill_between(xs, vals.min(axis=0), vals.max(axis=0), color=LARANJA,
+                      alpha=0.16, linewidth=0)
+    eixo.plot(xs, vals.mean(axis=0), color=LARANJA, linewidth=2, marker="o",
+              markersize=6, markeredgecolor="#fcfcfb", markeredgewidth=1.2,
+              label=f"canônico · {len(CANONICAS)} sementes · lote 128 · aval. 177.490")
+    crit_canon = np.mean([0.95 * CANONICAS[n]["D"][metrica] for n in CANONICAS])
+    eixo.axhline(crit_canon, color=LARANJA, linewidth=1.2, linestyle="--", alpha=0.55)
+
+    eixo.annotate("critério", (xs[-1], 0.95 * s42p["D"][metrica]), color=AZUL,
+                  fontsize=7.5, ha="right", xytext=(0, 4), textcoords="offset points")
+    eixo.annotate("critério", (xs[-1], crit_canon), color=LARANJA, fontsize=7.5,
+                  ha="right", xytext=(0, -11), textcoords="offset points")
     eixo.set_title(f"{rotulo} — varredura de orçamento", color=TINTA,
                    fontsize=10, loc="left")
     eixo.set_xlabel("rótulos no treino")
     eixo.grid(True, color=GRADE, linewidth=0.6, alpha=0.7)
     eixo.set_axisbelow(True)
-    # ticks nos pontos que existem: o automático inventa 18k, 22k, 28k, que não
-    # correspondem a braço nenhum e sugerem uma continuidade que não há
-    eixo.set_xticks([s42[a]["n_train"] for a in VARREDURA])
+    eixo.set_xticks(xs)
     eixo.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v/1000:.0f}k"))
     eixo.yaxis.set_major_formatter(vg)
 eixos[0].set_ylabel("valor da métrica")
 eixos[0].legend(frameon=False, fontsize=7.5, loc="upper left")
-fig.suptitle("E3′ · a varredura cruza o critério num regime e não no outro",
+fig.suptitle("E3′ · a faixa laranja é a variação entre as 3 sementes canônicas",
              x=0.005, ha="left", color=TINTA, fontsize=12)
 fig.tight_layout()
 plt.show()
