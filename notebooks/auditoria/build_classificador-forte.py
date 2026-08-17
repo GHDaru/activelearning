@@ -2,14 +2,14 @@
 
 Edite ESTE arquivo, não o .ipynb — depois rode:
 
-    python notebooks/auditoria/build_e3prime.py
+    python notebooks/auditoria/build_classificador-forte.py
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-SAIDA = Path(__file__).resolve().parent / "e3prime-validacao.ipynb"
+SAIDA = Path(__file__).resolve().parent / "classificador-forte.ipynb"
 
 
 def md(texto: str) -> dict:
@@ -52,13 +52,24 @@ da mesma base deduplicada (231.490 textos, 714 classes, embaralho com semente
 usados nas decisões de parada). Logo `dedup[54000:]` = **177.490**, e não os
 181.490 do E6. Os dois números estão certos, para experimentos diferentes.
 
-> ⚠️ **Dois regimes convivem nos artefatos, e comparar sementes entre eles é
-> inválido.** A semente 42 rodou com **lote 16** e avaliação numa **amostra
-> estratificada de 20.092**; a semente 7 rodou com **lote 128** e avaliação na
-> **população inteira (177.490)**. Variam três coisas ao mesmo tempo — semente,
-> lote e conjunto de avaliação —, então a diferença entre elas **não mede
-> robustez à semente**. Este notebook mostra as duas lado a lado exatamente
-> para tornar isso visível, nunca para tratá-las como réplicas.
+> ⚠️ **Dois regimes convivem, e só um par é comparável.** Existem três
+> conjuntos de resultados:
+>
+> | Conjunto | Lote | Avaliação | Papel |
+> |---|---|---|---|
+> | **s42 pareado** | 16 | 20.092 (amostra estratificada) | é o **publicado** no Cap. 5 |
+> | **s42 canônico** | 128 | 177.490 (população inteira) | reexecução do `executor02` |
+> | **s7 canônico** | 128 | 177.490 | execução do `executor01` |
+>
+> Comparar **s42 pareado** com qualquer canônico mede *regime*, não semente —
+> mudam lote e conjunto de avaliação junto. O par legítimo para medir semente é
+> **s42 canônico × s7 canônico**, e ele só passou a existir em 17/08. Este
+> notebook separa as duas leituras em vez de embolá-las.
+>
+> ⚠️ **Cuidado de arquivo**: os dois regimes gravam o MESMO nome
+> (`e3prime_D_s42.json`). Os canônicos foram isolados em
+> `results/canonico/` com sufixo `_canonico` para não sobrescreverem os números
+> que a tese cita. Ver `NOMES.md`.
 
 **Regra desta auditoria.** Divergência é acusada, nunca corrigida.
 """.rstrip()))
@@ -159,8 +170,26 @@ def carregar(semente):
         saida[d["arm"]] = d
     return saida
 
-s42 = carregar(42)
-s7 = carregar(7)
+def carregar_canonico():
+    """Regime canônico: lote 128 e avaliação na população inteira.
+
+    Fica em results/canonico/ com sufixo _canonico porque o runner escreve com
+    o MESMO nome do regime pareado — copiar por cima destruiria os números que
+    o Cap. 5 cita. Ver NOMES.md."""
+    saida = {}
+    pasta = RES / "canonico"
+    if not pasta.is_dir():
+        return saida
+    for caminho in pasta.glob("e3prime_*_canonico.json"):
+        if "_pred_" in caminho.stem:
+            continue
+        d = json.loads(caminho.read_text())
+        saida[d["arm"]] = d
+    return saida
+
+s42 = carregar(42)          # regime PAREADO (lote 16) — o publicado na tese
+s7 = carregar(7)            # regime canônico (lote 128)
+s42c = carregar_canonico()  # regime canônico, semente 42 — do executor02
 FONTE = {"A": "pipeline real, rótulos do oráculo", "B": "mesmos itens, gabarito",
          "C": "aleatório, gabarito", "E": "15k por entropia (E6), gabarito",
          "D": "pool inteiro, gabarito (régua)"}
@@ -339,32 +368,63 @@ def linha_regime(rot, d):
     return (f"{rot:<26}{d['epochs']:>3} épocas  lote {d['batch_size']:>3}  "
             f"avaliação em {d['eval_n']:>7}")
 
-print(linha_regime("semente 42 (publicada)", s42["D"]))
-print(linha_regime("semente 7 (executor01)", s7["D"]))
+VARREDURA_NOMES = ["E", "E20", "E25", "E30", "E35"]
+
+print(linha_regime("s42 pareado (publicado)", s42["D"]))
+if s42c:
+    print(linha_regime("s42 canônico (executor02)", s42c["D"]))
+print(linha_regime("s7  canônico (executor01)", s7["D"]))
 
 crit42 = 0.95 * s42["D"]["macro_f1"]
 crit7 = 0.95 * s7["D"]["macro_f1"]
 print(f"\ncritério de Macro F1  ·  s42: {crit42:.4f}   s7: {crit7:.4f}")
-print(f"\n{'braço':<6}{'n':>7}{'F1 s42':>9}{'crit?':>7}{'F1 s7':>9}{'crit?':>7}   leitura")
-for a in ["E", "E20", "E25", "E30", "E35", "D"]:
-    if a not in s42 or a not in s7:
-        continue
-    f42, f7 = s42[a]["macro_f1"], s7[a]["macro_f1"]
-    ok42 = "sim" if f42 >= crit42 else "não"
-    ok7 = "sim" if f7 >= crit7 else "não"
-    virou = "" if (f42 >= crit42) == (f7 >= crit7) or a == "D" else "  <-- INVERTE"
-    print(f"{a:<6}{s42[a]['n_train']:>7}{f42:>9.4f}{ok42:>7}{f7:>9.4f}{ok7:>7}{virou}")
+crit42c = 0.95 * s42c["D"]["macro_f1"] if s42c else None
+if crit42c:
+    print(f"critério no canônico    ·  s42: {crit42c:.4f}   s7: {crit7:.4f}")
 
-e35_42 = s42["E35"]["macro_f1"] > s42["D"]["macro_f1"]
-e35_7 = s7["E35"]["macro_f1"] > s7["D"]["macro_f1"]
-print(f"\n'E35 supera a régua' (a leitura (iii) do capítulo):")
-print(f"  na semente 42: {'SIM' if e35_42 else 'NÃO'}  "
-      f"({s42['E35']['macro_f1']:.4f} vs {s42['D']['macro_f1']:.4f})")
-print(f"  na semente  7: {'SIM' if e35_7 else 'NÃO'}  "
-      f"({s7['E35']['macro_f1']:.4f} vs {s7['D']['macro_f1']:.4f})")
-print("\nA afirmação do capítulo depende do regime. Enquanto a s42 não for")
-print("refeita no mesmo comando da s7, as duas NÃO são comparáveis e a")
-print("robustez à semente segue sem medida. Decisão do principal + autor.")
+print(f"\n{'braço':<6}{'n':>7}{'s42 pareado':>13}{'s42 canôn.':>13}{'s7 canôn.':>13}")
+for a in ["E", "E20", "E25", "E30", "E35", "D"]:
+    if a not in s42:
+        continue
+    def cel(d, crit):
+        if not d or a not in d:
+            return "—"
+        marca = "" if a == "D" else (" *" if d[a]["macro_f1"] >= crit else "  ")
+        return f"{d[a]['macro_f1']:.4f}{marca}"
+    print(f"{a:<6}{s42[a]['n_train']:>7}{cel(s42, crit42):>13}"
+          f"{cel(s42c, crit42c):>13}{cel(s7, crit7):>13}")
+print("  * = cruza o critério 0,95xF1(D) do PRÓPRIO regime")
+
+# A semente 42 refeita em canônico (executor02) é o que torna a comparação
+# entre sementes legítima pela primeira vez: mesmo lote, mesma avaliação,
+# muda só a semente. Sem ela, tudo aqui seria confundido com o regime.
+print("\n" + "=" * 66)
+print("'E35 supera a régua' — a leitura (iii) do Cap. 5, nos três conjuntos")
+print("=" * 66)
+for rot, d in [("s42 PAREADO (o publicado)", s42),
+               ("s42 canônico (executor02)", s42c),
+               ("s7  canônico (executor01)", s7)]:
+    if not d or "E35" not in d or "D" not in d:
+        print(f"  {rot:<28} (indisponível)")
+        continue
+    supera = d["E35"]["macro_f1"] > d["D"]["macro_f1"]
+    print(f"  {rot:<28} {'SIM' if supera else 'NÃO':>3}  "
+          f"(E35 {d['E35']['macro_f1']:.4f} vs D {d['D']['macro_f1']:.4f})")
+
+if s42c:
+    print("\nCom DUAS sementes no MESMO regime canônico, dá para separar as duas")
+    print("perguntas que antes vinham emboladas:")
+    print("  1) efeito do REGIME: a leitura (iii) só vale com lote 16. Nas duas")
+    print("     sementes canônicas o E35 NÃO supera a régua.")
+    c42, c7 = 0.95 * s42c["D"]["macro_f1"], 0.95 * s7["D"]["macro_f1"]
+    cruza42 = [a for a in VARREDURA_NOMES if a in s42c and s42c[a]["macro_f1"] >= c42]
+    cruza7 = [a for a in VARREDURA_NOMES if a in s7 and s7[a]["macro_f1"] >= c7]
+    print(f"  2) efeito da SEMENTE: quem cruza o critério em s42 canônico: "
+          f"{', '.join(cruza42) or 'nenhum'}; em s7: {', '.join(cruza7) or 'nenhum'}.")
+    print("     As duas sementes DISCORDAM sobre o piso de orçamento — é")
+    print("     sensibilidade real à semente, que é o que a banca mandou medir.")
+else:
+    print("\nSem a semente 42 em canônico, regime e semente ficam confundidos.")
 '''))
 
 celulas.append(code(r'''

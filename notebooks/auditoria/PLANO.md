@@ -5,6 +5,9 @@
 > Kaggle com GPU" + "tem coisa da edição do ano passado" — combinado com a
 > tarefa `20260816-2026_principal_executor01_tarefa_notebooks-auditaveis`.
 
+> **Nomes dos experimentos**: os códigos `E0`…`E6` viraram nomes legíveis;
+> o mapa de-para e a convenção de nomes de artefato estão em `NOMES.md`.
+
 ## A ideia que organiza tudo
 
 **Auditar e refazer são o mesmo trabalho.** Cada notebook começa reproduzindo o
@@ -51,12 +54,23 @@ não faz sentido esperar cota de GPU para rodar E1/E4/E6/P1.
    **`experiments/p1/results/` não existe** — nenhum artefato foi commitado.
    Hoje o Cap. 4 **não é reproduzível a partir deste repositório**.
 
-3. **A tabela `tab:e3p-sweep` do Cap. 5 está contestada pela semente 7.**
-   Publicado (s42, lote 16, avaliação em 20.092): E35 = 88,6% / 0,463 **supera**
-   D = 88,3% / 0,451. Medido (s7, canônico, avaliação em 177.490): E35 = 85,9% /
-   0,344 e D = 86,8% / 0,377 — **nenhum braço cruza** o critério de Macro F1.
-   A leitura (iii) da seção, "menos é mais também no transformer", depende do
-   regime. É o item de maior risco desta lista.
+3. **A tabela `tab:e3p-sweep` do Cap. 5 não sobrevive ao regime canônico**, e
+   agora com duas sementes no MESMO regime — o `executor02` reexecutou a
+   semente 42 em canônico (kernel `falco-e3prime-s42`), o que torna a
+   comparação legítima pela primeira vez:
+
+   | Braço | s42 publicado (lote 16) | s42 canônico | s7 canônico |
+   |---|---|---|---|
+   | E35 | 0,463 | 0,3660 | 0,3440 |
+   | D (régua) | 0,451 | 0,3691 | 0,3771 |
+   | E35 supera D? | **sim** | não | não |
+
+   A leitura (iii) do capítulo — "menos é mais também no transformer", o E35
+   superando a supervisão completa — **só vale no regime de lote 16**. Nas duas
+   sementes canônicas, não vale. Além disso as sementes canônicas discordam
+   entre si sobre o piso de orçamento (em s42 o E35 cruza o critério; em s7
+   nenhum braço cruza), o que é sensibilidade real à semente — exatamente o que
+   a banca mandou medir. Item de maior risco desta lista.
 
 4. **Sem chaves de API nesta sessão** (`NVIDIA_API_KEY`, `OPENROUTER_API_KEY`,
    `OPENAI_API_KEY`, `GEMINI_API_KEY` — todas ausentes). Mas isso importa menos
@@ -85,29 +99,30 @@ não faz sentido esperar cota de GPU para rodar E1/E4/E6/P1.
   (Perdeu urgência: a Onda 3a não depende disso.)
 
 ### Onda 1 — reproduzir o que já tem artefato (começa já; sem depender da Onda 0)
-Notebooks `e6-populacao.ipynb` e `e3linha-validacao.ipynb`. Meta: bater o número
-publicado. E6 é CPU e tem 133 artefatos + `analysis_multiseed.json` — dá para
-auditar sem gastar GPU. E3′ reusa o que já rodei.
+**CONCLUÍDA** — `escala-populacional.ipynb` (E6) e `classificador-forte.ipynb`
+(E3′). Placar: **27 de 29 afirmações do Cap. 5 conferem**, com McNemar e
+bootstrap recomputados. Duas divergências: a população do E6 (≈140 mil contra
+181.490) e um arredondamento no E3′ (3,0 p.p. contra 2,93).
 
 ### Onda 2 — a dívida do Capítulo 4 (a "edição do ano passado")
-Notebook `p1p2-composicao-l0.ipynb`: roda os dois replays que nunca foram
+Notebook `conjunto-inicial.ipynb` (P1/P2): roda os dois replays que nunca foram
 commitados e coloca lado a lado a série antiga (do draft) e a nova. É CPU,
 ~2 h. **É aqui que o pedido do autor sobre a edição antiga se resolve.**
 
 ### Onda 3a — reanálise do oráculo (GRÁTIS, não espera ninguém)
-`e0-oraculos.ipynb` e `e0p-prompt.ipynb` recalculam as métricas a partir das
+`escolha-do-oraculo.ipynb` (E0) e `efeito-do-prompt.ipynb` (E0-P) recalculam as métricas a partir das
 anotações já versionadas (item 6 acima). Sem chave, sem custo, sem repetir uma
 única chamada ao LLM. É auditoria de verdade: confere se os números publicados
 saem das respostas que estão gravadas.
 
 ### Onda 3b — recoleta do oráculo (bloqueada; custa dinheiro)
 Só se a 3a apontar divergência que exija reexecução, ou se o autor quiser
-provedor/modelo novo. `e5-ciclo.ipynb` cai aqui porque depende do cache que
+provedor/modelo novo. `ciclo-completo.ipynb` (E5) cai aqui porque depende do cache que
 falta. Estimativa da tabela de reprodução: ~US$ 4 no E0, ~US$ 0,10 no E0-P,
 US$ 0 no E5 (NIM).
 
 ### Onda 4 — CPU longo
-`e1e4-estrategias-ruido.ipynb` (~9 h). Cabe numa sessão de CPU do Kaggle com
+`estrategias-de-selecao.ipynb` (E1) e `robustez-ao-ruido.ipynb` (E4), ~9 h. Cabe numa sessão de CPU do Kaggle com
 retomada por estado, como o E3′ faz.
 
 ### Onda 5 — fechamento
