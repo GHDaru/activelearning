@@ -155,7 +155,10 @@ from matplotlib.ticker import FuncFormatter
 COR = {"entropy": "#2a78d6", "least_confidence": "#eb6834", "smallest_margin": "#1baf7a",
        "hybrid": "#eda100", "random": "#e87ba4"}
 TINTA, TINTA2, GRADE = "#0b0b0b", "#52514e", "#d8d7d2"
-vg = FuncFormatter(lambda v, _: f"{v:.1f}".replace(".", ","))
+# :.2f, não :.1f — o matplotlib escolhe passo de 0,05 aqui, e uma casa decimal
+# duplicava o rótulo (0,05 e 0,10 caíam ambos em "0,1"). Só apareceu ao OLHAR
+# a figura renderizada, não ao ler o código.
+vg = FuncFormatter(lambda v, _: f"{v:.2f}".replace(".", ","))
 
 plt.rcParams.update({"figure.dpi": 120, "font.size": 9,
                      "axes.edgecolor": GRADE, "axes.labelcolor": TINTA2,
