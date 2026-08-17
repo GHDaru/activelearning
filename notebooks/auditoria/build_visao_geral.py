@@ -141,18 +141,44 @@ mudam leitura do texto, não número solto:
 2. **classificador-forte — a leitura (iii) da varredura é efeito de regime.**
    "E35 supera a régua" só vale no regime de lote 16 (o publicado). Nas três
    sementes canônicas (42, 7, 123), não vale em nenhuma.
-3. **escala-populacional — população reservada.** Tese diz ≈140 mil,
-   artefato e recálculo dão 181.490.
-4. **conjunto-inicial — o "auditadas" do Cap. 3 não tinha artefato**, e agora
-   tem: recuperado na Onda 2. Uma divergência real de magnitude no ganho do
-   AG (+1,3 p.p. medido contra +5,2 p.p. relatado).
+3. **escala-populacional — população reservada, e o Cap. 3 já tinha o número certo.**
+   O Cap. 5 diz ≈140 mil; artefato e recálculo dão 181.490. Achado novo do
+   R5/Cap. 3 (20260817-1940): o **Cap. 3, na Seção de particionamento, já diz
+   "≈177 mil"** — que bate com o artefato (177.490, calculado por
+   50.000+4.000+177.490=231.490). Ou seja: é o Cap. 5 que diverge, tanto do
+   artefato quanto do próprio Cap. 3 — dois números diferentes para a mesma
+   quantidade em dois capítulos.
+4. **conjunto-inicial — AG: divergência de magnitude, causa já identificada.**
+   +1,3 p.p. medido contra +5,2 p.p. relatado — CORREÇÃO desta auditoria:
+   D-002 (`docs/decisoes.md`) documenta que o replay usa escala
+   deliberadamente reduzida (N_pop=30/40 gerações vs. original 50/100); a
+   divergência de magnitude é esperada por desenho, não um mistério a
+   investigar. O número segue divergente, mas a causa está registrada.
+5. **BERTimbau — dois hiperparâmetros do Cap. 3 não batem com o código, em
+   nenhum lugar do repositório** (achado novo, R5/Cap. 3): taxa de
+   aprendizado — tese diz 3×10⁻⁵, código usa 5×10⁻⁵ (default da classe, do
+   notebook do E2 e do `train_full.py`, sem exceção); lote de treinamento —
+   tese diz 32, código usa 16 (default) ou 128 (notebook real do E2), nunca
+   32. Hipótese não confirmada: 32 é o default de `max_length` (comprimento
+   de token), um parâmetro *diferente* no mesmo construtor — troca provável
+   na redação, não confirmada.
+6. **escolha-do-oraculo — o piso de 85% do critério de decisão não é
+   atingido por nenhum oráculo** (achado novo, R5/Cap. 3). O Cap. 3 define a
+   escolha do LLM Inicial como sujeita a acurácia mínima de 85% na S-rand;
+   nenhum oráculo do E0 chega lá (melhor: 82,1%, deepseek-v4-pro). O próprio
+   `experiments/e0/config.json` anota deepseek-v4-flash (78,3%) como
+   "LLM Inicial candidato" — abaixo do piso declarado no texto.
 
 ## O que falta para fechar 100%
 
-- Cache do oráculo (`annotation_cache_nemotron.jsonl`) — destrava E5 e os
-  braços A/B/C do E3′.
-- Figuras de `experiments/plots/` — únicos itens ainda `sem-evidencia`.
-- Decisão do `principal`/autor sobre os quatro achados acima.
+- Cache do oráculo (`annotation_cache_nemotron.jsonl`) — destrava E5, os
+  braços A/B/C do E3′, e o cálculo de `|A|/|D|≈18%` do Cap. 3.
+- Figuras de `experiments/plots/` — únicos itens de Cap. 4/5 ainda
+  `sem-evidencia`.
+- Três números do Cap. 3 sem artefato recuperável: janela de estagnação
+  (p=5, ε=10⁻³), conjunto de |L| varrido no E2, calibração de lote do E0
+  (1/10/25 por McNemar).
+- Decisão do `principal`/autor sobre os seis achados acima.
 """))
 
 notebook = {

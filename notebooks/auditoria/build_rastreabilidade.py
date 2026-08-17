@@ -417,9 +417,199 @@ add("P2 inflação de circularidade em max_f1 |L0|=500: +6,3 p.p.",
 
 add("P2 ganho do AG sobre a média aleatória em |L0|=50: +5,2 p.p.",
     "docs/convergencia-replays.md#C2", "conjunto-inicial", ART_P2, COD_P2, "divergente",
-    "replay dá +1,3 p.p. — MESMA DIREÇÃO (o AG vence), magnitude ~4x menor. Não é "
-    "arredondamento; é divergência de grau que merece decisão do principal sobre "
-    "investigar", NB_P1)
+    "replay dá +1,3 p.p. — mesma direção (o AG vence), magnitude ~4x menor. CORREÇÃO "
+    "desta própria auditoria: a divergência de magnitude é ESPERADA, não anômala — "
+    "D-002 (docs/decisoes.md) documenta que o replay usa escala deliberadamente "
+    "reduzida (N_pop=30, 40 gerações) vs. o original (N_pop=50, 100 gerações); "
+    "mantido como 'divergente' porque o NÚMERO ainda diverge do texto, mas a causa "
+    "está identificada e documentada, não é acaso de investigar", NB_P1)
+
+# ------------------------------------------------- Cap. 3 (método) — R5 casado
+# Tarefa 20260817-1940. Cobre os números de 3-metodo/texto.tex que ainda não
+# apareciam em nenhuma seção acima (os que já apareciam — S-rand/S-strat do
+# E0, ε do E4 — ganham aqui só uma entrada de referência cruzada, não duplicam
+# a auditoria: a rastreabilidade de fato já foi feita nas seções de Cap. 5).
+M3 = "3-metodo/texto.tex"
+
+add("N=250.221 descrições (versão corrigida)", f"{M3}#sec:metodo-dados",
+    "todos", "data/dataset.csv", "leitura direta do CSV", "rastreado",
+    "250.221 linhas — bate exato", "")
+
+add("N=250.365 na versão original; 144 linhas 'inativo' removidas",
+    f"{M3}#sec:metodo-dados", "todos", "data/dataset.csv",
+    "leitura direta do CSV", "rastreado",
+    "250.365 − 250.221 = 144 — inferido por subtração, não há artefato "
+    "intermediário da versão 'original' pré-correção versionado; a aritmética "
+    "fecha mas não há como auditar a lista das 144 linhas em si", "")
+
+add("classe mais frequente 'biscoito': 14.292 instâncias (5,7%)",
+    f"{M3}#sec:metodo-dados", "todos", "data/dataset.csv",
+    "leitura direta do CSV (Counter por nm_product)", "rastreado",
+    "14.292/250.221 = 5,71% — bate exato", "")
+
+add("descrições curtas: 4 a 50 caracteres, mediana 32",
+    f"{M3}#sec:metodo-dados", "todos", "data/dataset.csv",
+    "leitura direta do CSV (len(nm_item))", "rastreado",
+    "min=4, max=50, mediana=32 — bate exato", "")
+
+add("conflitos de rótulo: 719 descrições distintas (1.807 linhas; 0,7%)",
+    f"{M3}#sec:metodo-dados-auditoria", "escolha-do-oraculo",
+    "experiments/e0/results/noise_impact.json",
+    "experiments/e0/analyze_noise_impact.py", "divergente",
+    "script canônico (o mesmo que sustenta a análise de sensibilidade citada no "
+    "próprio parágrafo) reexecutado agora: 693 descrições / 1.720 linhas (0,69%). "
+    "O percentual arredondado bate (0,7%), os inteiros não — 719 vs 693 (+3,7%), "
+    "1.807 vs 1.720 (+5,1%). Não é ponto flutuante: são 26 descrições e 87 linhas "
+    "de diferença. Divergência real, reportada — não corrigida",
+    "notebooks/auditoria/escolha-do-oraculo.ipynb")
+
+add("CategorySchema: 620 classes frequentes + 1 sentinela (_rare_) = 621",
+    f"{M3}#sec:metodo-dados-preprocessamento", "todos", "data/dataset.csv",
+    "min_samples_per_class=5 (experiments/e0/config.json)", "rastreado",
+    "621 classes com ≥5 exemplos + _rare_ — bate exato", "")
+
+add("337 linhas em classes raras (0,135%)",
+    f"{M3}#sec:metodo-dados-preprocessamento", "todos", "data/dataset.csv",
+    "min_samples_per_class=5 (experiments/e0/config.json)", "rastreado",
+    "337/250.221 = 0,1347% ≈ 0,13% — bate", "")
+
+add("particionamento deduplicado: 231.490 textos únicos / 714 classes presentes",
+    f"{M3}#sec:metodo-dados-particionamento", "escala-populacional",
+    "experiments/e6population/", "método já validado nas Ondas anteriores "
+    "(Counter de rótulo bruto ANTES do dedup para o filtro ≥2, chave de dedup "
+    "= texto.strip().lower(), não normalize_label completo)", "rastreado",
+    "231.490 / 714 — bate exato com o método já usado nas auditorias de E6/E3′",
+    "notebooks/auditoria/escala-populacional.ipynb")
+
+add("pool=50.000; holdout=4.000 (2.000+2.000); população reservada≈177 mil",
+    f"{M3}#sec:metodo-dados-particionamento", "escala-populacional",
+    "experiments/e6population/", "50.000+4.000+177.490=231.490", "rastreado",
+    "177.490 bate com '≈177 mil' do PRÓPRIO Cap. 3 — nota importante: isso NÃO é "
+    "o mesmo achado da divergência já reportada em escala-populacional (Cap. 5), "
+    "onde o texto do Cap. 5 diz '≈140 mil' para a mesma população reservada. "
+    "Ou seja: o Cap. 3 (aqui) está CORRETO/bate com o artefato; é o Cap. 5 que "
+    "diverge — do artefato E também do próprio Cap. 3. Reforça o achado #3 já "
+    "levantado, agora com uma segunda fonte textual confirmando o valor certo",
+    "notebooks/auditoria/escala-populacional.ipynb")
+
+add("JS divergence pool×população = 0,0022; Spearman = 0,983",
+    f"{M3}#sec:metodo-dados-particionamento", "escala-populacional",
+    "experiments/e6population/results/analysis.json",
+    "experiments/e6population/", "rastreado", "bate exato", "")
+
+add("649/714 classes no pool (90,9%); 65 ausentes; 179 com <5 exemplos",
+    f"{M3}#sec:metodo-dados-particionamento", "escala-populacional",
+    "experiments/e6population/", "649+65=714; 649/714=90,90%", "rastreado",
+    "bate exato", "")
+
+add("≈70 exemplos/classe em média no pool",
+    f"{M3}#sec:metodo-dados-particionamento", "escala-populacional",
+    "experiments/e6population/", "50.000/714=70,03", "rastreado",
+    "denominador correto é 714 (total de classes do schema), não 649 "
+    "(classes presentes) — com 649 daria 77,04, não bate; com 714 bate", "")
+
+add("BERTimbau: taxa de aprendizado 3×10⁻⁵",
+    f"{M3}#sec:metodo-classificadores", "classificador-forte",
+    "src/activelearning/adapters/classifiers/bertimbau.py",
+    "BertimbauClassifier.__init__ (default learning_rate)", "divergente",
+    "código usa 5×10⁻⁵ em TODO lugar onde a taxa aparece: default da classe "
+    "(5e-5), experiments/e2e3/train_full.py --lr default (5e-5), "
+    "bertimbau_colab_tpu.ipynb célula LR=5e-5 (o notebook do E2 de verdade). "
+    "Nenhuma ocorrência de 3e-5 em nenhum script ou notebook do repositório. "
+    "run_e3prime.py nem expõe --lr como argumento — sempre usa o default da "
+    "classe, portanto sempre 5e-5. Divergência real, reportada — não corrigida",
+    "notebooks/auditoria/classificador-forte.ipynb")
+
+add("BERTimbau: lote de treinamento 32",
+    f"{M3}#sec:metodo-classificadores", "classificador-forte",
+    "src/activelearning/adapters/classifiers/bertimbau.py",
+    "BertimbauClassifier.__init__ (default batch_size)", "divergente",
+    "código usa batch_size=16 por default (CPU) e 128 no notebook real do E2 "
+    "(bertimbau_colab_tpu.ipynb: 'BATCH=128 if DEVICE_KIND!=\"cpu\" else 16'); "
+    "32 nunca aparece como tamanho de lote em lugar nenhum do repositório. "
+    "HIPÓTESE (não confirmada, reportada como tal): o mesmo construtor "
+    "(BertimbauClassifier.__init__) tem, na linha seguinte ao batch_size, um "
+    "parâmetro DIFERENTE chamado max_length também com default 32 — é o "
+    "comprimento máximo de tokens, não o tamanho do lote. Provável troca dos "
+    "dois parâmetros na redação do Cap. 3. Divergência real, reportada — "
+    "não corrigida, hipótese de causa incluída para o principal avaliar",
+    "notebooks/auditoria/classificador-forte.ipynb")
+
+add("BERTimbau: decaimento de peso 0,01",
+    f"{M3}#sec:metodo-classificadores", "classificador-forte",
+    "src/activelearning/adapters/classifiers/bertimbau.py",
+    "torch.optim.AdamW(...) sem weight_decay explícito", "rastreado",
+    "o código NÃO fixa weight_decay explicitamente — mas 0,01 é o default do "
+    "próprio torch.optim.AdamW; portanto o valor efetivo bate, por herança do "
+    "default da biblioteca, não por parâmetro escrito no código", "")
+
+add("épocas por iteração determinadas empiricamente no E2 (|L|∈{10³,10⁴,5×10⁴})",
+    f"{M3}#sec:metodo-classificadores", "classificador-forte",
+    "experiments/e2e3/bertimbau_colab_tpu.ipynb", "leitura do notebook",
+    "sem-evidencia",
+    "o notebook real do E2 não fixa LIMIT∈{1000,10000,50000} como conjunto de "
+    "varredura — não há artefato de resultado do E2 versionado (nenhum "
+    "experiments/e2e3/results/e2*) que permita confirmar quais |L| foram de "
+    "fato varridos. Sem evidência recuperável do conjunto exato usado",
+    "")
+
+add("S-rand n=1.000; S-strat 3/classe, n≈1.863",
+    f"{M3}#sec:metodo-oraculo-desenho", "escolha-do-oraculo",
+    "experiments/e0/config.json + experiments/e0/results/{rand,strat}/",
+    "config.json: samples.random_size=1000, stratified_per_class=3",
+    "rastreado", "wc -l dos JSONL reais: rand=1.000, strat=1.863 — bate exato. "
+    "Referência cruzada: já coberto pelas entradas de E0 em Cap. 5; incluído "
+    "aqui só porque o número também é citado no Cap. 3", "")
+
+add("critério de decisão do oráculo: piso de 85% de acurácia na S-rand",
+    f"{M3}#sec:metodo-oraculo-decisao", "escolha-do-oraculo",
+    "experiments/e0/config.json + experiments/e0/results/e0_table.json",
+    "e0_table.json (accuracy por oráculo, amostra rand)", "divergente",
+    "NENHUM oráculo do E0 atinge 85% de acurácia na S-rand — o melhor é "
+    "deepseek-v4-pro com 82,1%. O próprio experiments/e0/config.json anota "
+    "deepseek-v4-flash (78,3% no rand) como '_nota: LLM Inicial candidato' e "
+    "deepseek-v4-pro (82,1%) como '_nota: LLM Avancado candidato' — ou seja, a "
+    "escolha real registrada no config não satisfaz o piso de 85% que o "
+    "próprio Cap. 3 declara como critério. O texto também prevê esse caso "
+    "('se nenhum modelo atingir o limiar, o E4 torna-se obrigatório'), mas não "
+    "há, nos artefatos, registro de que essa branch alternativa foi de fato "
+    "adotada — ambiguidade entre a regra escrita e a escolha registrada",
+    "notebooks/auditoria/escolha-do-oraculo.ipynb")
+
+add("E4: ε ∈ {0; 0,1; 0,2; 0,4}", f"{M3}#sec:metodo-falco", "robustez-ao-ruido",
+    "experiments/e1e4/run_sweeps.py", "run_sweeps.py linha 5 e loop 'for noise "
+    "in (0.1, 0.2, 0.4)'", "rastreado",
+    "código varre noise∈{0,1;0,2;0,4} explicitamente; ε=0 é o próprio E1 "
+    "(oráculo perfeito), reaproveitado como o ponto zero da mesma curva — "
+    "não há um 4º valor de noise=0 rodado à parte, é E1 relido. Referência "
+    "cruzada: já coberto pelas entradas de E1/E4 em Cap. 5",
+    "notebooks/auditoria/estrategias-e-robustez.ipynb")
+
+add("estagnação: p=5 iterações, ε=10⁻³ de tolerância",
+    f"{M3}#sec:metodo-falco", "todos", "docs/architecture.md ou config do E5",
+    "busca no repositório", "sem-evidencia",
+    "não localizado nenhum config/script com p=5 ou tolerância 1e-3 de "
+    "estagnação versionado e executável fora do E5 (que está bloqueado pelo "
+    "cache do oráculo, mesmo bloqueio já registrado para E5/braços A-C do E3′)",
+    "")
+
+add("E3′ braço A: |A|/|D| ≈ 18% dos rótulos",
+    f"{M3}#sec:metodo-falco-baselines", "classificador-forte",
+    "experiments/e2e3/results/ (braços A/B/C)", "run_e3prime.py braços A/B/C",
+    "sem-evidencia",
+    "mesmo bloqueio já registrado: braços A/B/C do E3′ dependem do "
+    "annotation_cache_nemotron.jsonl, fora do repositório — não há como "
+    "calcular |A| (cardinalidade real do cache) para conferir a proporção",
+    "")
+
+add("gate de calibração de lote do E0: maior lote sem degradar acurácia "
+    "(McNemar, lotes de 1/10/25)", f"{M3}#sec:metodo-oraculo-instrumentacao",
+    "escolha-do-oraculo", "experiments/e0/", "busca no repositório",
+    "sem-evidencia",
+    "não localizado um artefato/script versionado com essa calibração "
+    "específica (comparação de lotes 1 vs 10 vs 25 por McNemar) — os "
+    "items_per_call finais (10 ou 25, por provedor) estão no config.json, mas "
+    "a análise que justificou a escolha não está versionada", "")
 
 # ---------------------------------------------------------------- gravação
 resumo = {}
@@ -429,7 +619,7 @@ for it in itens:
 doc = {
     "schema": "rastreabilidade/v1",
     "gerado_por": "executor01 · notebooks/auditoria/build_rastreabilidade.py",
-    "cobertura": "Cap. 5 completo menos a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2) + a nota do Cap. 3 sobre execuções auditadas. Faltam: seção do gate, Caps. 3 e 6, apêndices, pré-textuais",
+    "cobertura": "Cap. 5 completo menos a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2) + Cap. 3 (método, ~24 números casados com R5, tarefa 20260817-1940). Faltam: seção do gate, Cap. 6, apêndices, pré-textuais",
     "resumo": resumo,
     "legenda": {
         "rastreado": "o número sai do artefato citado",

@@ -42,22 +42,42 @@
   {
     "sample": "rand",
     "oracle_id": "huawei-maas:glm-5.2@T0.0#prompt@b25",
-    "n": 375,
-    "n_conflito": 6,
-    "pct_conflito": 1.6,
-    "acc_original": 0.7707,
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.773,
     "ic_original": [
-      0.7255,
-      0.8103
+      0.746,
+      0.7979
     ],
-    "acc_sem_ruido": 0.7751,
+    "acc_sem_ruido": 0.7789,
     "ic_sem_ruido": [
-      0.7298,
-      0.8147
+      0.7519,
+      0.8037
     ],
-    "acc_multigold": 0.776,
-    "delta_sem_ruido_pp": 0.44,
-    "delta_multigold_pp": 0.53
+    "acc_multigold": 0.779,
+    "delta_sem_ruido_pp": 0.59,
+    "delta_multigold_pp": 0.6
+  },
+  {
+    "sample": "rand",
+    "oracle_id": "nvidia-nim:nvidia/nemotron-3-ultra-550b-a55b@T0.0#prompt@b10",
+    "n": 1000,
+    "n_conflito": 14,
+    "pct_conflito": 1.4,
+    "acc_original": 0.779,
+    "ic_original": [
+      0.7522,
+      0.8036
+    ],
+    "acc_sem_ruido": 0.784,
+    "ic_sem_ruido": [
+      0.7572,
+      0.8085
+    ],
+    "acc_multigold": 0.784,
+    "delta_sem_ruido_pp": 0.5,
+    "delta_multigold_pp": 0.5
   },
   {
     "sample": "rand",
@@ -122,22 +142,22 @@
   {
     "sample": "rand",
     "oracle_id": "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free@T0.0#prompt@b10",
-    "n": 550,
-    "n_conflito": 7,
-    "pct_conflito": 1.27,
-    "acc_original": 0.6745,
+    "n": 850,
+    "n_conflito": 11,
+    "pct_conflito": 1.29,
+    "acc_original": 0.4365,
     "ic_original": [
-      0.6343,
-      0.7124
+      0.4035,
+      0.47
     ],
-    "acc_sem_ruido": 0.6777,
+    "acc_sem_ruido": 0.4386,
     "ic_sem_ruido": [
-      0.6373,
-      0.7157
+      0.4054,
+      0.4724
     ],
-    "acc_multigold": 0.68,
-    "delta_sem_ruido_pp": 0.32,
-    "delta_multigold_pp": 0.55
+    "acc_multigold": 0.44,
+    "delta_sem_ruido_pp": 0.21,
+    "delta_multigold_pp": 0.35
   },
   {
     "sample": "strat",
@@ -178,6 +198,46 @@
     "acc_multigold": 0.8293,
     "delta_sem_ruido_pp": 0.5,
     "delta_multigold_pp": 0.32
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "huawei-maas:glm-5.2@T0.0#prompt@b25",
+    "n": 1863,
+    "n_conflito": 40,
+    "pct_conflito": 2.15,
+    "acc_original": 0.8089,
+    "ic_original": [
+      0.7904,
+      0.8261
+    ],
+    "acc_sem_ruido": 0.8118,
+    "ic_sem_ruido": [
+      0.7933,
+      0.8291
+    ],
+    "acc_multigold": 0.8121,
+    "delta_sem_ruido_pp": 0.29,
+    "delta_multigold_pp": 0.32
+  },
+  {
+    "sample": "strat",
+    "oracle_id": "nvidia-nim:nvidia/nemotron-3-ultra-550b-a55b@T0.0#prompt@b10",
+    "n": 1863,
+    "n_conflito": 40,
+    "pct_conflito": 2.15,
+    "acc_original": 0.796,
+    "ic_original": [
+      0.7771,
+      0.8137
+    ],
+    "acc_sem_ruido": 0.8003,
+    "ic_sem_ruido": [
+      0.7814,
+      0.818
+    ],
+    "acc_multigold": 0.7987,
+    "delta_sem_ruido_pp": 0.43,
+    "delta_multigold_pp": 0.27
   },
   {
     "sample": "strat",
