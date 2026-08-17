@@ -6,16 +6,16 @@
   "epochs": 3,
   "batch_size": 128,
   "max_length": 32,
-  "seed": 42,
+  "seed": 123,
   "data_seed": 42,
   "eval_n": 177490,
   "eval_limit": 0,
-  "accuracy": 0.8656,
+  "accuracy": 0.8582,
   "accuracy_wilson95": [
-    0.864,
-    0.8672
+    0.8566,
+    0.8598
   ],
-  "macro_f1": 0.366,
-  "fit_seconds": 582.8,
-  "predict_seconds": 320.9
+  "macro_f1": 0.3461,
+  "fit_seconds": 549.6,
+  "predict_seconds": 301.3
 }

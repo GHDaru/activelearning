@@ -4,18 +4,17 @@
   "n_train": 20000,
   "n_train_classes": 646,
   "epochs": 3,
-  "batch_size": 128,
+  "batch_size": 16,
   "max_length": 32,
   "seed": 42,
-  "data_seed": 42,
-  "eval_n": 177490,
-  "eval_limit": 0,
-  "accuracy": 0.7702,
+  "eval_n": 20092,
+  "eval_limit": 20000,
+  "accuracy": 0.8592,
   "accuracy_wilson95": [
-    0.7683,
-    0.7722
+    0.8543,
+    0.8639
   ],
-  "macro_f1": 0.2651,
-  "fit_seconds": 333.8,
-  "predict_seconds": 320.3
+  "macro_f1": 0.4181,
+  "fit_seconds": 4238.5,
+  "predict_seconds": 345.4
 }
