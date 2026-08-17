@@ -2,7 +2,7 @@
 
 Edite ESTE arquivo, não o .ipynb — depois rode:
 
-    python notebooks/auditoria/build_e6.py
+    python notebooks/auditoria/build_escala-populacional.py
 
 Convenção adotada do `build_nb.py` do executor02: o notebook é artefato
 gerado; o código revisável é o Python aqui.
@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-SAIDA = Path(__file__).resolve().parent / "e6-populacao.ipynb"
+SAIDA = Path(__file__).resolve().parent / "escala-populacional.ipynb"
 
 
 def md(texto: str) -> dict:
