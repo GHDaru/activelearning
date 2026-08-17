@@ -10,14 +10,21 @@ agora **com `--cache`**, que o comando da rodada original não registrou por
 escrito e cuja omissão custou uma rodada descartada (ver mensagem de conclusão
 na coordenação da tese).
 
-- `cycle_sgd_b15k.json` / `cycle_sgd_b15k_records.jsonl` — sumário e curva do
-  ciclo SGD da re-coleta. **Não substituem** os arquivos homônimos da pasta de
-  cima (julho), que são os citados pela tese; a re-coleta existe para
-  reconstituir o CACHE (braços A/B/C do E3′), não para refazer as curvas.
+- `cycle_sgd_b15k.json` / `cycle_pvbin_b15k.json` (+ `_records.jsonl`) —
+  sumário e curva de cada ciclo da re-coleta. **Não substituem** os arquivos
+  homônimos da pasta de cima (julho), que são os citados pela tese; a
+  re-coleta existe para reconstituir o CACHE (braços A/B/C do E3′), não para
+  refazer as curvas.
 - O cache re-coletado NÃO é versionado (decisão do principal: é dado, não
   código) — vive como dataset privado do Kaggle `ghdaru/falco-annotation-cache`
   e alimenta os kernels do E3′.
 - Trajetórias diferem do original (T=0 não é determinismo perfeito no
-  provedor; o laço realimenta a seleção): SGD parou em 3.699 rotulados
-  (julho: 4.742), com 51 inválidos (julho: 208). A tese deve tratar A/B/C
-  como re-coleta, não como reprodução bit a bit.
+  provedor; o laço realimenta a seleção):
+  - SGD: 3.699 rotulados (julho: 4.742), 51 inválidos (julho: 208), 43,3 min.
+  - PVBin: 7.113 rotulados (julho: 6.009), 137 inválidos (julho: 241), 135,1 min.
+  - **Cache final consolidado: 12.152 registros únicos** (contra 9.357 do
+    original — o `CachedOracle` compartilha itens já rotulados entre os dois
+    ciclos, então o total não é a soma simples).
+  A tese deve tratar A/B/C do E3′ como re-coleta, não como reprodução bit a
+  bit — mesma metodologia, mesma proveniência declarada (`oracle_id`), amostra
+  diferente por natureza do processo estocástico.
