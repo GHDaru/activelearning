@@ -239,11 +239,31 @@ add("sensibilidade do L0: acurácia de 6,7% (I=10) a 89,1% (I=200.000)",
     "somente leitura e sem referência cruzada; o REPRODUCIBILITY.md aponta para "
     "'Tese-Vers-o-Draft', que não é este repositório")
 
+# ------------------------------------------------- E0/E0-P · confirmação da Onda 3a
+# Reanálise pura (script real rodado sobre as anotações cruas versionadas, sem
+# chave de API): zero divergências no pipeline inteiro. Reforça, não repete,
+# os itens ponto-a-ponto já registrados acima — é o veredito de nível de
+# PIPELINE que só um recálculo completo (não célula a célula) sustenta.
+add("pipeline do E0 é reprodutível ponta a ponta do dado bruto",
+    "experiments/e0/analyze_e0.py", "escolha-do-oraculo", ART_E0 + " + " + ART_MC,
+    COD_E0, "rastreado",
+    "reanálise completa (13/13 linhas da tabela, 43/43 pares de McNemar) roda "
+    "zero-custo sobre as anotações já versionadas e reproduz os artefatos "
+    "exatamente — inclusive a AUSÊNCIA de b=43/c=16 em qualquer par",
+    "notebooks/auditoria/escolha-do-oraculo.ipynb")
+
 # ------------------------------------------------- E0-P · ablação de prompt
 e0p = ler("e0p/results/analysis.json")
 ART_E0P = "experiments/e0p/results/analysis.json"
 COD_E0P = "experiments/e0p/run_e0p.py + analyze_e0p.py"
 TAB_P = "5-resultados-falco/texto.tex#tab:e0p"
+
+add("pipeline do E0-P é reprodutível ponta a ponta do dado bruto",
+    "experiments/e0p/analyze_e0p.py", "efeito-do-prompt", ART_E0P, COD_E0P,
+    "rastreado",
+    "reanálise completa (6/6 acurácias, 6/6 pares de McNemar) roda zero-custo "
+    "e reproduz o analysis.json publicado exatamente",
+    "notebooks/auditoria/efeito-do-prompt.ipynb")
 
 for amostra, variante, acc, disc, pv in [
         ("rand", "v3", 60.4, None, None),
