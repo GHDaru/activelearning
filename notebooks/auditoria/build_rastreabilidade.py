@@ -370,13 +370,19 @@ add("a vantagem da entropia sobrevive com p=0,0078 em todo ε",
     "rastreado" if all(perto(p, 0.0078, 0.0001) for p in todos_p) else "divergente",
     f"artefato: {todos_p}")
 
-# ------------------------------------------------- dados brutos que faltam
-add("as 104 células do E1/E1b/E4",
+# ------------------------------------------------- E1/E4 (Onda 4 — reexecutado)
+sweeps_path = RAIZ / "experiments/e1e4/results/sweeps.jsonl"
+add("as 104 células do E1/E1b/E4 (sweeps.jsonl)",
     "5-resultados-falco/texto.tex#sec:res-e1", "estrategias-de-selecao",
-    "experiments/e1e4/results/sweeps.jsonl", COD_E1, "sem-evidencia",
-    "o REPRODUCIBILITY.md lista sweeps.jsonl como artefato do experimento, mas ele "
-    "não está no repositório: só o analysis.json e o baseline.json. As conclusões "
-    "estão versionadas, o dado por célula não. Casa com a linha 7 do .gitignore")
+    "experiments/e1e4/results/sweeps.jsonl", COD_E1,
+    "rastreado" if sweeps_path.exists() else "sem-evidencia",
+    "reexecutado na Onda 4 (run_sweeps.py roda de novo, não é reanálise — o dado "
+    "bruto nunca esteve versionado). Pool determinístico (semente 7 fixa no "
+    "script): a reprodução do E1 e do E4 bateu quase exata (3ª/4ª casa decimal) "
+    "com os agregados publicados. git add -f — casa com a linha 7 do .gitignore",
+    "notebooks/auditoria/estrategias-e-robustez.ipynb")
+
+# ------------------------------------------------- dados brutos que faltam
 
 add("figuras do Cap. 4 e do Cap. 5 geradas por script",
     "experiments/plots/", "todos", "experiments/plots/figures/*.{pdf,png}",
