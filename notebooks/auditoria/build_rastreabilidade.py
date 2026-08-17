@@ -27,7 +27,14 @@ def ler(rel: str):
 
 
 def perto(a, b, tol):
-    return a is not None and b is not None and abs(a - b) <= tol
+    """Comparação numérica com folga para o erro de ponto flutuante.
+
+    O `1e-9` não é preciosismo: sem ele, 0,006 − 0,0055 dá
+    0,0005000000000000004 e estoura uma tolerância de exatamente 0,0005 —
+    o que marcaria como divergentes três números do E1/E4 que na verdade
+    conferem. Auditoria que inventa divergência é pior que auditoria nenhuma.
+    """
+    return a is not None and b is not None and abs(a - b) <= tol + 1e-9
 
 
 # ---------------------------------------------------------------- artefatos
@@ -232,6 +239,141 @@ add("sensibilidade do L0: acurácia de 6,7% (I=10) a 89,1% (I=200.000)",
     "somente leitura e sem referência cruzada; o REPRODUCIBILITY.md aponta para "
     "'Tese-Vers-o-Draft', que não é este repositório")
 
+# ------------------------------------------------- E0-P · ablação de prompt
+e0p = ler("e0p/results/analysis.json")
+ART_E0P = "experiments/e0p/results/analysis.json"
+COD_E0P = "experiments/e0p/run_e0p.py + analyze_e0p.py"
+TAB_P = "5-resultados-falco/texto.tex#tab:e0p"
+
+for amostra, variante, acc, disc, pv in [
+        ("rand", "v3", 60.4, None, None),
+        ("rand", "v4a", 64.2, (50, 31), 0.045),
+        ("rand", "v4b", 65.0, (50, 27), 0.012),
+        ("strat", "v3", 51.8, None, None),
+        ("strat", "v4a", 44.8, (20, 55), 0.001),
+        ("strat", "v4b", 41.0, (14, 68), 0.001)]:
+    d = e0p[amostra][variante]
+    problemas = []
+    if not perto(d["accuracy"] * 100, acc, 0.05):
+        problemas.append(f"acurácia {d['accuracy']*100:.1f}% no artefato")
+    if disc:
+        mc = e0p[amostra][f"mcnemar_v3_vs_{variante}"]
+        # a tese escreve (+/-) = (a favor da variante / contra)
+        if (mc["only_b_correct"], mc["only_a_correct"]) != disc:
+            problemas.append(f"discordantes {mc['only_b_correct']}/{mc['only_a_correct']} "
+                             "no artefato")
+        if pv == 0.001:                      # a tese escreve "<0,001"
+            if not mc["p_value"] < 0.001:
+                problemas.append(f"p={mc['p_value']} não é < 0,001")
+        elif not perto(mc["p_value"], pv, 0.0006):
+            problemas.append(f"p={mc['p_value']:.4f} no artefato")
+    add(f"E0-P {amostra} {variante}: acurácia {acc}%"
+        + (f" · discordantes {disc[0]}/{disc[1]} · p {pv}" if disc else ""),
+        TAB_P, "efeito-do-prompt", ART_E0P, COD_E0P,
+        "divergente" if problemas else "rastreado", "; ".join(problemas))
+
+mc_ab = e0p["strat"]["mcnemar_v4a_vs_v4b"]
+add("E0-P: v4b piora sobre v4a na S-strat com p=0,0013", TAB_P, "efeito-do-prompt",
+    ART_E0P, COD_E0P,
+    "rastreado" if perto(mc_ab["p_value"], 0.0013, 0.00005) else "divergente",
+    f"artefato p={mc_ab['p_value']}")
+
+# ------------------------------------------------- E1 · estratégias de seleção
+e1e4 = ler("e1e4/results/analysis.json")
+ART_E1 = "experiments/e1e4/results/analysis.json"
+COD_E1 = "experiments/e1e4/run_sweeps.py + analyze_e1e4.py"
+e1 = e1e4["e1_strategies_noise0_b100"]
+
+add("teto supervisionado do pool completo: Macro F1 = 0,540",
+    "5-resultados-falco/texto.tex#sec:res-e1", "estrategias-de-selecao", ART_E1, COD_E1,
+    "rastreado" if perto(e1e4["baseline_macro_f1_full_pool"], 0.540, 0.0005) else "divergente",
+    f"artefato: {e1e4['baseline_macro_f1_full_pool']}")
+
+for chave, rot, lce, lce_sd, f1, f1_sd in [
+        ("smallest_margin", "menor margem", 0.528, 0.013, 0.418, 0.013),
+        ("least_confidence", "menor confiança", 0.518, 0.010, 0.421, 0.009),
+        ("entropy", "entropia", 0.493, 0.006, 0.398, 0.008),
+        ("hybrid", "híbrida", 0.476, 0.014, 0.379, 0.008),
+        ("random", "aleatória", 0.444, 0.011, 0.339, 0.006)]:
+    c = e1[chave]
+    problemas = []
+    for nome, obtido, esperado, tol in [
+            ("LCE", c["lce"]["mean"], lce, 0.0005),
+            ("desvio do LCE", c["lce"]["sd"], lce_sd, 0.0005),
+            ("F1 final", c["final_macro_f1"]["mean"], f1, 0.0005),
+            ("desvio do F1", c["final_macro_f1"]["sd"], f1_sd, 0.0005)]:
+        if not perto(obtido, esperado, tol):
+            problemas.append(f"{nome} {obtido} no artefato")
+    add(f"E1 {rot}: LCE {lce}±{lce_sd} · F1 final {f1}±{f1_sd}",
+        "5-resultados-falco/texto.tex#tab:e1", "estrategias-de-selecao", ART_E1, COD_E1,
+        "divergente" if problemas else "rastreado", "; ".join(problemas))
+
+melhor = max(e1[k]["final_macro_f1"]["mean"] for k in e1)
+recuperado = melhor / e1e4["baseline_macro_f1_full_pool"] * 100
+add("a melhor célula recupera 78% do teto supervisionado com 15% dos rótulos",
+    "5-resultados-falco/texto.tex#sec:res-e1", "estrategias-de-selecao", ART_E1, COD_E1,
+    "rastreado" if 77.5 <= recuperado <= 78.5 else "divergente",
+    f"conta: {recuperado:.1f}%")
+
+lotes = e1e4["e1b_batch_ablation"]["cells"]
+for celula, lce, sd in [("b50", 0.492, 0.009), ("b100", 0.493, 0.006), ("b200", 0.481, 0.012)]:
+    c = lotes[celula]["lce"]
+    ok = perto(c["mean"], lce, 0.0005) and perto(c["sd"], sd, 0.0005)
+    add(f"E1b ablação de lote {celula}: LCE {lce}±{sd}",
+        "5-resultados-falco/texto.tex#sec:res-e1", "estrategias-de-selecao", ART_E1, COD_E1,
+        "rastreado" if ok else "divergente", f"artefato: {c['mean']}±{c['sd']}")
+
+# ------------------------------------------------- E4 · robustez ao ruído
+e4 = e1e4["e4_noise"]
+for eps, estrategia, rot, f1, sd, ret in [
+        (0.1, "entropy", "entropia", 0.347, 0.008, 87.2),
+        (0.1, "random", "aleatória", 0.294, 0.006, 86.7),
+        (0.2, "entropy", "entropia", 0.294, 0.006, 74.0),
+        (0.2, "random", "aleatória", 0.252, 0.006, 74.4),
+        (0.4, "entropy", "entropia", 0.215, 0.010, 54.1),
+        (0.4, "random", "aleatória", 0.186, 0.006, 54.8)]:
+    c = e4[f"eps{eps}"][estrategia]
+    problemas = []
+    if not perto(c["final_macro_f1"]["mean"], f1, 0.0005):
+        problemas.append(f"F1 {c['final_macro_f1']['mean']} no artefato")
+    if not perto(c["final_macro_f1"]["sd"], sd, 0.0005):
+        problemas.append(f"desvio {c['final_macro_f1']['sd']} no artefato")
+    if not perto(c["f1_retention_vs_eps0"] * 100, ret, 0.05):
+        problemas.append(f"retenção {c['f1_retention_vs_eps0']*100:.1f}% no artefato")
+    add(f"E4 ε={eps} {rot}: F1 {f1}±{sd} · retenção {ret}%",
+        "5-resultados-falco/texto.tex#tab:e4", "robustez-ao-ruido", ART_E1, COD_E1,
+        "divergente" if problemas else "rastreado", "; ".join(problemas))
+
+todos_p = [e4[f"eps{e}"]["wilcoxon_entropy_vs_random_final_macro_f1_p"] for e in (0.1, 0.2, 0.4)]
+add("a vantagem da entropia sobrevive com p=0,0078 em todo ε",
+    "5-resultados-falco/texto.tex#sec:res-e4", "robustez-ao-ruido", ART_E1, COD_E1,
+    "rastreado" if all(perto(p, 0.0078, 0.0001) for p in todos_p) else "divergente",
+    f"artefato: {todos_p}")
+
+# ------------------------------------------------- dados brutos que faltam
+add("as 104 células do E1/E1b/E4",
+    "5-resultados-falco/texto.tex#sec:res-e1", "estrategias-de-selecao",
+    "experiments/e1e4/results/sweeps.jsonl", COD_E1, "sem-evidencia",
+    "o REPRODUCIBILITY.md lista sweeps.jsonl como artefato do experimento, mas ele "
+    "não está no repositório: só o analysis.json e o baseline.json. As conclusões "
+    "estão versionadas, o dado por célula não. Casa com a linha 7 do .gitignore")
+
+add("figuras do Cap. 4 e do Cap. 5 geradas por script",
+    "experiments/plots/", "todos", "experiments/plots/figures/*.{pdf,png}",
+    "experiments/plots/make_figures.py", "sem-evidencia",
+    "o script existe e nenhuma figura está versionada em experiments/plots/. As "
+    "figuras publicadas vivem em tesedaru/N-*/imagens/, desacopladas do gerador — "
+    "não há garantia de que a figura da tese corresponda ao artefato atual")
+
+add("replays de auditoria de P1 e P2 (a base do 'execuções já auditadas')",
+    "3-metodo/texto.tex#tab:metodo-experimentos", "conjunto-inicial",
+    "experiments/p1/results/replay_l0.jsonl e replay_ga.jsonl",
+    "experiments/p1/{replay_l0_sensitivity.py,replay_ga.py}", "sem-evidencia",
+    "docs/convergencia-replays.md declara estes dois arquivos como artefatos-fonte "
+    "da auditoria (convergência de 0,7 p.p. e inflação de circularidade de 6,3 p.p.), "
+    "mas git log --all mostra que NUNCA foram commitados. A afirmação 'execuções já "
+    "realizadas e auditadas' do Cap. 3 é hoje inverificável")
+
 # ---------------------------------------------------------------- gravação
 resumo = {}
 for it in itens:
@@ -240,8 +382,7 @@ for it in itens:
 doc = {
     "schema": "rastreabilidade/v1",
     "gerado_por": "executor01 · notebooks/auditoria/build_rastreabilidade.py",
-    "cobertura": "Cap. 5 (E0, E6, E3′) + Cap. 4 (P1). Faltam: E0-P, E1, E4, "
-                 "seção do gate, Caps. 3 e 6, apêndices, pré-textuais",
+    "cobertura": "Cap. 5 completo menos a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2) + a nota do Cap. 3 sobre execuções auditadas. Faltam: seção do gate, Caps. 3 e 6, apêndices, pré-textuais",
     "resumo": resumo,
     "legenda": {
         "rastreado": "o número sai do artefato citado",
