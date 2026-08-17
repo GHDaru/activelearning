@@ -1,0 +1,786 @@
+
+===== nova tentativa: /usr/bin/python3 experiments/e2e3/run_e3prime.py --arms E,D,E20,E25,E30,E35 --epochs 3 --batch-size 128 --eval-limit 0 --seed 42 --out-dir /kaggle/working/results =====
+pool=50000 população=177490 classes=714 | semente de treino=42 (dados fixos em 42)
+avaliação: 177490 instâncias (712 classes na amostra)
+
+=== braço E: prefixo 15000 da trajetória de entropia do E6 (SGD), gold · n=15000 classes=644 ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+BertForSequenceClassification LOAD REPORT from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING	:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/118 loss=6.4946
+  época 1/3 passo 11/118 loss=6.3786
+  época 1/3 passo 21/118 loss=6.2563
+  época 1/3 passo 31/118 loss=6.0743
+  época 1/3 passo 41/118 loss=5.9666
+  época 1/3 passo 51/118 loss=6.0403
+  época 1/3 passo 61/118 loss=5.9302
+  época 1/3 passo 71/118 loss=5.7954
+  época 1/3 passo 81/118 loss=5.7657
+  época 1/3 passo 91/118 loss=5.7615
+  época 1/3 passo 101/118 loss=5.5979
+  época 1/3 passo 111/118 loss=5.5006
+  época 1: loss médio 5.9392
+  época 2/3 passo 1/118 loss=5.4699
+  época 2/3 passo 11/118 loss=5.2203
+  época 2/3 passo 21/118 loss=5.4279
+  época 2/3 passo 31/118 loss=5.1198
+  época 2/3 passo 41/118 loss=5.0565
+  época 2/3 passo 51/118 loss=5.1202
+  época 2/3 passo 61/118 loss=4.8265
+  época 2/3 passo 71/118 loss=4.8576
+  época 2/3 passo 81/118 loss=4.8897
+  época 2/3 passo 91/118 loss=4.4821
+  época 2/3 passo 101/118 loss=4.4108
+  época 2/3 passo 111/118 loss=4.5112
+  época 2: loss médio 4.8956
+  época 3/3 passo 1/118 loss=4.3048
+  época 3/3 passo 11/118 loss=4.3042
+  época 3/3 passo 21/118 loss=4.0662
+  época 3/3 passo 31/118 loss=4.2197
+  época 3/3 passo 41/118 loss=3.8293
+  época 3/3 passo 51/118 loss=3.6772
+  época 3/3 passo 61/118 loss=3.8333
+  época 3/3 passo 71/118 loss=3.7460
+  época 3/3 passo 81/118 loss=3.9824
+  época 3/3 passo 91/118 loss=3.7543
+  época 3/3 passo 101/118 loss=3.4478
+  época 3/3 passo 111/118 loss=3.3411
+  época 3: loss médio 3.8443
+  avaliação: 5000/177490
+  avaliação: 10000/177490
+  avaliação: 15000/177490
+  avaliação: 20000/177490
+  avaliação: 25000/177490
+  avaliação: 30000/177490
+  avaliação: 35000/177490
+  avaliação: 40000/177490
+  avaliação: 45000/177490
+  avaliação: 50000/177490
+  avaliação: 55000/177490
+  avaliação: 60000/177490
+  avaliação: 65000/177490
+  avaliação: 70000/177490
+  avaliação: 75000/177490
+  avaliação: 80000/177490
+  avaliação: 85000/177490
+  avaliação: 90000/177490
+  avaliação: 95000/177490
+  avaliação: 100000/177490
+  avaliação: 105000/177490
+  avaliação: 110000/177490
+  avaliação: 115000/177490
+  avaliação: 120000/177490
+  avaliação: 125000/177490
+  avaliação: 130000/177490
+  avaliação: 135000/177490
+  avaliação: 140000/177490
+  avaliação: 145000/177490
+  avaliação: 150000/177490
+  avaliação: 155000/177490
+  avaliação: 160000/177490
+  avaliação: 165000/177490
+  avaliação: 170000/177490
+  avaliação: 175000/177490
+  avaliação: 177490/177490
+{"arm": "E", "fonte": "prefixo 15000 da trajetória de entropia do E6 (SGD), gold", "n_train": 15000, "n_train_classes": 644, "epochs": 3, "batch_size": 128, "max_length": 32, "seed": 42, "data_seed": 42, "eval_n": 177490, "eval_limit": 0, "accuracy": 0.6997, "accuracy_wilson95": [0.6976, 0.7019], "macro_f1": 0.2088, "fit_seconds": 251.2, "predict_seconds": 320.5}
+
+=== braço D: pool inteiro, gold (régua) · n=50000 classes=649 ===
+BertForSequenceClassification LOAD REPORT from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING	:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/391 loss=6.4728
+  época 1/3 passo 11/391 loss=6.1188
+  época 1/3 passo 21/391 loss=5.9092
+  época 1/3 passo 31/391 loss=5.6002
+  época 1/3 passo 41/391 loss=5.2707
+  época 1/3 passo 51/391 loss=5.2471
+  época 1/3 passo 61/391 loss=4.9110
+  época 1/3 passo 71/391 loss=4.8250
+  época 1/3 passo 81/391 loss=4.2615
+  época 1/3 passo 91/391 loss=4.0640
+  época 1/3 passo 101/391 loss=4.0918
+  época 1/3 passo 111/391 loss=3.8044
+  época 1/3 passo 121/391 loss=3.5882
+  época 1/3 passo 131/391 loss=3.1537
+  época 1/3 passo 141/391 loss=3.2947
+  época 1/3 passo 151/391 loss=3.5248
+  época 1/3 passo 161/391 loss=3.4102
+  época 1/3 passo 171/391 loss=3.1170
+  época 1/3 passo 181/391 loss=3.2729
+  época 1/3 passo 191/391 loss=3.0947
+  época 1/3 passo 201/391 loss=2.7439
+  época 1/3 passo 211/391 loss=2.8697
+  época 1/3 passo 221/391 loss=2.6245
+  época 1/3 passo 231/391 loss=2.5856
+  época 1/3 passo 241/391 loss=2.5172
+  época 1/3 passo 251/391 loss=2.2334
+  época 1/3 passo 261/391 loss=2.3597
+  época 1/3 passo 271/391 loss=2.1193
+  época 1/3 passo 281/391 loss=2.1094
+  época 1/3 passo 291/391 loss=2.2940
+  época 1/3 passo 301/391 loss=1.9859
+  época 1/3 passo 311/391 loss=1.9042
+  época 1/3 passo 321/391 loss=1.8215
+  época 1/3 passo 331/391 loss=1.7742
+  época 1/3 passo 341/391 loss=1.9229
+  época 1/3 passo 351/391 loss=1.9240
+  época 1/3 passo 361/391 loss=2.0993
+  época 1/3 passo 371/391 loss=1.4801
+  época 1/3 passo 381/391 loss=1.9395
+  época 1/3 passo 391/391 loss=1.7128
+  época 1: loss médio 3.2305
+  época 2/3 passo 1/391 loss=1.4997
+  época 2/3 passo 11/391 loss=1.6041
+  época 2/3 passo 21/391 loss=1.8029
+  época 2/3 passo 31/391 loss=1.6895
+  época 2/3 passo 41/391 loss=1.5187
+  época 2/3 passo 51/391 loss=1.5788
+  época 2/3 passo 61/391 loss=1.7622
+  época 2/3 passo 71/391 loss=1.4961
+  época 2/3 passo 81/391 loss=1.4675
+  época 2/3 passo 91/391 loss=1.4666
+  época 2/3 passo 101/391 loss=1.3742
+  época 2/3 passo 111/391 loss=1.3219
+  época 2/3 passo 121/391 loss=1.2620
+  época 2/3 passo 131/391 loss=1.6638
+  época 2/3 passo 141/391 loss=1.1068
+  época 2/3 passo 151/391 loss=1.2447
+  época 2/3 passo 161/391 loss=1.4436
+  época 2/3 passo 171/391 loss=1.3383
+  época 2/3 passo 181/391 loss=1.1782
+  época 2/3 passo 191/391 loss=1.0406
+  época 2/3 passo 201/391 loss=1.2940
+  época 2/3 passo 211/391 loss=1.3681
+  época 2/3 passo 221/391 loss=1.0083
+  época 2/3 passo 231/391 loss=1.4735
+  época 2/3 passo 241/391 loss=1.1190
+  época 2/3 passo 251/391 loss=1.2212
+  época 2/3 passo 261/391 loss=1.2130
+  época 2/3 passo 271/391 loss=1.1711
+  época 2/3 passo 281/391 loss=1.2947
+  época 2/3 passo 291/391 loss=1.1508
+  época 2/3 passo 301/391 loss=1.2137
+  época 2/3 passo 311/391 loss=1.2352
+  época 2/3 passo 321/391 loss=1.3509
+  época 2/3 passo 331/391 loss=1.1344
+  época 2/3 passo 341/391 loss=0.7562
+  época 2/3 passo 351/391 loss=0.7976
+  época 2/3 passo 361/391 loss=0.9802
+  época 2/3 passo 371/391 loss=0.5656
+  época 2/3 passo 381/391 loss=1.0011
+  época 2/3 passo 391/391 loss=0.9573
+  época 2: loss médio 1.2644
+  época 3/3 passo 1/391 loss=0.9390
+  época 3/3 passo 11/391 loss=0.8756
+  época 3/3 passo 21/391 loss=0.7493
+  época 3/3 passo 31/391 loss=0.9359
+  época 3/3 passo 41/391 loss=0.7715
+  época 3/3 passo 51/391 loss=0.9319
+  época 3/3 passo 61/391 loss=0.7750
+  época 3/3 passo 71/391 loss=0.9001
+  época 3/3 passo 81/391 loss=1.0026
+  época 3/3 passo 91/391 loss=0.7735
+  época 3/3 passo 101/391 loss=0.7322
+  época 3/3 passo 111/391 loss=0.6505
+  época 3/3 passo 121/391 loss=0.8179
+  época 3/3 passo 131/391 loss=0.9151
+  época 3/3 passo 141/391 loss=0.9003
+  época 3/3 passo 151/391 loss=0.7566
+  época 3/3 passo 161/391 loss=0.6955
+  época 3/3 passo 171/391 loss=0.5676
+  época 3/3 passo 181/391 loss=0.7323
+  época 3/3 passo 191/391 loss=0.5775
+  época 3/3 passo 201/391 loss=0.6169
+  época 3/3 passo 211/391 loss=0.8154
+  época 3/3 passo 221/391 loss=0.5834
+  época 3/3 passo 231/391 loss=0.8143
+  época 3/3 passo 241/391 loss=0.6345
+  época 3/3 passo 251/391 loss=0.6942
+  época 3/3 passo 261/391 loss=0.7854
+  época 3/3 passo 271/391 loss=1.1401
+  época 3/3 passo 281/391 loss=0.7467
+  época 3/3 passo 291/391 loss=0.6803
+  época 3/3 passo 301/391 loss=0.5168
+  época 3/3 passo 311/391 loss=0.5695
+  época 3/3 passo 321/391 loss=0.8079
+  época 3/3 passo 331/391 loss=0.7322
+  época 3/3 passo 341/391 loss=0.8032
+  época 3/3 passo 351/391 loss=0.8902
+  época 3/3 passo 361/391 loss=0.7072
+  época 3/3 passo 371/391 loss=0.8282
+  época 3/3 passo 381/391 loss=0.5656
+  época 3/3 passo 391/391 loss=0.5189
+  época 3: loss médio 0.7838
+  avaliação: 5000/177490
+  avaliação: 10000/177490
+  avaliação: 15000/177490
+  avaliação: 20000/177490
+  avaliação: 25000/177490
+  avaliação: 30000/177490
+  avaliação: 35000/177490
+  avaliação: 40000/177490
+  avaliação: 45000/177490
+  avaliação: 50000/177490
+  avaliação: 55000/177490
+  avaliação: 60000/177490
+  avaliação: 65000/177490
+  avaliação: 70000/177490
+  avaliação: 75000/177490
+  avaliação: 80000/177490
+  avaliação: 85000/177490
+  avaliação: 90000/177490
+  avaliação: 95000/177490
+  avaliação: 100000/177490
+  avaliação: 105000/177490
+  avaliação: 110000/177490
+  avaliação: 115000/177490
+  avaliação: 120000/177490
+  avaliação: 125000/177490
+  avaliação: 130000/177490
+  avaliação: 135000/177490
+  avaliação: 140000/177490
+  avaliação: 145000/177490
+  avaliação: 150000/177490
+  avaliação: 155000/177490
+  avaliação: 160000/177490
+  avaliação: 165000/177490
+  avaliação: 170000/177490
+  avaliação: 175000/177490
+  avaliação: 177490/177490
+{"arm": "D", "fonte": "pool inteiro, gold (régua)", "n_train": 50000, "n_train_classes": 649, "epochs": 3, "batch_size": 128, "max_length": 32, "seed": 42, "data_seed": 42, "eval_n": 177490, "eval_limit": 0, "accuracy": 0.8694, "accuracy_wilson95": [0.8678, 0.871], "macro_f1": 0.3691, "fit_seconds": 833.7, "predict_seconds": 320.9}
+
+=== braço E20: prefixo 20000 da trajetória de entropia do E6 (SGD), gold · n=20000 classes=646 ===
+BertForSequenceClassification LOAD REPORT from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING	:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/157 loss=6.5012
+  época 1/3 passo 11/157 loss=6.4037
+  época 1/3 passo 21/157 loss=6.2380
+  época 1/3 passo 31/157 loss=5.9772
+  época 1/3 passo 41/157 loss=5.9311
+  época 1/3 passo 51/157 loss=5.8278
+  época 1/3 passo 61/157 loss=5.7459
+  época 1/3 passo 71/157 loss=5.7290
+  época 1/3 passo 81/157 loss=5.6824
+  época 1/3 passo 91/157 loss=5.6625
+  época 1/3 passo 101/157 loss=5.5792
+  época 1/3 passo 111/157 loss=5.5511
+  época 1/3 passo 121/157 loss=5.4286
+  época 1/3 passo 131/157 loss=5.1741
+  época 1/3 passo 141/157 loss=5.0433
+  época 1/3 passo 151/157 loss=5.2241
+  época 1: loss médio 5.7128
+  época 2/3 passo 1/157 loss=4.9700
+  época 2/3 passo 11/157 loss=4.9647
+  época 2/3 passo 21/157 loss=4.9105
+  época 2/3 passo 31/157 loss=4.7539
+  época 2/3 passo 41/157 loss=4.5459
+  época 2/3 passo 51/157 loss=4.6298
+  época 2/3 passo 61/157 loss=4.4982
+  época 2/3 passo 71/157 loss=4.4821
+  época 2/3 passo 81/157 loss=4.1958
+  época 2/3 passo 91/157 loss=4.0740
+  época 2/3 passo 101/157 loss=3.9688
+  época 2/3 passo 111/157 loss=4.0767
+  época 2/3 passo 121/157 loss=4.0518
+  época 2/3 passo 131/157 loss=3.6915
+  época 2/3 passo 141/157 loss=3.6974
+  época 2/3 passo 151/157 loss=3.5467
+  época 2: loss médio 4.2395
+  época 3/3 passo 1/157 loss=3.1621
+  época 3/3 passo 11/157 loss=3.5609
+  época 3/3 passo 21/157 loss=3.4160
+  época 3/3 passo 31/157 loss=3.1805
+  época 3/3 passo 41/157 loss=3.4245
+  época 3/3 passo 51/157 loss=2.9881
+  época 3/3 passo 61/157 loss=2.7795
+  época 3/3 passo 71/157 loss=3.0420
+  época 3/3 passo 81/157 loss=2.8821
+  época 3/3 passo 91/157 loss=2.8248
+  época 3/3 passo 101/157 loss=2.8691
+  época 3/3 passo 111/157 loss=2.5579
+  época 3/3 passo 121/157 loss=2.5299
+  época 3/3 passo 131/157 loss=2.9142
+  época 3/3 passo 141/157 loss=2.5958
+  época 3/3 passo 151/157 loss=2.5130
+  época 3: loss médio 3.0150
+  avaliação: 5000/177490
+  avaliação: 10000/177490
+  avaliação: 15000/177490
+  avaliação: 20000/177490
+  avaliação: 25000/177490
+  avaliação: 30000/177490
+  avaliação: 35000/177490
+  avaliação: 40000/177490
+  avaliação: 45000/177490
+  avaliação: 50000/177490
+  avaliação: 55000/177490
+  avaliação: 60000/177490
+  avaliação: 65000/177490
+  avaliação: 70000/177490
+  avaliação: 75000/177490
+  avaliação: 80000/177490
+  avaliação: 85000/177490
+  avaliação: 90000/177490
+  avaliação: 95000/177490
+  avaliação: 100000/177490
+  avaliação: 105000/177490
+  avaliação: 110000/177490
+  avaliação: 115000/177490
+  avaliação: 120000/177490
+  avaliação: 125000/177490
+  avaliação: 130000/177490
+  avaliação: 135000/177490
+  avaliação: 140000/177490
+  avaliação: 145000/177490
+  avaliação: 150000/177490
+  avaliação: 155000/177490
+  avaliação: 160000/177490
+  avaliação: 165000/177490
+  avaliação: 170000/177490
+  avaliação: 175000/177490
+  avaliação: 177490/177490
+{"arm": "E20", "fonte": "prefixo 20000 da trajetória de entropia do E6 (SGD), gold", "n_train": 20000, "n_train_classes": 646, "epochs": 3, "batch_size": 128, "max_length": 32, "seed": 42, "data_seed": 42, "eval_n": 177490, "eval_limit": 0, "accuracy": 0.7702, "accuracy_wilson95": [0.7683, 0.7722], "macro_f1": 0.2651, "fit_seconds": 333.8, "predict_seconds": 320.3}
+
+=== braço E25: prefixo 25000 da trajetória de entropia do E6 (SGD), gold · n=25000 classes=647 ===
+BertForSequenceClassification LOAD REPORT from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING	:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/196 loss=6.4929
+  época 1/3 passo 11/196 loss=6.3388
+  época 1/3 passo 21/196 loss=6.1083
+  época 1/3 passo 31/196 loss=5.9418
+  época 1/3 passo 41/196 loss=5.8423
+  época 1/3 passo 51/196 loss=5.7614
+  época 1/3 passo 61/196 loss=5.6936
+  época 1/3 passo 71/196 loss=5.5289
+  época 1/3 passo 81/196 loss=5.4590
+  época 1/3 passo 91/196 loss=5.3463
+  época 1/3 passo 101/196 loss=5.0293
+  época 1/3 passo 111/196 loss=5.1489
+  época 1/3 passo 121/196 loss=4.9713
+  época 1/3 passo 131/196 loss=4.9510
+  época 1/3 passo 141/196 loss=4.8160
+  época 1/3 passo 151/196 loss=4.6882
+  época 1/3 passo 161/196 loss=4.4649
+  época 1/3 passo 171/196 loss=4.4676
+  época 1/3 passo 181/196 loss=4.6364
+  época 1/3 passo 191/196 loss=4.3343
+  época 1: loss médio 5.2671
+  época 2/3 passo 1/196 loss=4.0038
+  época 2/3 passo 11/196 loss=4.1938
+  época 2/3 passo 21/196 loss=4.0140
+  época 2/3 passo 31/196 loss=3.7590
+  época 2/3 passo 41/196 loss=3.7509
+  época 2/3 passo 51/196 loss=3.6463
+  época 2/3 passo 61/196 loss=3.7688
+  época 2/3 passo 71/196 loss=3.6947
+  época 2/3 passo 81/196 loss=3.3968
+  época 2/3 passo 91/196 loss=3.2207
+  época 2/3 passo 101/196 loss=3.2354
+  época 2/3 passo 111/196 loss=3.1163
+  época 2/3 passo 121/196 loss=3.2027
+  época 2/3 passo 131/196 loss=2.9997
+  época 2/3 passo 141/196 loss=2.9103
+  época 2/3 passo 151/196 loss=2.8525
+  época 2/3 passo 161/196 loss=2.7178
+  época 2/3 passo 171/196 loss=2.5442
+  época 2/3 passo 181/196 loss=2.8085
+  época 2/3 passo 191/196 loss=2.5503
+  época 2: loss médio 3.2713
+  época 3/3 passo 1/196 loss=2.5475
+  época 3/3 passo 11/196 loss=2.3726
+  época 3/3 passo 21/196 loss=2.4742
+  época 3/3 passo 31/196 loss=2.0030
+  época 3/3 passo 41/196 loss=2.3107
+  época 3/3 passo 51/196 loss=2.0538
+  época 3/3 passo 61/196 loss=2.4019
+  época 3/3 passo 71/196 loss=1.9714
+  época 3/3 passo 81/196 loss=1.8627
+  época 3/3 passo 91/196 loss=2.1980
+  época 3/3 passo 101/196 loss=1.8209
+  época 3/3 passo 111/196 loss=2.0698
+  época 3/3 passo 121/196 loss=1.8876
+  época 3/3 passo 131/196 loss=1.8837
+  época 3/3 passo 141/196 loss=2.0328
+  época 3/3 passo 151/196 loss=1.9364
+  época 3/3 passo 161/196 loss=1.7634
+  época 3/3 passo 171/196 loss=1.9985
+  época 3/3 passo 181/196 loss=2.0946
+  época 3/3 passo 191/196 loss=1.6194
+  época 3: loss médio 2.1086
+  avaliação: 5000/177490
+  avaliação: 10000/177490
+  avaliação: 15000/177490
+  avaliação: 20000/177490
+  avaliação: 25000/177490
+  avaliação: 30000/177490
+  avaliação: 35000/177490
+  avaliação: 40000/177490
+  avaliação: 45000/177490
+  avaliação: 50000/177490
+  avaliação: 55000/177490
+  avaliação: 60000/177490
+  avaliação: 65000/177490
+  avaliação: 70000/177490
+  avaliação: 75000/177490
+  avaliação: 80000/177490
+  avaliação: 85000/177490
+  avaliação: 90000/177490
+  avaliação: 95000/177490
+  avaliação: 100000/177490
+  avaliação: 105000/177490
+  avaliação: 110000/177490
+  avaliação: 115000/177490
+  avaliação: 120000/177490
+  avaliação: 125000/177490
+  avaliação: 130000/177490
+  avaliação: 135000/177490
+  avaliação: 140000/177490
+  avaliação: 145000/177490
+  avaliação: 150000/177490
+  avaliação: 155000/177490
+  avaliação: 160000/177490
+  avaliação: 165000/177490
+  avaliação: 170000/177490
+  avaliação: 175000/177490
+  avaliação: 177490/177490
+{"arm": "E25", "fonte": "prefixo 25000 da trajetória de entropia do E6 (SGD), gold", "n_train": 25000, "n_train_classes": 647, "epochs": 3, "batch_size": 128, "max_length": 32, "seed": 42, "data_seed": 42, "eval_n": 177490, "eval_limit": 0, "accuracy": 0.8228, "accuracy_wilson95": [0.8211, 0.8246], "macro_f1": 0.2989, "fit_seconds": 416.7, "predict_seconds": 320.8}
+
+=== braço E30: prefixo 30000 da trajetória de entropia do E6 (SGD), gold · n=30000 classes=648 ===
+BertForSequenceClassification LOAD REPORT from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING	:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/235 loss=6.4766
+  época 1/3 passo 11/235 loss=6.3126
+  época 1/3 passo 21/235 loss=6.1174
+  época 1/3 passo 31/235 loss=5.9794
+  época 1/3 passo 41/235 loss=5.8896
+  época 1/3 passo 51/235 loss=5.6412
+  época 1/3 passo 61/235 loss=5.6519
+  época 1/3 passo 71/235 loss=5.5696
+  época 1/3 passo 81/235 loss=5.2962
+  época 1/3 passo 91/235 loss=5.2679
+  época 1/3 passo 101/235 loss=4.9700
+  época 1/3 passo 111/235 loss=5.0895
+  época 1/3 passo 121/235 loss=4.8546
+  época 1/3 passo 131/235 loss=4.9216
+  época 1/3 passo 141/235 loss=4.7465
+  época 1/3 passo 151/235 loss=4.5966
+  época 1/3 passo 161/235 loss=4.3446
+  época 1/3 passo 171/235 loss=4.1652
+  época 1/3 passo 181/235 loss=4.2534
+  época 1/3 passo 191/235 loss=4.0785
+  época 1/3 passo 201/235 loss=3.9688
+  época 1/3 passo 211/235 loss=3.6422
+  época 1/3 passo 221/235 loss=3.6077
+  época 1/3 passo 231/235 loss=3.4610
+  época 1: loss médio 4.9554
+  época 2/3 passo 1/235 loss=3.6071
+  época 2/3 passo 11/235 loss=3.3842
+  época 2/3 passo 21/235 loss=3.3081
+  época 2/3 passo 31/235 loss=3.5818
+  época 2/3 passo 41/235 loss=2.8290
+  época 2/3 passo 51/235 loss=3.0988
+  época 2/3 passo 61/235 loss=3.0621
+  época 2/3 passo 71/235 loss=2.9771
+  época 2/3 passo 81/235 loss=2.8480
+  época 2/3 passo 91/235 loss=3.0067
+  época 2/3 passo 101/235 loss=2.9463
+  época 2/3 passo 111/235 loss=2.4541
+  época 2/3 passo 121/235 loss=2.5423
+  época 2/3 passo 131/235 loss=2.4403
+  época 2/3 passo 141/235 loss=2.5272
+  época 2/3 passo 151/235 loss=2.4143
+  época 2/3 passo 161/235 loss=2.6473
+  época 2/3 passo 171/235 loss=2.7096
+  época 2/3 passo 181/235 loss=2.4437
+  época 2/3 passo 191/235 loss=2.0327
+  época 2/3 passo 201/235 loss=2.3506
+  época 2/3 passo 211/235 loss=1.9589
+  época 2/3 passo 221/235 loss=2.5145
+  época 2/3 passo 231/235 loss=2.3548
+  época 2: loss médio 2.7474
+  época 3/3 passo 1/235 loss=2.1962
+  época 3/3 passo 11/235 loss=1.6966
+  época 3/3 passo 21/235 loss=1.9892
+  época 3/3 passo 31/235 loss=1.8105
+  época 3/3 passo 41/235 loss=1.8310
+  época 3/3 passo 51/235 loss=1.5995
+  época 3/3 passo 61/235 loss=1.7534
+  época 3/3 passo 71/235 loss=1.9753
+  época 3/3 passo 81/235 loss=1.6524
+  época 3/3 passo 91/235 loss=1.5150
+  época 3/3 passo 101/235 loss=1.4620
+  época 3/3 passo 111/235 loss=1.7985
+  época 3/3 passo 121/235 loss=1.7931
+  época 3/3 passo 131/235 loss=1.6790
+  época 3/3 passo 141/235 loss=1.6236
+  época 3/3 passo 151/235 loss=1.8048
+  época 3/3 passo 161/235 loss=1.5902
+  época 3/3 passo 171/235 loss=2.0124
+  época 3/3 passo 181/235 loss=1.7590
+  época 3/3 passo 191/235 loss=1.2398
+  época 3/3 passo 201/235 loss=1.5790
+  época 3/3 passo 211/235 loss=1.9195
+  época 3/3 passo 221/235 loss=1.8465
+  época 3/3 passo 231/235 loss=1.5509
+  época 3: loss médio 1.6958
+  avaliação: 5000/177490
+  avaliação: 10000/177490
+  avaliação: 15000/177490
+  avaliação: 20000/177490
+  avaliação: 25000/177490
+  avaliação: 30000/177490
+  avaliação: 35000/177490
+  avaliação: 40000/177490
+  avaliação: 45000/177490
+  avaliação: 50000/177490
+  avaliação: 55000/177490
+  avaliação: 60000/177490
+  avaliação: 65000/177490
+  avaliação: 70000/177490
+  avaliação: 75000/177490
+  avaliação: 80000/177490
+  avaliação: 85000/177490
+  avaliação: 90000/177490
+  avaliação: 95000/177490
+  avaliação: 100000/177490
+  avaliação: 105000/177490
+  avaliação: 110000/177490
+  avaliação: 115000/177490
+  avaliação: 120000/177490
+  avaliação: 125000/177490
+  avaliação: 130000/177490
+  avaliação: 135000/177490
+  avaliação: 140000/177490
+  avaliação: 145000/177490
+  avaliação: 150000/177490
+  avaliação: 155000/177490
+  avaliação: 160000/177490
+  avaliação: 165000/177490
+  avaliação: 170000/177490
+  avaliação: 175000/177490
+  avaliação: 177490/177490
+{"arm": "E30", "fonte": "prefixo 30000 da trajetória de entropia do E6 (SGD), gold", "n_train": 30000, "n_train_classes": 648, "epochs": 3, "batch_size": 128, "max_length": 32, "seed": 42, "data_seed": 42, "eval_n": 177490, "eval_limit": 0, "accuracy": 0.8395, "accuracy_wilson95": [0.8378, 0.8412], "macro_f1": 0.3231, "fit_seconds": 499.7, "predict_seconds": 321.2}
+
+=== braço E35: prefixo 35000 da trajetória de entropia do E6 (SGD), gold · n=35000 classes=648 ===
+BertForSequenceClassification LOAD REPORT from: neuralmind/bert-base-portuguese-cased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING	:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  época 1/3 passo 1/274 loss=6.4637
+  época 1/3 passo 11/274 loss=6.2985
+  época 1/3 passo 21/274 loss=6.1515
+  época 1/3 passo 31/274 loss=5.8326
+  época 1/3 passo 41/274 loss=5.6794
+  época 1/3 passo 51/274 loss=5.7605
+  época 1/3 passo 61/274 loss=5.4748
+  época 1/3 passo 71/274 loss=5.2554
+  época 1/3 passo 81/274 loss=5.0148
+  época 1/3 passo 91/274 loss=4.8890
+  época 1/3 passo 101/274 loss=4.7125
+  época 1/3 passo 111/274 loss=4.7315
+  época 1/3 passo 121/274 loss=4.3759
+  época 1/3 passo 131/274 loss=4.1694
+  época 1/3 passo 141/274 loss=4.0984
+  época 1/3 passo 151/274 loss=4.1667
+  época 1/3 passo 161/274 loss=4.0505
+  época 1/3 passo 171/274 loss=4.0772
+  época 1/3 passo 181/274 loss=3.7467
+  época 1/3 passo 191/274 loss=3.5991
+  época 1/3 passo 201/274 loss=3.3315
+  época 1/3 passo 211/274 loss=3.7529
+  época 1/3 passo 221/274 loss=3.0292
+  época 1/3 passo 231/274 loss=2.9408
+  época 1/3 passo 241/274 loss=2.7369
+  época 1/3 passo 251/274 loss=3.1248
+  época 1/3 passo 261/274 loss=3.0265
+  época 1/3 passo 271/274 loss=2.7775
+  época 1: loss médio 4.3893
+  época 2/3 passo 1/274 loss=2.5714
+  época 2/3 passo 11/274 loss=2.4861
+  época 2/3 passo 21/274 loss=2.7601
+  época 2/3 passo 31/274 loss=2.6904
+  época 2/3 passo 41/274 loss=2.3541
+  época 2/3 passo 51/274 loss=2.3618
+  época 2/3 passo 61/274 loss=2.4514
+  época 2/3 passo 71/274 loss=2.7658
+  época 2/3 passo 81/274 loss=2.1422
+  época 2/3 passo 91/274 loss=1.9841
+  época 2/3 passo 101/274 loss=2.4542
+  época 2/3 passo 111/274 loss=2.0187
+  época 2/3 passo 121/274 loss=2.0332
+  época 2/3 passo 131/274 loss=1.8864
+  época 2/3 passo 141/274 loss=2.3170
+  época 2/3 passo 151/274 loss=1.7625
+  época 2/3 passo 161/274 loss=1.8509
+  época 2/3 passo 171/274 loss=1.9342
+  época 2/3 passo 181/274 loss=1.8421
+  época 2/3 passo 191/274 loss=1.7752
+  época 2/3 passo 201/274 loss=1.8124
+  época 2/3 passo 211/274 loss=1.8733
+  época 2/3 passo 221/274 loss=1.9887
+  época 2/3 passo 231/274 loss=1.5729
+  época 2/3 passo 241/274 loss=2.3293
+  época 2/3 passo 251/274 loss=1.6892
+  época 2/3 passo 261/274 loss=1.7756
+  época 2/3 passo 271/274 loss=1.4598
+  época 2: loss médio 2.0773
+  época 3/3 passo 1/274 loss=1.5189
+  época 3/3 passo 11/274 loss=1.3360
+  época 3/3 passo 21/274 loss=1.7946
+  época 3/3 passo 31/274 loss=1.4658
+  época 3/3 passo 41/274 loss=1.5467
+  época 3/3 passo 51/274 loss=1.0068
+  época 3/3 passo 61/274 loss=1.3250
+  época 3/3 passo 71/274 loss=1.4339
+  época 3/3 passo 81/274 loss=1.2474
+  época 3/3 passo 91/274 loss=1.1396
+  época 3/3 passo 101/274 loss=1.2845
+  época 3/3 passo 111/274 loss=1.3475
+  época 3/3 passo 121/274 loss=1.1653
+  época 3/3 passo 131/274 loss=1.4024
+  época 3/3 passo 141/274 loss=1.1249
+  época 3/3 passo 151/274 loss=1.3868
+  época 3/3 passo 161/274 loss=1.0859
+  época 3/3 passo 171/274 loss=1.2381
+  época 3/3 passo 181/274 loss=0.9637
+  época 3/3 passo 191/274 loss=1.3219
+  época 3/3 passo 201/274 loss=1.1527
+  época 3/3 passo 211/274 loss=1.2599
+  época 3/3 passo 221/274 loss=1.5097
+  época 3/3 passo 231/274 loss=1.0993
+  época 3/3 passo 241/274 loss=1.2975
+  época 3/3 passo 251/274 loss=1.2425
+  época 3/3 passo 261/274 loss=1.0276
+  época 3/3 passo 271/274 loss=1.2977
+  época 3: loss médio 1.2815
+  avaliação: 5000/177490
+  avaliação: 10000/177490
+  avaliação: 15000/177490
+  avaliação: 20000/177490
+  avaliação: 25000/177490
+  avaliação: 30000/177490
+  avaliação: 35000/177490
+  avaliação: 40000/177490
+  avaliação: 45000/177490
+  avaliação: 50000/177490
+  avaliação: 55000/177490
+  avaliação: 60000/177490
+  avaliação: 65000/177490
+  avaliação: 70000/177490
+  avaliação: 75000/177490
+  avaliação: 80000/177490
+  avaliação: 85000/177490
+  avaliação: 90000/177490
+  avaliação: 95000/177490
+  avaliação: 100000/177490
+  avaliação: 105000/177490
+  avaliação: 110000/177490
+  avaliação: 115000/177490
+  avaliação: 120000/177490
+  avaliação: 125000/177490
+  avaliação: 130000/177490
+  avaliação: 135000/177490
+  avaliação: 140000/177490
+  avaliação: 145000/177490
+  avaliação: 150000/177490
+  avaliação: 155000/177490
+  avaliação: 160000/177490
+  avaliação: 165000/177490
+  avaliação: 170000/177490
+  avaliação: 175000/177490
+  avaliação: 177490/177490
+{"arm": "E35", "fonte": "prefixo 35000 da trajetória de entropia do E6 (SGD), gold", "n_train": 35000, "n_train_classes": 648, "epochs": 3, "batch_size": 128, "max_length": 32, "seed": 42, "data_seed": 42, "eval_n": 177490, "eval_limit": 0, "accuracy": 0.8656, "accuracy_wilson95": [0.864, 0.8672], "macro_f1": 0.366, "fit_seconds": 582.8, "predict_seconds": 320.9}
+VARREDURA (n, F1, acc, braço) vs critério F1>=0.3506 / acc>=0.8259:
+     E n= 15000 F1=0.2088 [--] acc=0.6997 [--] (30%)
+   E20 n= 20000 F1=0.2651 [--] acc=0.7702 [--] (40%)
+   E25 n= 25000 F1=0.2989 [--] acc=0.8228 [--] (50%)
+   E30 n= 30000 F1=0.3231 [--] acc=0.8395 [OK] (60%)
+   E35 n= 35000 F1=0.3660 [OK] acc=0.8656 [OK] (70%)
+     D n= 50000 F1=0.3691 [OK] acc=0.8694 [OK] (100%)
