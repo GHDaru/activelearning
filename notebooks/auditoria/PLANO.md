@@ -59,7 +59,17 @@ não faz sentido esperar cota de GPU para rodar E1/E4/E6/P1.
    regime. É o item de maior risco desta lista.
 
 4. **Sem chaves de API nesta sessão** (`NVIDIA_API_KEY`, `OPENROUTER_API_KEY`,
-   `OPENAI_API_KEY`, `GEMINI_API_KEY` — todas ausentes). E0/E0-P/E5 não rodam.
+   `OPENAI_API_KEY`, `GEMINI_API_KEY` — todas ausentes). Mas isso importa menos
+   do que parecia: veja o item 6.
+
+6. **As anotações cruas do E0 e do E0-P estão versionadas** — 33 e 9 arquivos,
+   incluindo os `annotations_*.jsonl` de cada provedor. Elas escaparam do
+   `.gitignore` porque a regra `experiments/*/results/*.jsonl` casa **um só
+   nível**, e as do E0 moram em `results/rand/` e `results/strat/`. O cache do
+   E5, que fica direto em `results/`, foi apanhado pela mesma regra — é por isso
+   que um sobreviveu e o outro não. Consequência prática: **E0 e E0-P podem ser
+   reauditados de graça, sem chave e sem gastar nada**; só uma recoleta nova
+   precisa de crédito.
 
 5. **`annotation_cache_nemotron.jsonl` continua fora do repositório**, travando
    os braços A/B/C do E3′ e qualquer replay do E5 a partir do cache.
@@ -71,7 +81,8 @@ não faz sentido esperar cota de GPU para rodar E1/E4/E6/P1.
   Kaggle Dataset privado.
 - **Decidir o regime do E3′** (as três opções estão na mensagem
   `20260816-2130`). Enquanto não decidir, toda semente nova é aposta.
-- Dizer quais chaves de API existem e qual orçamento a Onda 3 pode gastar.
+- Dizer quais chaves de API existem e qual orçamento a Onda **3b** pode gastar.
+  (Perdeu urgência: a Onda 3a não depende disso.)
 
 ### Onda 1 — reproduzir o que já tem artefato (começa já; sem depender da Onda 0)
 Notebooks `e6-populacao.ipynb` e `e3linha-validacao.ipynb`. Meta: bater o número
@@ -83,9 +94,17 @@ Notebook `p1p2-composicao-l0.ipynb`: roda os dois replays que nunca foram
 commitados e coloca lado a lado a série antiga (do draft) e a nova. É CPU,
 ~2 h. **É aqui que o pedido do autor sobre a edição antiga se resolve.**
 
-### Onda 3 — oráculo (bloqueada na Onda 0; custa dinheiro)
-`e0-oraculos.ipynb`, `e0p-prompt.ipynb`, `e5-ciclo.ipynb`. Antes de gastar,
-cada um roda em modo *replay do cache* para auditar sem repetir chamada paga.
+### Onda 3a — reanálise do oráculo (GRÁTIS, não espera ninguém)
+`e0-oraculos.ipynb` e `e0p-prompt.ipynb` recalculam as métricas a partir das
+anotações já versionadas (item 6 acima). Sem chave, sem custo, sem repetir uma
+única chamada ao LLM. É auditoria de verdade: confere se os números publicados
+saem das respostas que estão gravadas.
+
+### Onda 3b — recoleta do oráculo (bloqueada; custa dinheiro)
+Só se a 3a apontar divergência que exija reexecução, ou se o autor quiser
+provedor/modelo novo. `e5-ciclo.ipynb` cai aqui porque depende do cache que
+falta. Estimativa da tabela de reprodução: ~US$ 4 no E0, ~US$ 0,10 no E0-P,
+US$ 0 no E5 (NIM).
 
 ### Onda 4 — CPU longo
 `e1e4-estrategias-ruido.ipynb` (~9 h). Cabe numa sessão de CPU do Kaggle com
