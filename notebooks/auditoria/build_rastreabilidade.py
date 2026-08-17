@@ -365,14 +365,35 @@ add("figuras do Cap. 4 e do Cap. 5 geradas por script",
     "figuras publicadas vivem em tesedaru/N-*/imagens/, desacopladas do gerador — "
     "não há garantia de que a figura da tese corresponda ao artefato atual")
 
-add("replays de auditoria de P1 e P2 (a base do 'execuções já auditadas')",
-    "3-metodo/texto.tex#tab:metodo-experimentos", "conjunto-inicial",
-    "experiments/p1/results/replay_l0.jsonl e replay_ga.jsonl",
-    "experiments/p1/{replay_l0_sensitivity.py,replay_ga.py}", "sem-evidencia",
-    "docs/convergencia-replays.md declara estes dois arquivos como artefatos-fonte "
-    "da auditoria (convergência de 0,7 p.p. e inflação de circularidade de 6,3 p.p.), "
-    "mas git log --all mostra que NUNCA foram commitados. A afirmação 'execuções já "
-    "realizadas e auditadas' do Cap. 3 é hoje inverificável")
+# ------------------------------------------------- P1/P2 (Onda 2 — reexecutado)
+ART_P1 = "experiments/p1/results/replay_l0.jsonl"
+ART_P2 = "experiments/p1/results/replay_ga.jsonl"
+COD_P1 = "experiments/p1/replay_l0_sensitivity.py"
+COD_P2 = "experiments/p1/replay_ga.py"
+NB_P1 = "notebooks/auditoria/conjunto-inicial.ipynb"
+
+for tam, acc_pub, delta in [(10, 6.7, -0.1), (100, 24.7, -0.7), (1_000, 55.9, -0.4),
+                            (10_000, 76.9, -0.5), (200_000, 89.1, -0.3)]:
+    add(f"P1 sensibilidade |L0|={tam}: acurácia {acc_pub}%",
+        "4-resultados-l0/texto.tex#sec:res-l0-sens", "conjunto-inicial", ART_P1, COD_P1,
+        "rastreado", f"replay: {acc_pub + delta:.1f}% (Δ {delta:+.1f} p.p., dentro de "
+        "1,0 p.p. de folga)", NB_P1)
+
+add("P1 amplitude em |L0|=100: 6,4 p.p. entre repetições",
+    "4-resultados-l0/texto.tex#sec:res-l0-sens", "conjunto-inicial", ART_P1, COD_P1,
+    "rastreado", "replay (10 reps, vs. 30 originais): 4,8 p.p. — mesmo fenômeno, "
+    "amplitude menor por ter menos repetições, não é refutação", NB_P1)
+
+add("P2 inflação de circularidade em max_f1 |L0|=500: +6,3 p.p.",
+    "docs/convergencia-replays.md#C2", "conjunto-inicial", ART_P2, COD_P2, "rastreado",
+    "replay REPRODUZ EXATAMENTE: +6,3 p.p. (19,4% partição de aptidão vs. 13,1% teste "
+    "intocado, valores idênticos ao relatório que estava sem artefato)", NB_P1)
+
+add("P2 ganho do AG sobre a média aleatória em |L0|=50: +5,2 p.p.",
+    "docs/convergencia-replays.md#C2", "conjunto-inicial", ART_P2, COD_P2, "divergente",
+    "replay dá +1,3 p.p. — MESMA DIREÇÃO (o AG vence), magnitude ~4x menor. Não é "
+    "arredondamento; é divergência de grau que merece decisão do principal sobre "
+    "investigar", NB_P1)
 
 # ---------------------------------------------------------------- gravação
 resumo = {}
