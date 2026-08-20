@@ -1,54 +1,54 @@
 {
   "seed": 42,
   "data_seed": 42,
-  "eval_n": 20092,
+  "eval_n": 177490,
   "fonte_predicoes": "e3prime_<braço>_s42_pred.json",
   "definicao": "b = só X acerta, c = só Y acerta (par X-Y); p_exato = binomial bicaudal em min(b,c)~Bin(b+c, 0,5); chi2 com correção de continuidade",
   "pares": {
     "A-B": {
       "acuracia": {
-        "A": 0.6585,
-        "B": 0.7023
+        "A": 0.5438,
+        "B": 0.5662
       },
-      "delta_acuracia": -0.0438,
-      "concordantes_ambos_acertam": 11967,
-      "concordantes_ambos_erram": 4719,
-      "b": 1263,
-      "c": 2143,
-      "discordantes": 3406,
-      "p_exato": 7.963432341052133e-52,
-      "chi2_correcao": 226.847,
-      "p_chi2": 2.9038353597518255e-51
+      "delta_acuracia": -0.0224,
+      "concordantes_ambos_acertam": 81994,
+      "concordantes_ambos_erram": 62474,
+      "b": 14521,
+      "c": 18501,
+      "discordantes": 33022,
+      "p_exato": 1.569394467001841e-106,
+      "chi2_correcao": 479.4513,
+      "p_chi2": 2.8127982019930765e-106
     },
     "B-C": {
       "acuracia": {
-        "B": 0.7023,
-        "C": 0.7316
+        "B": 0.5662,
+        "C": 0.6776
       },
-      "delta_acuracia": -0.0294,
-      "concordantes_ambos_acertam": 12912,
-      "concordantes_ambos_erram": 4194,
-      "b": 1198,
-      "c": 1788,
-      "discordantes": 2986,
-      "p_exato": 2.95683211621105e-27,
-      "chi2_correcao": 116.1825,
-      "p_chi2": 4.3350641115248466e-27
+      "delta_acuracia": -0.1114,
+      "concordantes_ambos_acertam": 91908,
+      "concordantes_ambos_erram": 48627,
+      "b": 8587,
+      "c": 28368,
+      "discordantes": 36955,
+      "p_exato": 0.0,
+      "chi2_correcao": 10587.1574,
+      "p_chi2": 0.0
     },
     "E35-D": {
       "acuracia": {
-        "E35": 0.886,
-        "D": 0.8831
+        "E35": 0.8656,
+        "D": 0.8694
       },
-      "delta_acuracia": 0.0028,
-      "concordantes_ambos_acertam": 17183,
-      "concordantes_ambos_erram": 1730,
-      "b": 618,
-      "c": 561,
-      "discordantes": 1179,
-      "p_exato": 0.10286803291127154,
-      "chi2_correcao": 2.6599,
-      "p_chi2": 0.10290841678318854
+      "delta_acuracia": -0.0038,
+      "concordantes_ambos_acertam": 150289,
+      "concordantes_ambos_erram": 19831,
+      "b": 3345,
+      "c": 4025,
+      "discordantes": 7370,
+      "p_exato": 2.4768036693058147e-15,
+      "chi2_correcao": 62.5564,
+      "p_chi2": 2.5891660184256945e-15
     }
   }
 }
