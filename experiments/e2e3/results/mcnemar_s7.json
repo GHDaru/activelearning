@@ -1,0 +1,54 @@
+{
+  "seed": 7,
+  "data_seed": 42,
+  "eval_n": 177490,
+  "fonte_predicoes": "e3prime_<braço>_s7_pred.json",
+  "definicao": "b = só X acerta, c = só Y acerta (par X-Y); p_exato = binomial bicaudal em min(b,c)~Bin(b+c, 0,5); chi2 com correção de continuidade",
+  "pares": {
+    "A-B": {
+      "acuracia": {
+        "A": 0.5663,
+        "B": 0.6366
+      },
+      "delta_acuracia": -0.0703,
+      "concordantes_ambos_acertam": 91473,
+      "concordantes_ambos_erram": 55447,
+      "b": 9048,
+      "c": 21522,
+      "discordantes": 30570,
+      "p_exato": 0.0,
+      "chi2_correcao": 5089.1635,
+      "p_chi2": 0.0
+    },
+    "B-C": {
+      "acuracia": {
+        "B": 0.6366,
+        "C": 0.6679
+      },
+      "delta_acuracia": -0.0312,
+      "concordantes_ambos_acertam": 101663,
+      "concordantes_ambos_erram": 47617,
+      "b": 11332,
+      "c": 16878,
+      "discordantes": 28210,
+      "p_exato": 1.4410556485118827e-240,
+      "chi2_correcao": 1089.9335,
+      "p_chi2": 5.090761259161855e-239
+    },
+    "E35-D": {
+      "acuracia": {
+        "E35": 0.8592,
+        "D": 0.8678
+      },
+      "delta_acuracia": -0.0087,
+      "concordantes_ambos_acertam": 148971,
+      "concordantes_ambos_erram": 19936,
+      "b": 3520,
+      "c": 5063,
+      "discordantes": 8583,
+      "p_exato": 1.5652327665176896e-62,
+      "chi2_correcao": 277.0318,
+      "p_chi2": 3.329882555711705e-62
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "seed": 7,
+  "data_seed": 42,
+  "eval_n": 177490,
+  "n_boot": 10000,
+  "boot_seed": 42,
+  "metodo": "bootstrap pareado por instância (mesmas reamostragens em todos os braços), IC percentil 95%; Macro F1 por braço com rótulos fixados em união(gabarito, predições) da amostra completa, classe ausente na reamostragem conta F1=0",
+  "macro_f1_braco": {
+    "A": {
+      "ponto": 0.1421,
+      "ic95": [
+        0.1406,
+        0.1432
+      ]
+    },
+    "B": {
+      "ponto": 0.163,
+      "ic95": [
+        0.1617,
+        0.164
+      ]
+    },
+    "C": {
+      "ponto": 0.1255,
+      "ic95": [
+        0.1246,
+        0.1263
+      ]
+    },
+    "D": {
+      "ponto": 0.3771,
+      "ic95": [
+        0.3744,
+        0.3786
+      ]
+    },
+    "E35": {
+      "ponto": 0.344,
+      "ic95": [
+        0.3419,
+        0.3454
+      ]
+    }
+  },
+  "pares": {
+    "A-B": {
+      "delta_ponto": -0.0209,
+      "delta_ic95": [
+        -0.0226,
+        -0.0192
+      ],
+      "delta_media_boot": -0.0209,
+      "frac_replicas_delta_menor_igual_0": 1.0
+    },
+    "B-C": {
+      "delta_ponto": 0.0375,
+      "delta_ic95": [
+        0.036,
+        0.0389
+      ],
+      "delta_media_boot": 0.0374,
+      "frac_replicas_delta_menor_igual_0": 0.0
+    },
+    "E35-D": {
+      "delta_ponto": -0.033,
+      "delta_ic95": [
+        -0.0352,
+        -0.0306
+      ],
+      "delta_media_boot": -0.0329,
+      "frac_replicas_delta_menor_igual_0": 1.0
+    }
+  }
+}
