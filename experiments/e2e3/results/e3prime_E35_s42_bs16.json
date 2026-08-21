@@ -16,6 +16,6 @@
     0.8928
   ],
   "macro_f1": 0.4695,
-  "fit_seconds": 803.4,
-  "predict_seconds": 316.8
+  "fit_seconds": 775.6,
+  "predict_seconds": 309.0
 }
