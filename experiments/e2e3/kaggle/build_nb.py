@@ -64,21 +64,30 @@ except Exception:
 SEED = 123          # semente de TREINO (executor01 usa 7). O runner reescreve esta linha.
 
 # MODO decide batch size e tamanho da avaliação:
-#   "canonico"    -> --batch-size 128 --eval-limit 0      (populacao inteira, 177.490 itens)
-#   "pareado_s42" -> --batch-size 16  --eval-limit 20000  (identico a semente 42 ja publicada)
+#   "canonico"       -> --batch-size 128 --eval-limit 0     (populacao inteira, 177.490 itens)
+#   "pareado_s42"    -> --batch-size 16  --eval-limit 20000 (identico a semente 42 legada)
+#   "subtreino_bs16" -> --batch-size 16  --eval-limit 0     (avaliacao canonica, lote reduzido —
+#        confirmado em 2026-08-18: D sobe +22,5% de Macro F1 com lote 16 vs 128, mesmas epocas;
+#        autorizado pelo autor a virar o regime canonico definitivo apos verificacao)
 # ATENCAO: os resultados _s42 do repositorio foram gerados com bs=16 e eval-limit=20000.
 # Media +- desvio entre sementes so e valida entre execucoes com o MESMO modo.
 MODO = "canonico"
 
+# Saida do modo subtreino_bs16 leva o sufixo abaixo (nunca sobrescreve os arquivos
+# canonicos _s<semente>.json ja publicados em bs=128).
+SFX = "_bs16" if MODO == "subtreino_bs16" else ""
+
 REPO = 'https://github.com/GHDaru/activelearning.git'   # publico: nao precisa de token
-BRANCH = 'main'
+BRANCH = 'claude/e3prime-seed-7-rwatey'
 REPO_DIR = '/tmp/activelearning'   # fora de /kaggle/working: nao suja a saida do kernel
 ARMS_COMPLETOS = 'A,B,C,E,D,E20,E25,E30,E35'
 EPOCHS = 3
 OUT = '/kaggle/working/results'
 
-BATCH_SIZE, EVAL_LIMIT = (128, 0) if MODO == 'canonico' else (16, 20000)
-print(f'semente de treino={SEED} | modo={MODO} | batch={BATCH_SIZE} | eval-limit={EVAL_LIMIT}')'''),
+BATCH_SIZE = 128 if MODO == 'canonico' else 16
+EVAL_LIMIT = 20_000 if MODO == 'pareado_s42' else 0
+print(f'semente de treino={SEED} | modo={MODO} | batch={BATCH_SIZE} | '
+      f'eval-limit={EVAL_LIMIT} | sufixo={SFX or "(nenhum)"}')'''),
 
     code("""# 3) Clonar o repositório e instalar só o que falta (o Kaggle já traz torch com CUDA)
 #    O clone vai para /tmp (NAO /kaggle/working): assim ele nao entra na saida do
@@ -134,10 +143,17 @@ if not os.path.exists(CACHE_DEST):
         shutil.copy(achados[0], CACHE_DEST)
         print('cache do oraculo restaurado de', achados[0])
 
-# Retomada: traz de volta resultados desta mesma semente gerados antes
+# Retomada: traz de volta resultados desta mesma semente gerados antes. Busca
+# pelo nome COM sufixo (e o que um dataset de retomada anexado traria), mas
+# restaura no OUT SEM sufixo — e o nome que run_e3prime.py usa para decidir
+# se pula o braco (ele nao sabe nada sobre SFX).
 os.makedirs(OUT, exist_ok=True)
-for p in glob.glob(f'/kaggle/input/**/e3prime_*_s{SEED}*.json', recursive=True):
-    destino = os.path.join(OUT, os.path.basename(p))
+for p in glob.glob(f'/kaggle/input/**/e3prime_*_s{SEED}{SFX}*.json', recursive=True):
+    base = os.path.basename(p)
+    if SFX:
+        base = base.replace(f'_s{SEED}{SFX}_pred.json', f'_s{SEED}_pred.json') \
+                    .replace(f'_s{SEED}{SFX}.json', f'_s{SEED}.json')
+    destino = os.path.join(OUT, base)
     if not os.path.exists(destino):
         shutil.copy(p, destino)
 
@@ -190,13 +206,27 @@ if proc.returncode != 0:
         print(linha, end='', flush=True)
     raise SystemExit(f'run_e3prime.py FALHOU (codigo {proc.returncode}). '
                      f'O log foi salvo em {LOG} e desce junto com a saida do kernel. '
-                     'Bracos ja concluidos estao salvos: rodar de novo os pula.')'''),
+                     'Bracos ja concluidos estao salvos: rodar de novo os pula.')
+
+# Renomeia com o sufixo do MODO (se houver) — feito aqui, uma vez, para nao
+# colidir com os arquivos canonicos _s<semente>.json ja publicados quando os
+# resultados forem copiados para o repositorio. Roda mesmo em falha parcial
+# (bracos ja escritos antes do erro tambem levam o sufixo).
+if SFX:
+    for p in glob.glob(f'{OUT}/e3prime_*_s{SEED}.json') + glob.glob(f'{OUT}/e3prime_*_s{SEED}_pred.json'):
+        base = os.path.basename(p)
+        novo = base.replace(f'_s{SEED}_pred.json', f'_s{SEED}{SFX}_pred.json') \
+                    .replace(f'_s{SEED}.json', f'_s{SEED}{SFX}.json')
+        if novo != base:
+            os.rename(p, os.path.join(OUT, novo))
+    print(f'renomeado com sufixo {SFX}:',
+          sorted(os.path.basename(p) for p in glob.glob(f'{OUT}/e3prime_*_s{SEED}{SFX}*.json')))'''),
 
     code('''# 6) Consolidar e empacotar para download
 import glob, json, os, re, shutil
 
 linhas = []
-for p in sorted(glob.glob(f'{OUT}/e3prime_*_s{SEED}.json')):
+for p in sorted(glob.glob(f'{OUT}/e3prime_*_s{SEED}{SFX}.json')):
     if p.endswith('_pred.json'):
         continue
     d = json.load(open(p))

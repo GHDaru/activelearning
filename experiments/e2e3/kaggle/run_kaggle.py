@@ -163,17 +163,21 @@ def colhe_saida(kid: str, seed: int) -> list[str]:
         return sorted(trazidos)
 
 
-def bracos_faltando(seed: int, esperados: list[str]) -> list[str]:
+def bracos_faltando(seed: int, esperados: list[str], sfx: str = "") -> list[str]:
     return [b for b in esperados
-            if not (RESULTS / f"e3prime_{b}_s{seed}.json").exists()]
+            if not (RESULTS / f"e3prime_{b}_s{seed}{sfx}.json").exists()]
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, required=True, help="semente de TREINO (7, 123, ...)")
-    ap.add_argument("--modo", choices=["canonico", "pareado_s42"], default="canonico",
+    ap.add_argument("--modo", choices=["canonico", "pareado_s42", "subtreino_bs16"],
+                    default="canonico",
                     help="canonico = bs128/eval-limit 0; pareado_s42 = bs16/eval-limit 20000 "
-                         "(comparável aos resultados _s42 já publicados)")
+                         "(comparável aos resultados _s42 já publicados); subtreino_bs16 = "
+                         "bs16/eval-limit 0 (avaliação canônica, lote reduzido — confirmado em "
+                         "2026-08-18 que sobe Macro F1 em +22%; saída com sufixo _bs16, nunca "
+                         "sobrescreve os arquivos canônicos)")
     ap.add_argument("--dataset", action="append", default=[],
                     help="dataset do Kaggle a anexar, ex.: usuario/falco-annotation-cache "
                          "(necessário para os braços A, B e C). Pode repetir.")
@@ -200,16 +204,19 @@ def main() -> int:
         print("AVISO: sem --dataset com o annotation_cache_nemotron.jsonl, os braços "
               "A, B e C NÃO rodam (o cache é excluído pelo .gitignore do repositório).")
 
+    sfx = "_bs16" if args.modo == "subtreino_bs16" else ""
+    slug_padrao = f"falco-subtreino-s{args.seed}" if sfx else f"falco-e3prime-s{args.seed}"
+
     if args.so_monta:
         destino = Path(tempfile.mkdtemp(prefix=f"e3prime_s{args.seed}_"))
-        monta_pasta(destino, args.seed, f"SEU_USUARIO/falco-e3prime-s{args.seed}",
+        monta_pasta(destino, args.seed, f"SEU_USUARIO/{args.slug or slug_padrao}",
                     args.modo, args.dataset, args.retomar_de, args.maquina)
         print(f"pronto em {destino} — suba manualmente ou rode sem --so-monta com o token.")
         return 0
 
     if not shutil.which("kaggle"):
         sys.exit("CLI do Kaggle ausente: pip install kaggle")
-    kid = f"{usuario_kaggle()}/{args.slug or f'falco-e3prime-s{args.seed}'}"
+    kid = f"{usuario_kaggle()}/{args.slug or slug_padrao}"
     print(f"kernel: {kid} | semente={args.seed} | modo={args.modo} | "
           f"maquina={args.maquina} | braços={esperados}")
 
@@ -257,7 +264,7 @@ def main() -> int:
 
         trazidos = colhe_saida(kid, args.seed)
         print(f"  baixados: {trazidos or 'nada'}")
-        faltam = bracos_faltando(args.seed, esperados)
+        faltam = bracos_faltando(args.seed, esperados, sfx)
         if not faltam:
             print(f"CONCLUÍDO: todos os braços da semente {args.seed} estão em {RESULTS}")
             return 0
@@ -266,7 +273,7 @@ def main() -> int:
         if kid not in kernels_retomada:
             kernels_retomada.append(kid)
 
-    print(f"PAROU com braços faltando: {bracos_faltando(args.seed, esperados)}", file=sys.stderr)
+    print(f"PAROU com braços faltando: {bracos_faltando(args.seed, esperados, sfx)}", file=sys.stderr)
     return 1
 
 
