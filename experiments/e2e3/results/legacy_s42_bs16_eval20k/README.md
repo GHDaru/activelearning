@@ -19,12 +19,31 @@ Diferenças deste regime antigo para o canônico:
 parte porque a população inteira contém classes raras que a amostra de 20k
 sub-representa.
 
-**`mcnemar_s42.json` e `bootstrap_f1_s42.json`** (ainda na pasta de cima, para
-não quebrar os links do plano) foram calculados sobre as predições DESTE
-regime — os pares vêm dos `*_pred.json` desta pasta. Depois que a s42 canônica
-existir (e A/B/C canônicos, quando o cache do oráculo chegar), essas
-estatísticas precisam ser refeitas sobre as predições canônicas.
+**`mcnemar_s42.json` e `bootstrap_f1_s42.json`** desta pasta foram calculados
+sobre as predições DESTE regime antigo — os pares vêm dos `*_pred.json` desta
+pasta. **Já foram refeitos** sobre as predições canônicas (2026-08-17, cache
+do oráculo re-coletado) e os arquivos homônimos na pasta de cima são agora os
+canônicos — comparação entre os dois pares está documentada na mensagem de
+conclusão ao principal (coordenacao/caixa, tesedaru).
 
-Os únicos braços com rótulos do pipeline real (A) e seus controles (B, C) só
-existem neste regime por enquanto: dependem do
-`annotation_cache_nemotron.jsonl`, que não está no repositório.
+**Achado crítico da comparação**: dois dos três contrastes citados no
+Cap. 5 TROCAM DE SINAL entre os regimes.
+- **B−C** (valor da seleção): legado +0,0204 (seleção melhor) → canônico
+  −0,0120 (seleção PIOR que aleatório em F1, CI exclui zero).
+- **E35−D** (a alegação "menos é mais, também no transformer", §5,
+  `\label{sec:res-e3p-varredura}`): legado +0,0117 com McNemar não
+  significativo (p=0,103, "35k ≈ 50k") → canônico −0,0030 com CI
+  [−0,0055;−0,0008] (exclui zero) e McNemar p=2,5e-15 (MUITO
+  significativo). **E35 NÃO supera D em nenhuma das 3 sementes, em nenhuma
+  métrica** — a alegação (iii) da seção precisa de revisão.
+
+A anomalia que o revisor2 apontou (ponto fora do próprio IC bootstrap em D e
+E35, `20260817-0545`) **não se reproduz** no regime canônico — a população de
+avaliação 177k vs 20k reduz o viés de classe-ausente-na-reamostragem.
+
+Os braços com rótulos do pipeline real (A) e seus controles (B, C) desta
+pasta foram os únicos existentes até 2026-08-17: dependiam do
+`annotation_cache_nemotron.jsonl` original, perdido. Um cache RE-COLETADO
+(ver `experiments/e5cycle/results/recoleta-20260817/`) já produziu A/B/C
+canônicos nas 3 sementes — não comparáveis com os A/B/C desta pasta (regime
+diferente E proveniência do oráculo diferente).

@@ -108,6 +108,11 @@ class BertimbauClassifier:
                 optimizer.zero_grad()
                 out = self._model(input_ids=ids, attention_mask=mask, labels=yy)
                 out.loss.backward()
+                # Sem isto, lotes pequenos (mais passos, gradiente mais ruidoso)
+                # podem divergir para um minimo degenerado — visto em produção:
+                # 2 de 18 execuções em lote 16 colapsaram para prever sempre a
+                # mesma classe (Macro F1 = 0), de forma reprodutível.
+                torch.nn.utils.clip_grad_norm_(self._model.parameters(), max_norm=1.0)
                 optimizer.step()
                 total += float(out.loss.detach())
                 if self._progress and step % 10 == 0:

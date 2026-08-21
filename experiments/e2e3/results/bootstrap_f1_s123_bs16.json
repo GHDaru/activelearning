@@ -1,5 +1,5 @@
 {
-  "seed": 42,
+  "seed": 123,
   "data_seed": 42,
   "eval_n": 177490,
   "n_boot": 10000,
@@ -7,68 +7,68 @@
   "metodo": "bootstrap pareado por instância (mesmas reamostragens em todos os braços), IC percentil 95%; Macro F1 por braço com rótulos fixados em união(gabarito, predições) da amostra completa, classe ausente na reamostragem conta F1=0",
   "macro_f1_braco": {
     "A": {
-      "ponto": 0.1496,
+      "ponto": 0.3225,
       "ic95": [
-        0.148,
-        0.1507
+        0.3195,
+        0.3242
       ]
     },
     "B": {
-      "ponto": 0.1255,
+      "ponto": 0.3038,
       "ic95": [
-        0.1246,
-        0.1263
+        0.3018,
+        0.305
       ]
     },
     "C": {
-      "ponto": 0.1375,
+      "ponto": 0.2471,
       "ic95": [
-        0.1364,
-        0.1383
+        0.2458,
+        0.2482
       ]
     },
     "D": {
-      "ponto": 0.3691,
+      "ponto": 0.4567,
       "ic95": [
-        0.3667,
-        0.3705
+        0.4523,
+        0.4583
       ]
     },
     "E35": {
-      "ponto": 0.366,
+      "ponto": 0.4632,
       "ic95": [
-        0.3633,
-        0.3676
+        0.4598,
+        0.4649
       ]
     }
   },
   "pares": {
     "A-B": {
-      "delta_ponto": 0.0241,
+      "delta_ponto": 0.0188,
       "delta_ic95": [
-        0.0225,
-        0.0254
+        0.0158,
+        0.0211
       ],
-      "delta_media_boot": 0.0239,
+      "delta_media_boot": 0.0185,
       "frac_replicas_delta_menor_igual_0": 0.0
     },
     "B-C": {
-      "delta_ponto": -0.012,
+      "delta_ponto": 0.0566,
       "delta_ic95": [
-        -0.0131,
-        -0.0108
+        0.0545,
+        0.0583
       ],
-      "delta_media_boot": -0.012,
-      "frac_replicas_delta_menor_igual_0": 1.0
+      "delta_media_boot": 0.0565,
+      "frac_replicas_delta_menor_igual_0": 0.0
     },
     "E35-D": {
-      "delta_ponto": -0.003,
+      "delta_ponto": 0.0065,
       "delta_ic95": [
-        -0.0055,
-        -0.0008
+        0.0037,
+        0.0103
       ],
-      "delta_media_boot": -0.0031,
-      "frac_replicas_delta_menor_igual_0": 0.9949
+      "delta_media_boot": 0.007,
+      "frac_replicas_delta_menor_igual_0": 0.0
     }
   }
 }
