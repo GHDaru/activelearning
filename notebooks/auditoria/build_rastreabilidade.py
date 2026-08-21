@@ -384,12 +384,30 @@ add("as 104 células do E1/E1b/E4 (sweeps.jsonl)",
 
 # ------------------------------------------------- dados brutos que faltam
 
-add("figuras do Cap. 4 e do Cap. 5 geradas por script",
+# CORREÇÃO desta auditoria (a nota anterior estava desatualizada): as 6
+# figuras de experiments/plots/figures/ (E1, E4, E6×2, ciclo, E0) ESTÃO
+# versionadas há vários commits (git log: 20059cb) e reproduzem byte-a-byte
+# (menos metadado de PNG) a partir de make_figures.py sobre os artefatos já
+# auditados (sweeps.jsonl, e0_table.json). O problema real, achado agora, é
+# outro: NENHUMA das 6 está de fato referenciada no texto atual do Cap. 4/5
+# (grep de \includegraphics em 4-*/texto.tex e 5-*/texto.tex não acha
+# nenhuma) — script e figura existem e batem, só não estão inseridas na tese.
+add("figuras de E1/E4/E6/ciclo/E0 (6 arquivos) geradas por script",
     "experiments/plots/", "todos", "experiments/plots/figures/*.{pdf,png}",
-    "experiments/plots/make_figures.py", "sem-evidencia",
-    "o script existe e nenhuma figura está versionada em experiments/plots/. As "
-    "figuras publicadas vivem em tesedaru/N-*/imagens/, desacopladas do gerador — "
-    "não há garantia de que a figura da tese corresponda ao artefato atual")
+    "experiments/plots/make_figures.py", "rastreado",
+    "reexecutado: reproduz byte-a-byte (só difere metadado de timestamp do "
+    "PNG) a partir de sweeps.jsonl e e0_table.json, ambos já auditados em "
+    "outras entradas. Mas nenhuma das 6 está \\includegraphics'da no Cap. 4 "
+    "ou 5 hoje — geradas e corretas, porém não inseridas na tese")
+
+add("figura L0tendenciagerallog.png (a ÚNICA de fato no texto do Cap. 4)",
+    "4-resultados-l0/texto.tex#fig:tendencia-l0-log", "conjunto-inicial",
+    "tesedaru/4-resultados-l0/imagens/L0tendenciagerallog.png",
+    "não encontrado gerador", "sem-evidencia",
+    "busca por 'tendencia' em scripts .py do activelearning não acha nenhum "
+    "gerador; a imagem foi commitada direto no tesedaru (99f86e9), sem script "
+    "associado neste repositório. É a ÚNICA figura de fato referenciada no "
+    "texto de Cap. 4/5 hoje, e é justamente a que não tem artefato reprodutível")
 
 # ------------------------------------------------- P1/P2 (Onda 2 — reexecutado)
 ART_P1 = "experiments/p1/results/replay_l0.jsonl"
@@ -619,7 +637,7 @@ for it in itens:
 doc = {
     "schema": "rastreabilidade/v1",
     "gerado_por": "executor01 · notebooks/auditoria/build_rastreabilidade.py",
-    "cobertura": "Cap. 5 completo menos a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2) + Cap. 3 (método, ~24 números casados com R5, tarefa 20260817-1940). Faltam: seção do gate, Cap. 6, apêndices, pré-textuais",
+    "cobertura": "Cap. 5 completo menos a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2, figuras) + Cap. 3 (método, ~24 números casados com R5, tarefa 20260817-1940). Faltam: seção do gate, Cap. 6, apêndices, pré-textuais",
     "resumo": resumo,
     "legenda": {
         "rastreado": "o número sai do artefato citado",
