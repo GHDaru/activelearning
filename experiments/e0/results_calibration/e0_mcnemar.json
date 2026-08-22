@@ -1,0 +1,137 @@
+[
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt",
+    "oracle_b": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b10",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 0,
+    "p_value": 1.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt",
+    "oracle_b": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 0,
+    "p_value": 1.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt",
+    "oracle_b": "openai:gpt-4o-mini@T0.0",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 56,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b10",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 63,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 58,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b10",
+    "oracle_b": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 0,
+    "p_value": 1.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b10",
+    "oracle_b": "openai:gpt-4o-mini@T0.0",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 56,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b10",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b10",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 63,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b10",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 58,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "oracle_b": "openai:gpt-4o-mini@T0.0",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 56,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b10",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 63,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "huawei-maas:deepseek-v4-flash@T0.0#prompt@b25",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 0,
+    "a_wrong_b_right": 58,
+    "p_value": 0.0
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "openai:gpt-4o-mini@T0.0",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b10",
+    "n_paired": 100,
+    "a_right_b_wrong": 1,
+    "a_wrong_b_right": 8,
+    "p_value": 0.039062
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "openai:gpt-4o-mini@T0.0",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 6,
+    "a_wrong_b_right": 8,
+    "p_value": 0.790527
+  },
+  {
+    "sample": "rand",
+    "oracle_a": "openai:gpt-4o-mini@T0.0@b10",
+    "oracle_b": "openai:gpt-4o-mini@T0.0@b25",
+    "n_paired": 100,
+    "a_right_b_wrong": 7,
+    "a_wrong_b_right": 2,
+    "p_value": 0.179688
+  }
+]
