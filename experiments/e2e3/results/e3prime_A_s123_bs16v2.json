@@ -1,0 +1,23 @@
+{
+  "arm": "A",
+  "n_cache": 12152,
+  "n_validos": 11936,
+  "fonte": "rótulos do oráculo real (NIM)",
+  "n_train": 11936,
+  "n_train_classes": 643,
+  "epochs": 3,
+  "batch_size": 16,
+  "max_length": 32,
+  "seed": 123,
+  "data_seed": 42,
+  "eval_n": 177490,
+  "eval_limit": 0,
+  "accuracy": 0.7144,
+  "accuracy_wilson95": [
+    0.7123,
+    0.7165
+  ],
+  "macro_f1": 0.3221,
+  "fit_seconds": 283.6,
+  "predict_seconds": 300.3
+}
