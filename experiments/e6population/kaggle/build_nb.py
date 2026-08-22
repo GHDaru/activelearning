@@ -45,26 +45,36 @@ for mod in ("sklearn", "numpy"):
     print(mod, "ok")
 """),
     ("code", """# 4) A execução — as 42 curvas, retomada automática por checkpoint.
+#
+#    --out-dir aponta DIRETO pra /kaggle/working: é o único diretório que
+#    sobrevive ao fim da sessão e que `kaggle kernels output` consegue baixar.
+#    Escrever primeiro no clone (/tmp) e só copiar no final foi o bug da v1
+#    deste notebook — se a sessão do Kaggle corta o processo antes de ele
+#    terminar as 42 curvas (bem provável, a campanha inteira passa de 20h),
+#    a cópia final nunca roda e TODO o progresso da sessão se perde. Escrever
+#    direto em /kaggle/working faz cada checkpoint sobreviver assim que é
+#    gravado, igual ao padrão já usado no e3prime_kaggle.ipynb (célula 5).
+#
 #    subprocess (não !python) de propósito: lista de argumentos explícita e
 #    código de saída real, como o padrão do E3'/E1E4.
 import subprocess, sys, time
 
+OUT = "/kaggle/working/e6_results"
 t0 = time.time()
 cmd = [sys.executable, "experiments/e6population/reavaliar_177490.py",
-       "--all-tab-e6", "--all-seeded"]
+       "--all-tab-e6", "--all-seeded", "--out-dir", OUT]
 print("comando:", " ".join(cmd))
 proc = subprocess.run(cmd)
 print(f"\\nsaiu com código {proc.returncode} em {(time.time() - t0)/3600:.2f} h")
 """),
-    ("code", """# 5) Empacotar para download — só os artefatos novos (_pop177490), sem
-#    duplicar as curvas antigas que já estão no repositório.
-import glob, os, shutil
+    ("code", """# 5) Conferência final — o output já está em /kaggle/working/e6_results
+#    (célula 4 escreveu direto lá); esta célula só lista o que existe.
+import glob, os
 
-RES = "experiments/e6population/results"
-novos = sorted(glob.glob(f"{RES}/*_pop177490*.jsonl"))
-print(f"{len(novos)} arquivo(s) novo(s):")
+OUT = "/kaggle/working/e6_results"
+novos = sorted(glob.glob(f"{OUT}/*_pop177490*.jsonl"))
+print(f"{len(novos)} arquivo(s) em {OUT}:")
 for p in novos:
-    shutil.copy(p, os.path.join("/kaggle/working", os.path.basename(p)))
     print(" ", os.path.basename(p), os.path.getsize(p), "bytes")
 """),
 ]

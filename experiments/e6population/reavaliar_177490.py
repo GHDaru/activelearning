@@ -32,6 +32,7 @@ Saída (ao lado da curva antiga, nada sobrescrito):
 Uso: python reavaliar_177490.py --branch sgd:entropy [--tag _s43] [--smoke]
      python reavaliar_177490.py --all-tab-e6      # as 10 células principais
      python reavaliar_177490.py --all-seeded       # as 32 curvas com semente
+     python reavaliar_177490.py --all-tab-e6 --all-seeded --out-dir /kaggle/working/e6_results
 """
 from __future__ import annotations
 
@@ -68,7 +69,7 @@ def run_seed_of(tag: str) -> int:
 
 
 def reavaliar(classifier_name: str, strategy: str, tag: str, pool, pop_177490, pop_181490,
-              smoke: bool = False):
+              out_dir: Path, smoke: bool = False):
     factory = CLASSIFIERS[classifier_name]
     run_seed = run_seed_of(tag)
     pool_texts = [t for t, _ in pool]
@@ -88,8 +89,8 @@ def reavaliar(classifier_name: str, strategy: str, tag: str, pool, pop_177490, p
     if smoke:
         old_points = old_points[:2]
 
-    out_path = RES / f"popcurve_{classifier_name}_{strategy}{tag}_pop177490.jsonl"
-    pred_path = RES / f"popcurve_{classifier_name}_{strategy}{tag}_pop177490_final_pred.jsonl"
+    out_path = out_dir / f"popcurve_{classifier_name}_{strategy}{tag}_pop177490.jsonl"
+    pred_path = out_dir / f"popcurve_{classifier_name}_{strategy}{tag}_pop177490_final_pred.jsonl"
     done = set()
     if out_path.exists():
         for l in out_path.read_text().splitlines():
@@ -156,7 +157,23 @@ def main():
     ap.add_argument("--all-tab-e6", action="store_true")
     ap.add_argument("--all-seeded", action="store_true")
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--out-dir", type=Path, default=RES,
+                     help="onde ESCREVER os resultados novos (default: junto do "
+                          "repositório). No Kaggle, aponte para /kaggle/working/... "
+                          "— é o único jeito de sobreviver a um corte de sessão, "
+                          "porque só esse diretório vira output do kernel.")
     args = ap.parse_args()
+    out_dir = args.out_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # retomada: se out_dir é diferente de RES (caso Kaggle), traz pra dentro dele
+    # qualquer resultado que uma rodada anterior já tenha commitado no repositório
+    # — assim esta rodada não refaz checkpoint que já está salvo em algum lugar.
+    if out_dir.resolve() != RES.resolve():
+        for src in RES.glob("popcurve_*_pop177490*.jsonl"):
+            dst = out_dir / src.name
+            if not dst.exists():
+                dst.write_bytes(src.read_bytes())
 
     dedup = load_base()
     pool = dedup[:POOL_SIZE]
@@ -178,7 +195,8 @@ def main():
         ap.error("passe --branch, --all-tab-e6 e/ou --all-seeded")
 
     for classifier_name, strategy, tag in branches:
-        reavaliar(classifier_name, strategy, tag, pool, pop_177490, pop_181490, smoke=args.smoke)
+        reavaliar(classifier_name, strategy, tag, pool, pop_177490, pop_181490,
+                  out_dir=out_dir, smoke=args.smoke)
 
 
 if __name__ == "__main__":
