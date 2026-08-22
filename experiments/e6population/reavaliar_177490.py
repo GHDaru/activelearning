@@ -168,6 +168,10 @@ def main():
     ap.add_argument("--tag", default="")
     ap.add_argument("--all-tab-e6", action="store_true")
     ap.add_argument("--all-seeded", action="store_true")
+    ap.add_argument("--curves", default="",
+                     help="lote explícito de curvas p/ paralelizar em vários kernels: "
+                          "lista separada por vírgula de classificador:estrategia[:tag], "
+                          "ex. 'sgd:entropy,pvbin:random:_s43,sgd:drisl-c'")
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--out-dir", type=Path, default=RES,
                      help="onde ESCREVER os resultados novos (default: junto do "
@@ -200,6 +204,12 @@ def main():
         branches += TAB_E6_BRANCHES
     if args.all_seeded:
         branches += SEEDED_BRANCHES
+    if args.curves:
+        for item in args.curves.split(","):
+            parts = item.split(":")
+            c, s = parts[0], parts[1]
+            t = parts[2] if len(parts) > 2 else ""
+            branches.append((c, s, t))
     if args.branch:
         c, s = args.branch.split(":")
         branches.append((c, s, args.tag))

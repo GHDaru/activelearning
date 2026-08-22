@@ -24,6 +24,7 @@ tudo que já está no `.jsonl` de saída.
 """),
     ("code", """# 1) Configuração
 BRANCH = "claude/e3prime-seed-7-bx08ks"   # o runner reescreve esta linha
+CURVAS = ""   # lote deste kernel (classificador:estrategia[:tag], vírgula). Vazio = as 42
 """),
     ("code", """# 2) Clonar o repositório (vai para /tmp, fora da saída do kernel)
 import os, subprocess
@@ -107,8 +108,8 @@ import subprocess, sys, time
 
 OUT = "/kaggle/working/e6_results"
 t0 = time.time()
-cmd = [sys.executable, "experiments/e6population/reavaliar_177490.py",
-       "--all-tab-e6", "--all-seeded", "--out-dir", OUT]
+cmd = [sys.executable, "experiments/e6population/reavaliar_177490.py", "--out-dir", OUT]
+cmd += ["--curves", CURVAS] if CURVAS else ["--all-tab-e6", "--all-seeded"]
 print("comando:", " ".join(cmd))
 proc = subprocess.run(cmd)
 print(f"\\nsaiu com código {proc.returncode} em {(time.time() - t0)/3600:.2f} h")
