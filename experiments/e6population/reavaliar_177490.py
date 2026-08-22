@@ -68,6 +68,14 @@ def run_seed_of(tag: str) -> int:
     return SEED if not tag else int(tag.lstrip("_s"))
 
 
+def _peak_rss_kb():
+    try:
+        import resource
+        return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss  # KB no Linux
+    except Exception:
+        return None
+
+
 def reavaliar(classifier_name: str, strategy: str, tag: str, pool, pop_177490, pop_181490,
               out_dir: Path, smoke: bool = False):
     factory = CLASSIFIERS[classifier_name]
@@ -142,6 +150,10 @@ def reavaliar(classifier_name: str, strategy: str, tag: str, pool, pop_177490, p
             "f1_ext_181490": round(f1_181, 4) if f1_181 is not None else None,
             "acc_ext_181490_original": point["acc_ext"], "f1_ext_181490_original": point["f1_ext"],
             "elapsed_s": round(time.time() - t_start, 1),
+            # pico de RSS do processo até aqui (KB no Linux, bytes no macOS) —
+            # pedido do `local` pra dimensionar paralelismo por RAM na máquina
+            # do autor (worker via spawn no Windows duplica o pool em memória).
+            "rss_kb": _peak_rss_kb(),
         }
         with out_path.open("a") as fh:
             fh.write(json.dumps(new_point) + "\n")

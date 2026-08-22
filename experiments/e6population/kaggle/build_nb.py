@@ -38,11 +38,39 @@ else:
 os.chdir(REPO_DIR)
 print("cwd:", os.getcwd())
 """),
-    ("code", """# 3) Dependências — o sklearn já vem na imagem padrão do Kaggle; confere
-import importlib
-for mod in ("sklearn", "numpy"):
-    importlib.import_module(mod)
-    print(mod, "ok")
+    ("code", """# 3) Diagnóstico de hardware/ambiente — pedido do agente `local` (tarefa
+#    20260823-0500) pra comparar o Kaggle contra a máquina do autor ANTES de
+#    decidir migrar. Specs MEDIDAS aqui, não as prometidas pela documentação.
+import importlib, os, platform, subprocess
+
+for mod in ("sklearn", "numpy", "scipy"):
+    m = importlib.import_module(mod)
+    print(f"{mod} {m.__version__}")
+print("python", platform.python_version())
+
+print("\\ncpu_count (os.cpu_count):", os.cpu_count())
+try:
+    print(subprocess.run(["nproc", "--all"], capture_output=True, text=True).stdout.strip())
+except Exception as exc:
+    print("nproc indisponível:", exc)
+try:
+    cpuinfo = open("/proc/cpuinfo").read()
+    modelo = next((l for l in cpuinfo.splitlines() if "model name" in l), "?")
+    print(modelo)
+except Exception as exc:
+    print("/proc/cpuinfo indisponível:", exc)
+try:
+    meminfo = {l.split(":")[0]: l.split(":")[1].strip()
+               for l in open("/proc/meminfo") if ":" in l}
+    print("MemTotal:", meminfo.get("MemTotal"), "| MemAvailable:", meminfo.get("MemAvailable"))
+except Exception as exc:
+    print("/proc/meminfo indisponível:", exc)
+
+print("\\npip freeze (filtrado):")
+freeze = subprocess.run(["python", "-m", "pip", "freeze"], capture_output=True, text=True).stdout
+for linha in freeze.splitlines():
+    if linha.split("==")[0].lower() in ("scikit-learn", "numpy", "scipy", "joblib", "threadpoolctl"):
+        print(" ", linha)
 """),
     ("code", """# 4) A execução — as 42 curvas, retomada automática por checkpoint.
 #
