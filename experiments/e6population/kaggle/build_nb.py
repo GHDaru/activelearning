@@ -68,9 +68,27 @@ except Exception as exc:
 
 print("\\npip freeze (filtrado):")
 freeze = subprocess.run(["python", "-m", "pip", "freeze"], capture_output=True, text=True).stdout
-for linha in freeze.splitlines():
-    if linha.split("==")[0].lower() in ("scikit-learn", "numpy", "scipy", "joblib", "threadpoolctl"):
-        print(" ", linha)
+pacotes = [l for l in freeze.splitlines()
+           if l.split("==")[0].lower() in ("scikit-learn", "numpy", "scipy", "joblib", "threadpoolctl")]
+for linha in pacotes:
+    print(" ", linha)
+
+# grava em arquivo, dentro de /kaggle/working, pra sobreviver e dar pra baixar
+# mesmo enquanto o kernel ainda está RUNNING (print() sozinho não aparece em
+# `kaggle kernels output` até a sessão terminar).
+import json as _json
+diag = {
+    "python": platform.python_version(),
+    "cpu_count": os.cpu_count(),
+    "cpuinfo_model": modelo if 'modelo' in dir() else None,
+    "mem_total": meminfo.get("MemTotal") if 'meminfo' in dir() else None,
+    "mem_available": meminfo.get("MemAvailable") if 'meminfo' in dir() else None,
+    "pacotes": pacotes,
+}
+os.makedirs("/kaggle/working", exist_ok=True)
+with open("/kaggle/working/diagnostico_ambiente.json", "w") as fh:
+    _json.dump(diag, fh, indent=1)
+print("\\ndiagnóstico gravado em /kaggle/working/diagnostico_ambiente.json")
 """),
     ("code", """# 4) A execução — as 42 curvas, retomada automática por checkpoint.
 #
