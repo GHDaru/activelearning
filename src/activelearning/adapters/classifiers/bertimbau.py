@@ -42,6 +42,11 @@ class BertimbauClassifier:
         self.classes_: list[str] = []
         self._model = None
         self._tokenizer = None
+        # Publico (nao "_"): metadado de proveniencia — quem grava o resultado
+        # do treino (run_e3prime.py) le daqui em vez de duplicar o numero, para
+        # a homogeneidade da varredura ficar provada pelo proprio artefato, nao
+        # so pela cronologia do git (tarefa tesedaru 2015).
+        self.grad_clip_max_norm: float = 1.0
 
     # -- infraestrutura -----------------------------------------------------
     def _lazy_imports(self):
@@ -112,7 +117,9 @@ class BertimbauClassifier:
                 # podem divergir para um minimo degenerado — visto em produção:
                 # 2 de 18 execuções em lote 16 colapsaram para prever sempre a
                 # mesma classe (Macro F1 = 0), de forma reprodutível.
-                torch.nn.utils.clip_grad_norm_(self._model.parameters(), max_norm=1.0)
+                torch.nn.utils.clip_grad_norm_(
+                    self._model.parameters(), max_norm=self.grad_clip_max_norm
+                )
                 optimizer.step()
                 total += float(out.loss.detach())
                 if self._progress and step % 10 == 0:
