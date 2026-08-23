@@ -72,6 +72,20 @@ Todos os runners com oráculo real são **retomáveis** (JSONL append por
 instância) e os de laço longo têm **retomada por arquivo de estado**. O
 `CachedOracle` garante que nenhuma instância é paga duas vezes.
 
+**Atenção ao cache do ciclo E2E** (`--cache
+experiments/e5cycle/results/annotation_cache_nemotron.jsonl`, linha acima):
+esse caminho é **intencionalmente ignorado pelo git**
+(`experiments/*/results/*.jsonl` no `.gitignore`) — o cache é dado, não
+código, e as descrições de item que ele carrega são conteúdo de varejo que
+não deve entrar num repositório público (regra da tarefa
+`20260817-0020`). O cache original, gerado em julho, **foi perdido** por
+essa mesma razão: ninguém sabia que o git descartava o arquivo, e não havia
+cópia em outro lugar. Depois de gerar (ou regerar) o cache, **suba-o como
+dataset PRIVADO no Kaggle** antes de confiar nele — nunca dependa só do
+disco local ou do git para este artefato. A re-coleta atual e sua
+proveniência estão documentadas em
+`experiments/e5cycle/results/recoleta-20260817/README.md`.
+
 ## 5. Onde cada número da tese mora
 
 - Cap. 4 (P1/P2): `experiments/p1/results/` + tabelas originais do draft

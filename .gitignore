@@ -23,3 +23,6 @@ site/
 
 # sumarios de metrica do E6 (reavaliacao 177.490) — versionados p/ cruzada e tese; NAO os _final_pred (bulk regeneravel)
 !experiments/e6population/results/popcurve_*_pop177490.jsonl
+
+# sumarios homogeneos E3prime (_bs16v2) — rastreabilidade dos bracos A-E da tese; NAO os _pred (bulk regeneravel)
+!experiments/e2e3/results/*_bs16v2.json

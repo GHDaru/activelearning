@@ -227,6 +227,7 @@ def main():
             "n_train_classes": len(set(labels)),
             "epochs": args.epochs, "batch_size": args.batch_size,
             "max_length": args.max_length, "seed": args.seed, "data_seed": DATA_SEED,
+            "grad_clip_max_norm": clf.grad_clip_max_norm,
             "eval_n": len(ev_texts), "eval_limit": args.eval_limit,
             "accuracy": round(acc, 4),
             "accuracy_wilson95": wilson_ci(round(acc * len(ev_texts)), len(ev_texts)),

@@ -64,18 +64,27 @@ except Exception:
 SEED = 123          # semente de TREINO (executor01 usa 7). O runner reescreve esta linha.
 
 # MODO decide batch size e tamanho da avaliação:
-#   "canonico"       -> --batch-size 128 --eval-limit 0     (populacao inteira, 177.490 itens)
-#   "pareado_s42"    -> --batch-size 16  --eval-limit 20000 (identico a semente 42 legada)
-#   "subtreino_bs16" -> --batch-size 16  --eval-limit 0     (avaliacao canonica, lote reduzido —
+#   "canonico"         -> --batch-size 128 --eval-limit 0     (populacao inteira, 177.490 itens)
+#   "pareado_s42"      -> --batch-size 16  --eval-limit 20000 (identico a semente 42 legada)
+#   "subtreino_bs16"   -> --batch-size 16  --eval-limit 0     (avaliacao canonica, lote reduzido —
 #        confirmado em 2026-08-18: D sobe +22,5% de Macro F1 com lote 16 vs 128, mesmas epocas;
 #        autorizado pelo autor a virar o regime canonico definitivo apos verificacao)
+#   "subtreino_bs16v2" -> mesmo treino de subtreino_bs16 (bs=16, eval-limit 0), rodado DEPOIS do
+#        gradient clipping entrar em bertimbau.py (commit 1dabdbb) — regeracao dos bracos que
+#        ainda nao tinham clipping, aprovada pelo autor em 2026-08-21 (tarefa 2015/dec-regerar-
+#        25-bracos-aprovado) para a varredura sair homogenea (27/27 no mesmo codigo).
 # ATENCAO: os resultados _s42 do repositorio foram gerados com bs=16 e eval-limit=20000.
 # Media +- desvio entre sementes so e valida entre execucoes com o MESMO modo.
 MODO = "canonico"
 
-# Saida do modo subtreino_bs16 leva o sufixo abaixo (nunca sobrescreve os arquivos
-# canonicos _s<semente>.json ja publicados em bs=128).
-SFX = "_bs16" if MODO == "subtreino_bs16" else ""
+# Bracos desta semente a NAO treinar (ex.: "E25" ja regerado com clipping numa
+# rodada anterior e serve de referencia de estabilidade — nao retreinar). Vazio
+# treina todos. O runner reescreve esta linha quando pedido via --pular-bracos.
+PULAR_BRACOS = ""
+
+# Saida dos modos de subtreino leva o sufixo abaixo (nunca sobrescreve os arquivos
+# ja publicados de outro modo).
+SFX = {"subtreino_bs16": "_bs16", "subtreino_bs16v2": "_bs16v2"}.get(MODO, "")
 
 REPO = 'https://github.com/GHDaru/activelearning.git'   # publico: nao precisa de token
 BRANCH = 'claude/e3prime-seed-7-rwatey'
@@ -165,6 +174,11 @@ else:
     print('CACHE AUSENTE -> rodando so os 6 bracos que independem dele:', ARMS)
     print('   A, B e C ficam pendentes ate o cache ser anexado (rode de novo depois:')
     print('   os 6 ja prontos sao pulados e so A, B e C treinam).')
+
+if PULAR_BRACOS:
+    pular = set(PULAR_BRACOS.split(','))
+    ARMS = ','.join(a for a in ARMS.split(',') if a not in pular)
+    print('pulando por pedido explicito (ja regerado antes):', sorted(pular), '-> bracos:', ARMS)
 
 ja = sorted(os.path.basename(p) for p in glob.glob(f'{OUT}/e3prime_*_s{SEED}.json')
             if not p.endswith('_pred.json'))

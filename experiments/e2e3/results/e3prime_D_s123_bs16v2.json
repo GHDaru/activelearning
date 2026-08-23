@@ -1,0 +1,21 @@
+{
+  "arm": "D",
+  "fonte": "pool inteiro, gold (régua)",
+  "n_train": 50000,
+  "n_train_classes": 649,
+  "epochs": 3,
+  "batch_size": 16,
+  "max_length": 32,
+  "seed": 123,
+  "data_seed": 42,
+  "eval_n": 177490,
+  "eval_limit": 0,
+  "accuracy": 0.8858,
+  "accuracy_wilson95": [
+    0.8843,
+    0.8873
+  ],
+  "macro_f1": 0.4533,
+  "fit_seconds": 1140.4,
+  "predict_seconds": 300.7
+}

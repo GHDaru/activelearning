@@ -95,7 +95,7 @@ def kaggle(*args: str, check: bool = True) -> subprocess.CompletedProcess:
 
 def monta_pasta(destino: Path, seed: int, kid: str, modo: str,
                 datasets: list[str], kernels: list[str],
-                maquina: str = "NvidiaTeslaT4") -> None:
+                maquina: str = "NvidiaTeslaT4", pular_bracos: str = "") -> None:
     """Copia o notebook com a semente/modo aplicados + escreve o metadata."""
     nb = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
     trocas = 0
@@ -110,6 +110,9 @@ def monta_pasta(destino: Path, seed: int, kid: str, modo: str,
             elif re.match(r'^MODO\s*=\s*"', linha):
                 linha = re.sub(r'^MODO\s*=\s*"[^"]*"', f'MODO = "{modo}"', linha)
                 trocas += 1
+            elif re.match(r'^PULAR_BRACOS\s*=\s*"', linha):
+                linha = re.sub(r'^PULAR_BRACOS\s*=\s*"[^"]*"',
+                               f'PULAR_BRACOS = "{pular_bracos}"', linha)
             novo.append(linha)
         cel["source"] = novo
     if trocas < 2:
@@ -171,13 +174,16 @@ def bracos_faltando(seed: int, esperados: list[str], sfx: str = "") -> list[str]
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, required=True, help="semente de TREINO (7, 123, ...)")
-    ap.add_argument("--modo", choices=["canonico", "pareado_s42", "subtreino_bs16"],
+    ap.add_argument("--modo", choices=["canonico", "pareado_s42", "subtreino_bs16",
+                                       "subtreino_bs16v2"],
                     default="canonico",
                     help="canonico = bs128/eval-limit 0; pareado_s42 = bs16/eval-limit 20000 "
                          "(comparável aos resultados _s42 já publicados); subtreino_bs16 = "
                          "bs16/eval-limit 0 (avaliação canônica, lote reduzido — confirmado em "
                          "2026-08-18 que sobe Macro F1 em +22%; saída com sufixo _bs16, nunca "
-                         "sobrescreve os arquivos canônicos)")
+                         "sobrescreve os arquivos canônicos); subtreino_bs16v2 = mesmo treino, "
+                         "já com gradient clipping (tarefa 2015 — regeração dos 25 braços "
+                         "pré-correção); saída com sufixo _bs16v2, nunca sobrescreve _bs16")
     ap.add_argument("--dataset", action="append", default=[],
                     help="dataset do Kaggle a anexar, ex.: usuario/falco-annotation-cache "
                          "(necessário para os braços A, B e C). Pode repetir.")
@@ -197,20 +203,33 @@ def main() -> int:
                     choices=["NvidiaTeslaT4", "NvidiaTeslaP100"],
                     help="acelerador. T4 (sm_75) é o padrão: a P100 é sm_60 e o "
                          "PyTorch pré-instalado do Kaggle não a suporta.")
+    ap.add_argument("--pular-bracos", default="",
+                    help="braços desta semente para NÃO treinar (lista separada por "
+                         "vírgula, ex.: E25). Uso: braço já regerado numa rodada anterior "
+                         "que deve ficar como referência — não retreinar de novo.")
     args = ap.parse_args()
 
     esperados = BRACOS_COM_CACHE if args.dataset else BRACOS_SEM_CACHE
+    if args.pular_bracos:
+        pulados = set(args.pular_bracos.split(","))
+        esperados = [b for b in esperados if b not in pulados]
     if not args.dataset:
         print("AVISO: sem --dataset com o annotation_cache_nemotron.jsonl, os braços "
               "A, B e C NÃO rodam (o cache é excluído pelo .gitignore do repositório).")
 
-    sfx = "_bs16" if args.modo == "subtreino_bs16" else ""
-    slug_padrao = f"falco-subtreino-s{args.seed}" if sfx else f"falco-e3prime-s{args.seed}"
+    sfx = {"subtreino_bs16": "_bs16", "subtreino_bs16v2": "_bs16v2"}.get(args.modo, "")
+    if args.modo == "subtreino_bs16v2":
+        slug_padrao = f"falco-regen-clip-s{args.seed}"
+    elif sfx:
+        slug_padrao = f"falco-subtreino-s{args.seed}"
+    else:
+        slug_padrao = f"falco-e3prime-s{args.seed}"
 
     if args.so_monta:
         destino = Path(tempfile.mkdtemp(prefix=f"e3prime_s{args.seed}_"))
         monta_pasta(destino, args.seed, f"SEU_USUARIO/{args.slug or slug_padrao}",
-                    args.modo, args.dataset, args.retomar_de, args.maquina)
+                    args.modo, args.dataset, args.retomar_de, args.maquina,
+                    args.pular_bracos)
         print(f"pronto em {destino} — suba manualmente ou rode sem --so-monta com o token.")
         return 0
 
@@ -228,7 +247,7 @@ def main() -> int:
             while True:  # espera de cota não conta como tentativa de verdade
                 with tempfile.TemporaryDirectory() as tmp:
                     monta_pasta(Path(tmp), args.seed, kid, args.modo, args.dataset,
-                                kernels_retomada, args.maquina)
+                                kernels_retomada, args.maquina, args.pular_bracos)
                     print(f"[tentativa {tentativa}] push...")
                     saida_push = kaggle("kernels", "push", "-p", tmp).stdout.strip()
                     print(saida_push)
