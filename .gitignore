@@ -20,3 +20,6 @@ experiments/e0/results/lowcost_run.log
 
 # MkDocs build output
 site/
+
+# sumarios de metrica do E6 (reavaliacao 177.490) — versionados p/ cruzada e tese; NAO os _final_pred (bulk regeneravel)
+!experiments/e6population/results/popcurve_*_pop177490.jsonl

@@ -88,3 +88,24 @@ Porque o Cap. 5 e os artefatos de análise (`mcnemar_s42.json`,
 dedicado troca um problema silencioso por outro. A proposta é: o runner passa a
 escrever com regime, os novos nascem certos, e uma migração dos antigos entra
 como ciclo próprio com de-para registrado em ADR.
+
+## Rebatismo E3′ → E3 (tarefa 20260822-1200) — mapeamento, não renome
+
+O `principal` decidiu (aviso 2026-08-22T18:30, a partir de medição do
+`revisor2`: 135 arquivos com `e3prime` no nome — 130 em
+`experiments/e2e3/results/` — e 144 ocorrências em código/config em 27
+arquivos) que o rebatismo **E3′ → E3** é só no texto visível da tese.
+Identificadores internos são estáveis por desenho e **não mudam**:
+renomeá-los quebraria os caminhos que o `revisor2` já citou ao verificar
+números publicados — perda de rastreabilidade, não ganho.
+
+**Mapa de/para (o único artefato desta tarefa):**
+
+| No texto da tese (Cap. 3 em diante, por `revisor1`) | Nos artefatos/código deste repositório |
+|---|---|
+| **E3** (o experimento) | `e2e3` (diretório), `e3prime` (prefixo de arquivo/script: `run_e3prime.py`, `stats_e3prime.py`, `e3prime_<braço>_s<seed>.json`, `e3prime_<braço>_s<seed>_pred.json`) |
+| braços A–E, régua D, E35 | mantidos idênticos nos dois lados — não são parte do rebatismo |
+
+Nada em `experiments/e2e3/`, em `notebooks/auditoria/build_classificador-forte.py`
+ou em `docs/records/rastreabilidade.json` foi renomeado por esta tarefa. Esta
+tabela é a nota de equivalência completa.
