@@ -629,6 +629,56 @@ add("gate de calibração de lote do E0: maior lote sem degradar acurácia "
     "items_per_call finais (10 ou 25, por provedor) estão no config.json, mas "
     "a análise que justificou a escolha não está versionada", "")
 
+# ------------------------------------------------- Cap. 5 · seção do gate (tarefa 1130)
+GATE = "5-resultados-falco/texto.tex#sec:res-gate"
+COD_GATE = "experiments/e0/results/{e0_table,e0_mcnemar}.json"
+
+add("gate: nenhum oráculo atinge acurácia ≥85% na S-rand",
+    GATE, "escolha-do-oraculo", "experiments/e0/results/e0_table.json",
+    COD_GATE, "rastreado",
+    "confirmado — melhor é deepseek-v4-pro com 82,1% (já auditado na Onda 3a). "
+    "O texto já reconhece isso e declara a divergência com o critério "
+    "pré-registrado explicitamente — bom sinal de honestidade do texto", "")
+
+add("LLM Inicial = deepseek-v4-flash: 78,3% na S-rand, IC [75,6; 80,8]",
+    GATE, "escolha-do-oraculo", "experiments/e0/results/e0_table.json",
+    COD_GATE, "rastreado", "acc=0,783, acc_wilson=[0,7564; 0,8074] — bate", "")
+
+add("LLM Avançado = deepseek-v4-pro; nemotron empata com o flash na S-rand (p=0,76)",
+    GATE, "escolha-do-oraculo", "experiments/e0/results/e0_mcnemar.json",
+    COD_GATE, "rastreado",
+    "par nemotron-nim×flash, rand: b=52,c=48,p=0,7642 — bate", "")
+
+add("gpt-4o empata com v4-pro em acurácia (S-strat) e custa 'o dobro'",
+    GATE, "escolha-do-oraculo", "experiments/e0/results/{e0_table,e0_mcnemar}.json",
+    COD_GATE, "rastreado",
+    "par v4-pro×gpt-4o strat: b=105,c=95,p=0,5245 (empate, bate); custo "
+    "gpt-4o=US$0,9229/1k vs v4-pro=US$0,4099/1k → razão 2,25x, não "
+    "exatamente 'o dobro' (2,0x) mas próximo — linguagem qualitativa, não "
+    "tratado como divergência", "")
+
+add("gpt-4o-mini eliminado (p≈0 contra todos na S-strat)",
+    GATE, "escolha-do-oraculo", "experiments/e0/results/e0_mcnemar.json",
+    COD_GATE, "rastreado",
+    "todos os pares com gpt-4o-mini na amostra rand/strat que verifiquei "
+    "têm p=0,0 ou próximo — bate com 'eliminado'", "")
+
+add("v4-pro 'significativamente superior' ao flash na S-strat, p<0,001 "
+    "(justifica a Fase 3 do FALCO)",
+    GATE, "escolha-do-oraculo", "experiments/e0/results/e0_mcnemar.json",
+    COD_GATE, "divergente",
+    "MESMA causa-raiz do achado 'E0/RQ1 significância sem lastro' (Onda 3a, "
+    "confiança máxima) — mas aqui a consequência é mais grave: o par "
+    "v4-flash×v4-pro na S-strat dá b=73,c=91,p=0,1844 — NÃO significativo a "
+    "nenhum alfa usual, muito menos p<0,001. Pelo critério pré-registrado "
+    "da própria tese (Seção metodo-oraculo-decisao: 'desde que "
+    "significativamente superior... caso contrário, a Fase 3 é eliminada'), "
+    "o dado real diria que a Fase 3 NÃO se justifica — o oposto da "
+    "conclusão escrita. É o achado de maior impacto arquitetural já "
+    "encontrado nesta auditoria: não é só uma célula de tabela, é a "
+    "justificativa de um componente inteiro do framework proposto",
+    "notebooks/auditoria/escolha-do-oraculo.ipynb")
+
 # ---------------------------------------------------------------- gravação
 resumo = {}
 for it in itens:
@@ -637,7 +687,7 @@ for it in itens:
 doc = {
     "schema": "rastreabilidade/v1",
     "gerado_por": "executor01 · notebooks/auditoria/build_rastreabilidade.py",
-    "cobertura": "Cap. 5 completo menos a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2, figuras) + Cap. 3 (método, ~24 números casados com R5, tarefa 20260817-1940). Faltam: seção do gate, Cap. 6, apêndices, pré-textuais",
+    "cobertura": "Cap. 5 completo incluindo a seção do gate (E0, E0-P, E1, E4, E6, E3′) + Cap. 4 (P1/P2, figuras) + Cap. 3 (método, ~24 números casados com R5, tarefa 20260817-1940). Faltam: Cap. 6, apêndices, pré-textuais (em coordenação com R3/R5 do revisor2, tarefa 20260822-1130)",
     "resumo": resumo,
     "legenda": {
         "rastreado": "o número sai do artefato citado",
