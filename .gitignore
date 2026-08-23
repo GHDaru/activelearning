@@ -26,3 +26,6 @@ site/
 
 # sumarios homogeneos E3prime (_bs16v2) — rastreabilidade dos bracos A-E da tese; NAO os _pred (bulk regeneravel)
 !experiments/e2e3/results/*_bs16v2.json
+
+# estatistica homogenea E3prime (McNemar/bootstrap) — rastreabilidade dos testes da tese
+!experiments/e2e3/results/homogeneo_clip/*.json
